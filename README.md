@@ -1,2 +1,2 @@
-# Team 4 Project repo
-## StudyCity
+# Team 4 StudyCity repo
+
