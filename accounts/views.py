@@ -1,9 +1,10 @@
 # views.py
 from django.shortcuts import render, redirect
+
+from accounts.models import Profile
 from .forms import RegisterForm
 
 from django.contrib.auth import authenticate, login, logout
-
 from django.contrib import messages
 # Create your views here.
 from django.contrib.auth.decorators import login_required
@@ -15,19 +16,28 @@ def index(request):
 
 def registerPage(request):
     form = RegisterForm()
+    profile = Profile()
     if request.method == "POST":
         form = RegisterForm(request.POST)
         if form.is_valid():
             form.save()
+            # initialize profile
             user = form.cleaned_data.get("username")
-            messages.success(request, "Account was created for"+user)
+            email = form.cleaned_data.get("email")
+            business_account = form.cleaned_data["business_account"]
+            profile.set(user, email, business_account)
+            profile.save()
+            # ack business account creation
+            if business_account == True:
+                messages.success(request, "Business account successfully created for " + user)
+            else:
+                messages.success(request, "Account successfully created for " + user)
             return redirect("login")
 
     return render(request, "accounts/register.html", {"form": form})
 
 
 def loginPage(request):
-
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
