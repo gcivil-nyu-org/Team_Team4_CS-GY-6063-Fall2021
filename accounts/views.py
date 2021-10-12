@@ -13,19 +13,20 @@ from django.contrib.auth.decorators import login_required
 def index(request):
     return render(request, "accounts/index.html")
 
+
 def registerPage(request):
     form = RegisterForm()
-    profile = Profile()
+    # profile = Profile()
     if request.method == "POST":
         form = RegisterForm(request.POST)
         if form.is_valid():
             form.save()
             # initialize profile
             user = form.cleaned_data.get("username")
-            email = form.cleaned_data.get("email")
+            # email = form.cleaned_data.get("email")
             business_account = form.cleaned_data["business_account"]
-            profile.set(user, email, business_account)
-            profile.save()
+            # profile.set(user, email, business_account)
+            # profile.save()
             # ack business account creation
             if business_account == True:
                 messages.success(request, "Business account successfully created for " + user)
@@ -61,3 +62,8 @@ def logoutUser(request):
 @login_required(login_url='login')
 def user(request):
     return render(request, 'accounts/user.html')
+
+
+@login_required
+def profile(request):
+    return render(request, 'accounts/profile.html')
