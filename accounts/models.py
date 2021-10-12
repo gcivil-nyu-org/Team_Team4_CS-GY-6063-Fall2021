@@ -7,11 +7,7 @@ class Profile(models.Model):
     image = models.ImageField(default='profile_pics/default.jpg', upload_to='profile_pics')
     # username = models.CharField(max_length=256)
     # email = models.CharField(max_length=256)
-    # business_account = models.BooleanField(default=False)
+    business_account = models.BooleanField(default=False)
 
     def __str__(self):
         return f'{self.user.username} Profile'
-    # def set(self, username, email, business_account):
-    #     self.username = username
-    #     self.email = email
-    #     self.business_account = business_account
