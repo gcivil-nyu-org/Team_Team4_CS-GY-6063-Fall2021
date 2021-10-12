@@ -8,6 +8,11 @@
         <div class="media-body">
             <h2 class="account-heading">{{ user.username }}</h2>
             <p class="text-secondary">{{ user.email }}</p>
+            {% if user.profile.business_account %}
+                <p class="text-secondary">It's a business account</p>
+            {% else %}
+                <p class="text-secondary">It's a user account</p>
+            {% endif %}
         </div>
     </div>
     <form method="POST" enctype="multipart/form-data">

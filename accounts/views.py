@@ -8,6 +8,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 # Create your views here.
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from .models import Profile
 
 
 def index(request):
@@ -23,12 +25,16 @@ def registerPage(request):
             form.save()
             # initialize profile
             user = form.cleaned_data.get("username")
+            user_obj = User.objects.get(username=user)
             # email = form.cleaned_data.get("email")
             business_account = form.cleaned_data["business_account"]
             # profile.set(user, email, business_account)
             # profile.save()
             # ack business account creation
-            if business_account == True:
+            if business_account:
+                Profile.objects.filter(user=user_obj).update(business_account=True)
+                profile_obj = Profile.objects.get(user=user_obj)
+                print(profile_obj.business_account)
                 messages.success(request, "Business account successfully created for " + user)
             else:
                 messages.success(request, "Account successfully created for " + user)
@@ -86,4 +92,4 @@ def profile(request):
         'p_form': p_form
     }
 
-    return render(request, 'accounts/profile.html',context)
+    return render(request, 'accounts/profile.html', context)
