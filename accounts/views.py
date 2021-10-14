@@ -23,7 +23,7 @@ def index(request):
         response = requests.get(
             'https://api.yelp.com/v3/businesses/search',
             params={'location': place_search, 'limit': 10},
-            headers={'Authorization': os.environ.get('YELP_API')},
+            headers={'Authorization': 'Bearer '+os.environ.get('YELP_API')},
         )
         res = response.json()
         cor_list = []
