@@ -1,7 +1,88 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Simple Map</title>
+    <title>Marker Clustering</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+    <script src="https://unpkg.com/@googlemaps/markerclusterer/dist/index.min.js"></script>
+
+    <script type="text/javascript">
+      function initMap() {
+        var locations = {{cor_list|safe}}
+        const map = new google.maps.Map(document.getElementById("map"), {
+          zoom: 5,
+          center: { lat: 40, lng: -70 },
+        });
+        // Create an array of alphabetical characters used to label the markers.
+        const labels = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+        // Add some markers to the map.
+        const markers = locations.map((location, i) => {
+          return new google.maps.Marker({
+            position: location,
+            label: labels[i % labels.length],
+          });
+        });
+
+        // Add a marker clusterer to manage the markers.
+        new markerClusterer.MarkerClusterer({
+          map,
+          markers,
+        });
+      }
+
+      // const locations = [
+      //   { lat: -31.56391, lng: 147.154312 },
+      //   { lat: -33.718234, lng: 150.363181 },
+      //   { lat: -33.727111, lng: 150.371124 },
+      //   { lat: -33.848588, lng: 151.209834 },
+      //   { lat: -33.851702, lng: 151.216968 },
+      // ];
+    </script>
+    <style>
+      #map {
+        height: 100%;
+        width: 50vw;
+        flex: 1;
+      }
+      img {
+        max-width: 100%;
+      }
+
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: row;
+      }
+      .container {
+        width: 50vw;
+        flex: 1;
+      }
+    </style>
   </head>
-  <body><h1>StudyCity</h1><body>
+  <body>
+    <div id="map"></div>
+    <div class="container">
+      <form method="get">
+        <input type="text" name="place" />
+        <input type="submit" />
+      </form>
+      {% for location in res%}
+      <h1>{{ location.name }}</h1>
+      <img src="{{location.image_url}}" />
+      {% endfor %}
+      <!-- {% for cor in cor_list%}
+
+      <h1>{{ cor.lat }}</h1>
+      <h1>{{ cor.lng }}</h1>
+      {% endfor %} -->
+    </div>
+    <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
+    <script
+      src="https://maps.googleapis.com/maps/api/js?key={{google}}&callback=initMap&v=weekly"
+      async
+    ></script>
+  </body>
 </html>

@@ -10,10 +10,30 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from .models import Profile
+import requests
+import os
 
 
 def index(request):
-    return render(request, "accounts/index.html")
+    res = {}
+    context = {}
+    if 'place' in request.GET:
+        place_search = request.GET['place']
+        print(place_search)
+        response = requests.get(
+            'https://api.yelp.com/v3/businesses/search',
+            params={'location': place_search, 'limit': 10},
+            headers={'Authorization': os.environ.get('YELP_API')},
+        )
+        res = response.json()
+        cor_list = []
+        for item in res['businesses']:
+            cor_list.append(
+                {'lat': item['coordinates']['latitude'], 'lng': item['coordinates']['longitude']})
+        print(os.environ.get('GOOGLE_API'))
+        return render(request, "accounts/index.html", {'res': res['businesses'], 'cor_list': cor_list, 'google': os.environ.get('GOOGLE_API')})
+    else:
+        return render(request, "accounts/index.html", {'res': [], 'cor_list': []})
 
 
 def registerPage(request):
@@ -32,12 +52,15 @@ def registerPage(request):
             # profile.save()
             # ack business account creation
             if business_account:
-                Profile.objects.filter(user=user_obj).update(business_account=True)
+                Profile.objects.filter(user=user_obj).update(
+                    business_account=True)
                 profile_obj = Profile.objects.get(user=user_obj)
                 print(profile_obj.business_account)
-                messages.success(request, "Business account successfully created for " + user)
+                messages.success(
+                    request, "Business account successfully created for " + user)
             else:
-                messages.success(request, "Account successfully created for " + user)
+                messages.success(
+                    request, "Account successfully created for " + user)
             return redirect("login")
 
     return render(request, "accounts/register.html", {"form": form})
