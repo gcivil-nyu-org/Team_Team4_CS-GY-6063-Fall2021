@@ -7,7 +7,6 @@
 
     <script type="text/javascript">
       function initMap() {
-        var locations = {{cor_list|safe}}
         const map = new google.maps.Map(document.getElementById("map"), {
           zoom: 5,
           center: { lat: 40, lng: -70 },
@@ -30,13 +29,13 @@
         });
       }
 
-      // const locations = [
-      //   { lat: -31.56391, lng: 147.154312 },
-      //   { lat: -33.718234, lng: 150.363181 },
-      //   { lat: -33.727111, lng: 150.371124 },
-      //   { lat: -33.848588, lng: 151.209834 },
-      //   { lat: -33.851702, lng: 151.216968 },
-      // ];
+      const locations = [
+        { lat: -31.56391, lng: 147.154312 },
+        { lat: -33.718234, lng: 150.363181 },
+        { lat: -33.727111, lng: 150.371124 },
+        { lat: -33.848588, lng: 151.209834 },
+        { lat: -33.851702, lng: 151.216968 },
+      ];
     </script>
     <style>
       #map {
@@ -69,15 +68,7 @@
         <input type="text" name="place" />
         <input type="submit" />
       </form>
-      {% for location in res%}
-      <h1>{{ location.name }}</h1>
-      <img src="{{location.image_url}}" />
-      {% endfor %}
-      <!-- {% for cor in cor_list%}
-
-      <h1>{{ cor.lat }}</h1>
-      <h1>{{ cor.lng }}</h1>
-      {% endfor %} -->
+      <!--Search results can be displayed here-->
     </div>
     <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
     <script

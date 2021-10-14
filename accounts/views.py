@@ -15,25 +15,7 @@ import os
 
 
 def index(request):
-    res = {}
-    context = {}
-    if 'place' in request.GET:
-        place_search = request.GET['place']
-        print(place_search)
-        response = requests.get(
-            'https://api.yelp.com/v3/businesses/search',
-            params={'location': place_search, 'limit': 10},
-            headers={'Authorization': 'Bearer '+os.environ.get('YELP_API')},
-        )
-        res = response.json()
-        cor_list = []
-        for item in res['businesses']:
-            cor_list.append(
-                {'lat': item['coordinates']['latitude'], 'lng': item['coordinates']['longitude']})
-        print(os.environ.get('GOOGLE_API'))
-        return render(request, "accounts/index.html", {'res': res['businesses'], 'cor_list': cor_list, 'google': os.environ.get('GOOGLE_API')})
-    else:
-        return render(request, "accounts/index.html", {'res': [], 'cor_list': []})
+    return render(request, "accounts/index.html")
 
 
 def registerPage(request):
