@@ -10,6 +10,8 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from .models import Profile
+import requests
+import os
 
 
 def index(request):
@@ -32,12 +34,15 @@ def registerPage(request):
             # profile.save()
             # ack business account creation
             if business_account:
-                Profile.objects.filter(user=user_obj).update(business_account=True)
+                Profile.objects.filter(user=user_obj).update(
+                    business_account=True)
                 profile_obj = Profile.objects.get(user=user_obj)
                 print(profile_obj.business_account)
-                messages.success(request, "Business account successfully created for " + user)
+                messages.success(
+                    request, "Business account successfully created for " + user)
             else:
-                messages.success(request, "Account successfully created for " + user)
+                messages.success(
+                    request, "Account successfully created for " + user)
             return redirect("login")
 
     return render(request, "accounts/register.html", {"form": form})
