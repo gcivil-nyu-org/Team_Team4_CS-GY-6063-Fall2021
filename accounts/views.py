@@ -10,11 +10,22 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from .models import Profile
-import requests
-import os
+from .yelp_api import yelp_search
 
 
 def index(request):
+    # create yelp search object
+    search_object = yelp_search()
+    
+    # example 1: query yelp API through search_location method
+    yelp_term = 'cafe'
+    yelp_location = 'New York City'
+    search_object.search_location(yelp_term, yelp_location)
+
+    # example 2: query yelp API through search_business_id method
+    business_id = 'FEVQpbOPOwAPNIgO7D3xxw'
+    search_object.search_business_id(business_id)
+
     return render(request, "accounts/index.html")
 
 
