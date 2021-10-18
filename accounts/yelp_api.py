@@ -2,25 +2,28 @@ import os
 import requests
 import json
 
+
 class yelp_search:
 
     def __init__(self):
         self.yelp_api_key = os.environ.get("YELP_API_KEY")
         self.headers = {'Authorization': 'Bearer %s' % self.yelp_api_key}
-    
+
     def search_location(self, term, location):
-        params = {'term':term, 'location':location} 
+        params = {'term': term, 'location': location}
         url = 'https://api.yelp.com/v3/businesses/search'
+
         self.request(url, params)
 
-    def filter_location(self,params):
+    def filter_location(self, params):
         url = 'https://api.yelp.com/v3/businesses/search'
         output = self.request(url, params)
         return output
 
     def search_business_id(self, business_id):
         url = 'https://api.yelp.com/v3/businesses/' + business_id
-        self.request(url)
+        output = self.request(url)
+        return output
 
     def request(self, url, search_params=None):
         # get request
@@ -37,5 +40,3 @@ class yelp_search:
             print("search error (see yelp_api.py):", status_code)
         # return json object
         return output
-        
-
