@@ -19,7 +19,7 @@ from .yelp_api import yelp_search
 def index(request):
     # create yelp search object
     search_object = yelp_search()
-    
+
     # example 1: query yelp API through search_location method
     yelp_term = 'cafe'
     yelp_location = 'New York City'
@@ -29,29 +29,28 @@ def index(request):
     business_id = 'FEVQpbOPOwAPNIgO7D3xxw'
     search_object.search_business_id(business_id)
 
-
     # #38
     context = {}
     queryStr = request.GET
     if queryStr:
-        params = { 'location' :queryStr.get('place')}
+        params = {'location': queryStr.get('place')}
         if not queryStr.get('place'):
             return render(request, "accounts/index.html", context=context)
-        
+
         if queryStr.get('open_now'):
             params['open_now'] = True
 
         if queryStr.get('term'):
             params['term'] = queryStr.get('term')
-        
+
         if queryStr.get('category'):
             params['category'] = queryStr.get('category'),
-        
+
         if queryStr.get('rating'):
-            params['rating'] = queryStr.get('rating') 
-        
+            params['rating'] = queryStr.get('rating')
+
         if queryStr.get('price'):
-            params['price'] = queryStr.get('price') 
+            params['price'] = queryStr.get('price')
 
         result = search_object.filter_location(params)
         resultJSON = json.loads(result)
@@ -59,9 +58,22 @@ def index(request):
             'businesses': resultJSON['businesses'],
             'count': resultJSON['total'],
             'params': params,
-        } 
+        }
 
     return render(request, "accounts/index.html", context=context)
+
+
+def locationDetail(request):
+    search_object = yelp_search()
+    business_id = request.GET.get('locationID')
+    context = {}
+
+    if business_id:
+        result = search_object.search_business_id(business_id)
+        resultJSON = json.loads(result)
+        context = {'business': resultJSON}
+
+    return render(request, "accounts/location_detail.html", context=context)
 
 
 def registerPage(request):
