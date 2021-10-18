@@ -1,5 +1,8 @@
 # views.py
+import json
 from django.shortcuts import render, redirect
+from django.template.loader import render_to_string
+from django.http import HttpResponse
 
 from accounts.models import Profile
 from .forms import RegisterForm, UserUpdateForm, ProfileUpdateForm
@@ -26,7 +29,39 @@ def index(request):
     business_id = 'FEVQpbOPOwAPNIgO7D3xxw'
     search_object.search_business_id(business_id)
 
-    return render(request, "accounts/index.html")
+
+    # #38
+    context = {}
+    queryStr = request.GET
+    if queryStr:
+        params = { 'location' :queryStr.get('place')}
+        if not queryStr.get('place'):
+            return render(request, "accounts/index.html", context=context)
+        
+        if queryStr.get('open_now'):
+            params['open_now'] = True
+
+        if queryStr.get('term'):
+            params['term'] = queryStr.get('term')
+        
+        if queryStr.get('category'):
+            params['category'] = queryStr.get('category'),
+        
+        if queryStr.get('rating'):
+            params['rating'] = queryStr.get('rating') 
+        
+        if queryStr.get('price'):
+            params['price'] = queryStr.get('price') 
+
+        result = search_object.filter_location(params)
+        resultJSON = json.loads(result)
+        context = {
+            'businesses': resultJSON['businesses'],
+            'count': resultJSON['total'],
+            'params': params,
+        } 
+
+    return render(request, "accounts/index.html", context=context)
 
 
 def registerPage(request):
