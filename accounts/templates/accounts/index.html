@@ -4,8 +4,36 @@
     <title>Marker Clustering</title>
     <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
     <script src="https://unpkg.com/@googlemaps/markerclusterer/dist/index.min.js"></script>
+    <link
+    rel="stylesheet"
+    href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+    integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+    crossorigin="anonymous"
+  />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
+  <link
+    rel="stylesheet"
+    href="https://use.fontawesome.com/releases/v5.6.1/css/all.css"
+    integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP"
+    crossorigin="anonymous"
+  />
     <script type="text/javascript">
+     $(document).ready(function() { 
+      const urlSearchParams = new URLSearchParams(window.location.search);
+      const params = Object.fromEntries(urlSearchParams.entries());
+       if (params.category) {
+        $('#categoryDropDown').text(capitalize(params.category));
+       }
+       if (params.rating) {
+        selectRating(params.rating);
+       }
+       if (params.price) {
+        selectDollar(params.price);
+       }
+      });
+
       function initMap() {
         const map = new google.maps.Map(document.getElementById("map"), {
           zoom: 5,
@@ -36,6 +64,37 @@
         { lat: -33.848588, lng: 151.209834 },
         { lat: -33.851702, lng: 151.216968 },
       ];
+
+      function capitalize(string) {
+        
+        return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+    }
+
+      const selectCategories = (val) => {
+        $('#categoryInput').val(val);
+        $('#categoryDropdownMenu').toggleClass('show');
+        $('#categoryDropDown').text(capitalize(val));
+      }
+
+      const selectRating = (rating) => {
+        for (let index = 1; index <= rating; index++) {
+          $(`#rating${index}`).css('color', 'gold');
+          $('#ratingInput').val(rating);
+        }
+        for (let index = rating+1; index <= 5; index++) {
+          $(`#rating${index}`).css('color', 'black');
+        }
+      }
+
+      const selectDollar = (price) => {
+        for (let index = 1; index <= price; index++) {
+          $(`#price${index}`).css('color', 'green');
+          $('#priceInput').val(price);
+        }
+        for (let index = price+1; index <= 3; index++) {
+          $(`#price${index}`).css('color', 'black');
+        }
+      }
     </script>
     <style>
       #map {
@@ -59,18 +118,138 @@
         width: 50vw;
         flex: 1;
       }
+      .dollar{
+        font-size: 25px;
+      }
+      .pointer {
+        cursor: pointer;
+      }
+      .modal-dialog-slideout {min-height: 100%; margin: 0 0 0 auto;background: #fff;}
+      .modal.fade .modal-dialog.modal-dialog-slideout {-webkit-transform: translate(100%,0)scale(1);transform: translate(100%,0)scale(1);}
+      .modal.fade.show .modal-dialog.modal-dialog-slideout {-webkit-transform: translate(0,0);transform: translate(0,0);display: flex;align-items: stretch;-webkit-box-align: stretch;height: 100%;}
+      .modal.fade.show .modal-dialog.modal-dialog-slideout .modal-body{overflow-y: auto;overflow-x: hidden;}
+      .modal-dialog-slideout .modal-content{border: 0;}
+      .modal-dialog-slideout .modal-header, .modal-dialog-slideout .modal-footer {height: 69px; display: block;} 
+      .modal-dialog-slideout .modal-header h5 {float:left;}
     </style>
   </head>
   <body>
     <div id="map"></div>
+    <form method="get" class="form-group my-4">
     <div class="container">
-      <form method="get">
-        <input type="text" name="place" />
-        <input type="submit" />
-      </form>
+      <label>Enter the location/Zip Code</label>  
+      <input class="form-control" type="text" name="place" placeholder="Enter the location / zip code" value="{% if params.location %}{{params.location}}{% else %}&nbsp;{% endif %}" />
+
+        <!-- <input type="submit" /> -->
       <!--Search results can be displayed here-->
     </div>
     <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
+    <div class="container">
+      <button type="button" class="btn btn-secondary my-4" data-toggle="modal" data-target="#filterModal">
+        Filter
+    </button>
+   
+  <div class="my-4 container">
+      <div class="row">
+          {% for data in businesses %}
+            <div class="col-4 my-2">
+            <div class="card" style="width: 18rem;">
+              <img class="card-img-top" src="{{ data.image_url }}" alt="Card image cap">
+              <div class="card-body">
+                <h5 class="card-title">{{ data.name }}</h5>
+                <p class="card-text my-0">Phone: {{ data.phone }}</p>
+                <p class="card-text my-0">Rating: {{ data.rating }}</p>
+                <p class="card-text my-0">Price Range: {{ data.price }}</p>
+                <p class="card-text my-0">Address: {{ data.location.address1}} </p> 
+                <p class="card-text my-0">Zip Code: {{data.location.zip_code}}</p>
+                <a href="{{data.url}}"  target="_blank" class="card-text pointer">Visit Website</a>
+                <!-- <a href="#" class="btn btn-primary">Go somewhere</a> -->
+              </div>
+            </div>
+            </div>
+          
+          {% endfor %}
+      </div>
+    </div>
+    <div class="modal fade " id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModal" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-slideout" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="filterModalLabel">Filter</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">×</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-12">
+                <div class="my-4">
+                  <label>Enter the search term</label>
+                  <input type="text" class="form-control" name="term" value="{% if params.term %}{{params.term}}{% else %}&nbsp;{% endif %}" />
+                </div>
+                <div class="my-4">
+                  <input type="hidden" class="form-control"
+                  id="categoryInput"
+                  name="category" value="" />
+                </div>
+                <div class="dropdown show my-4">
+                  <a class="btn btn-secondary dropdown-toggle" 
+                  href="#" role="button" id="categoryDropDown"
+                  data-toggle="dropdown" aria-haspopup="true" 
+                  aria-expanded="true"
+                  onclick="$('#categoryDropdownMenu').toggleClass('show')"
+                  >
+                    Categories
+                  </a>
+                
+                  <div class="dropdown-menu" id="categoryDropdownMenu" aria-labelledby="categoryDropDown">
+                    <a class="dropdown-item" href="#"
+                    onclick="selectCategories('cafe')"
+                    >Cafe</a>
+                    <a class="dropdown-item" value="restaurants" href="#" 
+                    onclick="selectCategories('restaurants')">Restaurants</a>
+                    <a class="dropdown-item" href="#"
+                    onclick="selectCategories('internet cafe')"
+                    >Internet Cafe</a>
+                  </div>
+                </div>
+                <div class="form-check form-switch my-4">
+                  <input name="open_now" class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" checked={{ params.open_now }}>
+                  <label class="form-check-label" for="flexSwitchCheckChecked">Open Now</label>
+                </div>
+                <!-- <div class="my-4">
+                  <input type="time" class="form-control my-4" name="open_at" value="{% if params.open_at %}{{params.open_at}}{% else %}&nbsp;{% endif %}" />
+                </div> -->
+                <div class="my-4">
+                  <input type="hidden" class="form-control my-4"
+                  id="ratingInput"
+                  name="rating" value="{{ params.rating }}" />
+                  <i class="fas fa-star pointer" id="rating1" onclick="selectRating(1)"></i>
+                  <i class="fas fa-star pointer" id="rating2" onclick="selectRating(2)"></i>
+                  <i class="fas fa-star pointer" id="rating3" onclick="selectRating(3)"></i>
+                  <i class="fas fa-star pointer" id="rating4" onclick="selectRating(4)"></i>
+                  <i class="fas fa-star pointer" id="rating5" onclick="selectRating(5)"></i>
+                </div>
+                <div class="my-4">
+                  <input type="hidden" class="form-control my-4"
+                  id="priceInput"
+                  name="price" value="{{ params.price }}" />
+                  <i class="fas fa-dollar-sign dollar pointer mr-2" id="price1" onclick="selectDollar(1)"></i>
+                  <i class="fas fa-dollar-sign dollar pointer mr-2" id="price2" onclick="selectDollar(2)"></i>
+                  <i class="fas fa-dollar-sign dollar pointer mr-2" id="price3" onclick="selectDollar(3)"></i>
+                 
+                </div>
+                <input type="submit" class="btn btn-primary" value="Find me Study Spaces!" />
+              </div>
+            </div>
+          </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </form>
+   
+  
     <script
       src="https://maps.googleapis.com/maps/api/js?key={{google}}&callback=initMap&v=weekly"
       async
