@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Marker Clustering</title>
+    <title>Study City</title>
     <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
     <script src="https://unpkg.com/@googlemaps/markerclusterer/dist/index.min.js"></script>
     <link
@@ -38,6 +38,9 @@
         }
       });
 
+      // the following line will give out lint error, even though it's valid django template expression
+      let locations = {{location_list|safe}};
+
       function initMap() {
         const map = new google.maps.Map(document.getElementById("map"), {
           zoom: 5,
@@ -61,13 +64,13 @@
         });
       }
 
-      const locations = [
-        { lat: -31.56391, lng: 147.154312 },
-        { lat: -33.718234, lng: 150.363181 },
-        { lat: -33.727111, lng: 150.371124 },
-        { lat: -33.848588, lng: 151.209834 },
-        { lat: -33.851702, lng: 151.216968 },
-      ];
+      // const locations = [
+      //   { lat: -31.56391, lng: 147.154312 },
+      //   { lat: -33.718234, lng: 150.363181 },
+      //   { lat: -33.727111, lng: 150.371124 },
+      //   { lat: -33.848588, lng: 151.209834 },
+      //   { lat: -33.851702, lng: 151.216968 },
+      // ];
 
       function capitalize(string) {
         return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
@@ -221,7 +224,7 @@
                   class=""
                   href="{% url 'locationDetail'%}?locationID={{data.id|default:''}}"
                 >
-                  Check It Out
+                  View detail
                 </a>
               </div>
             </div>

@@ -14,6 +14,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from .models import Profile
 from .yelp_api import yelp_search
+import os
 
 
 def index(request):
@@ -54,10 +55,19 @@ def index(request):
 
         result = search_object.filter_location(params)
         resultJSON = json.loads(result)
+
+        cor_list = []
+        for item in resultJSON['businesses']:
+            cor_list.append(
+                {'lat': item['coordinates']['latitude'], 'lng': item['coordinates']['longitude']})
+        print(os.environ.get('GOOGLE_API'))
+
         context = {
             'businesses': resultJSON['businesses'],
             'count': resultJSON['total'],
             'params': params,
+            'google': os.environ.get('GOOGLE_API'),
+            'location_list': cor_list
         }
 
     return render(request, "accounts/index.html", context=context)
