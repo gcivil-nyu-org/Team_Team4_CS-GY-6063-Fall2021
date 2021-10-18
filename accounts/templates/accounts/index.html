@@ -39,7 +39,7 @@
       });
 
       // the following line will give out lint error, even though it's valid django template expression
-      let locations = {{location_list|safe}};
+      const locations = {{location_list|safe}};
 
       function initMap() {
         const map = new google.maps.Map(document.getElementById("map"), {

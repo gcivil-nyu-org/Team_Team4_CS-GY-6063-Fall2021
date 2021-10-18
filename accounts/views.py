@@ -32,6 +32,7 @@ def index(request):
 
     # #38
     context = {}
+    cor_list = []
     queryStr = request.GET
     if queryStr:
         params = {'location': queryStr.get('place')}
@@ -56,7 +57,6 @@ def index(request):
         result = search_object.filter_location(params)
         resultJSON = json.loads(result)
 
-        cor_list = []
         for item in resultJSON['businesses']:
             cor_list.append(
                 {'lat': item['coordinates']['latitude'], 'lng': item['coordinates']['longitude']})

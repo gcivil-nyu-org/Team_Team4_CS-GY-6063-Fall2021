@@ -2,5 +2,5 @@ gunicorn
 django-heroku
 Pillow
 django-crispy-forms
-python-dotenv
+django-dotenv
 requests

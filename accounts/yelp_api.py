@@ -12,6 +12,7 @@ class yelp_search:
     def search_location(self, term, location):
         params = {'term': term, 'location': location}
         url = 'https://api.yelp.com/v3/businesses/search'
+        print(self.yelp_api_key)
         self.request(url, params)
 
     def filter_location(self, params):
