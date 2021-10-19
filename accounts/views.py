@@ -35,7 +35,7 @@ def index(request):
     cor_list = []
     queryStr = request.GET
     if queryStr:
-        params = {'location': queryStr.get('place')}
+        params = {'location': queryStr.get('place'), 'limit':50}
         if not queryStr.get('place'):
             return render(request, "accounts/index.html", context=context)
 
@@ -45,8 +45,8 @@ def index(request):
         if queryStr.get('term'):
             params['term'] = queryStr.get('term')
 
-        if queryStr.get('category'):
-            params['category'] = queryStr.get('category'),
+        # if queryStr.get('category'):
+        #     params['category'] = queryStr.get('category'),
 
         if queryStr.get('rating'):
             params['rating'] = queryStr.get('rating')
