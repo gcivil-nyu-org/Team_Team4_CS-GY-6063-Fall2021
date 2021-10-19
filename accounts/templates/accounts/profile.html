@@ -13,18 +13,24 @@
             <p class="text-secondary">{{ user.email }}</p>
         </div>
     </div>
-    <form method="POST" enctype="multipart/form-data">
+    <div>
+        {% for review in reviews %}
+
+            <h2>You reviewed <a  href="{% url 'locationDetail' %}?locationID={{ review.yelp_id }}">{{ review.business_name }}</a> on {{ review.date_posted }} : {{ review.review_text }}</h2>
+        {% endfor %}
+    </div>
+    <form method=" POST" enctype="multipart/form-data">
         {% csrf_token %}
         <fieldset class="form-group">
             <legend class="border-bottom mb-4">Update Profile</legend>
-{#            {% crispy u_form %}#}
+            {#            {% crispy u_form %}#}
             {{ u_form|crispy }}
             {{ p_form|crispy }}
         </fieldset>
         <div class="form-group">
             <button class="btn btn-outline-info" type="submit">Save Changes</button>
         </div>
-    </form>
-    <span><a href="{% url 'user' %}">Exit Profile</a></span>
-</div>
+        </form>
+        <span><a href="{% url 'user' %}">Exit Profile</a></span>
+    </div>
 </html>

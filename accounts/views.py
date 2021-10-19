@@ -83,9 +83,9 @@ def locationDetail(request):
         if business_id[-1] == '/':
             business_id = business_id[:-1]
         review = request.POST.get('review')
+        business_name = request.POST.get('locationname')
         post_user = request.user
-        form_dict = {'user': post_user, 'yelp_id': business_id, 'review_text': review}
-        print(business_id)
+        form_dict = {'user': post_user, 'yelp_id': business_id, 'business_name': business_name, 'review_text': review}
         form = ReviewCreateForm(form_dict)
         if form.is_valid():
             form.save()
@@ -96,7 +96,7 @@ def locationDetail(request):
         review_list = Review.objects.filter(yelp_id=business_id).order_by('-date_posted')
         result = search_object.search_business_id(business_id)
         resultJSON = json.loads(result)
-        context = {'business': resultJSON, 'locationID': business_id, 'reviews':review_list}
+        context = {'business': resultJSON, 'locationID': business_id, 'reviews': review_list}
     return render(request, "accounts/location_detail.html", context=context)
 
 
@@ -119,7 +119,6 @@ def registerPage(request):
                 Profile.objects.filter(user=user_obj).update(
                     business_account=True)
                 profile_obj = Profile.objects.get(user=user_obj)
-                print(profile_obj.business_account)
                 messages.success(
                     request, "Business account successfully created for " + user)
             else:
@@ -174,9 +173,11 @@ def profile(request):
         u_form = UserUpdateForm(instance=request.user)
         p_form = ProfileUpdateForm(instance=request.user.profile)
 
+    review_list = Review.objects.filter(user=request.user).order_by('-date_posted')
     context = {
         'u_form': u_form,
-        'p_form': p_form
+        'p_form': p_form,
+        'reviews': review_list
     }
 
     return render(request, 'accounts/profile.html', context)

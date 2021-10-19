@@ -34,6 +34,7 @@
     {% csrf_token %}
     <input type="text" style="width: 200px; height: 50px" name=review placeholder="Your review"/>
     <input type=hidden name=locationid value={{ locationID }}/>
+    <input type=hidden name=locationname value={{ business.name }}/>
     <input type="submit"/>
 </form>
 </body>

@@ -15,8 +15,9 @@ class Profile(models.Model):
 class Review(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     yelp_id = models.CharField(max_length=256)
+    business_name = models.CharField(max_length=64, default='StudySpace')
     review_text = models.CharField(max_length=512)
     date_posted = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
-        return f'{self.user.username} review {self.yelp_id} as {self.review_text} on {self.date_posted}'
+        return f'{self.user.username} reviewed {self.business_name} as {self.review_text} on {self.date_posted}'
