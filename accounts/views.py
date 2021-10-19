@@ -5,14 +5,14 @@ from django.template.loader import render_to_string
 from django.http import HttpResponse
 
 from accounts.models import Profile
-from .forms import RegisterForm, UserUpdateForm, ProfileUpdateForm
+from .forms import RegisterForm, UserUpdateForm, ProfileUpdateForm, ReviewCreateForm
 
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 # Create your views here.
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from .models import Profile
+from .models import Profile, Review
 from .yelp_api import yelp_search
 import os
 
@@ -73,16 +73,30 @@ def index(request):
     return render(request, "accounts/index.html", context=context)
 
 
+@login_required(login_url='login')
 def locationDetail(request):
-    search_object = yelp_search()
-    business_id = request.GET.get('locationID')
-    context = {}
+    if request.method == "GET":
+        business_id = request.GET.get('locationID')
 
+    elif request.method == "POST":
+        business_id = request.POST.get('locationid')
+        if business_id[-1] == '/':
+            business_id = business_id[:-1]
+        review = request.POST.get('review')
+        post_user = request.user
+        form_dict = {'user': post_user, 'yelp_id': business_id, 'review_text': review}
+        print(business_id)
+        form = ReviewCreateForm(form_dict)
+        if form.is_valid():
+            form.save()
+            print('form saved successfully')
+    search_object = yelp_search()
+    context = {}
     if business_id:
+        review_list = Review.objects.filter(yelp_id=business_id).order_by('-date_posted')
         result = search_object.search_business_id(business_id)
         resultJSON = json.loads(result)
-        context = {'business': resultJSON}
-
+        context = {'business': resultJSON, 'locationID': business_id, 'reviews':review_list}
     return render(request, "accounts/location_detail.html", context=context)
 
 
