@@ -31,11 +31,12 @@ def index(request):
     search_object.search_business_id(business_id)
 
     # #38
-    context = {}
     cor_list = []
+    context = {'google': os.environ.get('GOOGLE_API'),
+               'location_list': cor_list}
     queryStr = request.GET
     if queryStr:
-        params = {'location': queryStr.get('place'), 'limit':50}
+        params = {'location': queryStr.get('place'), 'limit': 50}
         if not queryStr.get('place'):
             return render(request, "accounts/index.html", context=context)
 
@@ -85,7 +86,8 @@ def locationDetail(request):
         review = request.POST.get('review')
         business_name = request.POST.get('locationname')
         post_user = request.user
-        form_dict = {'user': post_user, 'yelp_id': business_id, 'business_name': business_name, 'review_text': review}
+        form_dict = {'user': post_user, 'yelp_id': business_id,
+                     'business_name': business_name, 'review_text': review}
         form = ReviewCreateForm(form_dict)
         if form.is_valid():
             form.save()
@@ -93,10 +95,12 @@ def locationDetail(request):
     search_object = yelp_search()
     context = {}
     if business_id:
-        review_list = Review.objects.filter(yelp_id=business_id).order_by('-date_posted')
+        review_list = Review.objects.filter(
+            yelp_id=business_id).order_by('-date_posted')
         result = search_object.search_business_id(business_id)
         resultJSON = json.loads(result)
-        context = {'business': resultJSON, 'locationID': business_id, 'reviews': review_list}
+        context = {'business': resultJSON,
+                   'locationID': business_id, 'reviews': review_list}
     return render(request, "accounts/location_detail.html", context=context)
 
 
@@ -173,7 +177,8 @@ def profile(request):
         u_form = UserUpdateForm(instance=request.user)
         p_form = ProfileUpdateForm(instance=request.user.profile)
 
-    review_list = Review.objects.filter(user=request.user).order_by('-date_posted')
+    review_list = Review.objects.filter(
+        user=request.user).order_by('-date_posted')
     context = {
         'u_form': u_form,
         'p_form': p_form,
