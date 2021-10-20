@@ -27,9 +27,9 @@
       $(document).ready(function () {
         const urlSearchParams = new URLSearchParams(window.location.search);
         const params = Object.fromEntries(urlSearchParams.entries());
-        if (params.category) {
-          $("#categoryDropDown").text(capitalize(params.category));
-        }
+        // if (params.category) {
+        //   $("#categoryDropDown").text(capitalize(params.category));
+        // }
         if (params.rating) {
           selectRating(params.rating);
         }
@@ -76,11 +76,11 @@
         return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
       }
 
-      const selectCategories = (val) => {
-        $("#categoryInput").val(val);
-        $("#categoryDropdownMenu").toggleClass("show");
-        $("#categoryDropDown").text(capitalize(val));
-      };
+      // const selectCategories = (val) => {
+      //   $("#categoryInput").val(val);
+      //   $("#categoryDropdownMenu").toggleClass("show");
+      //   $("#categoryDropDown").text(capitalize(val));
+      // };
 
       const selectRating = (rating) => {
         for (let index = 1; index <= rating; index++) {
@@ -265,7 +265,7 @@
                         value="{% if params.term %}{{params.term}}{% else %}&nbsp;{% endif %}"
                       />
                     </div>
-                    <div class="my-4">
+                    <!-- <div class="my-4">
                       <input
                         type="hidden"
                         class="form-control"
@@ -273,8 +273,8 @@
                         name="category"
                         value=""
                       />
-                    </div>
-                    <div class="dropdown show my-4">
+                    </div> -->
+                    <!-- <div class="dropdown show my-4">
                       <a
                         class="btn btn-secondary dropdown-toggle"
                         href="#"
@@ -286,9 +286,9 @@
                         onclick="$('#categoryDropdownMenu').toggleClass('show')"
                       >
                         Categories
-                      </a>
+                      </a> -->
 
-                      <div
+                      <!-- <div
                         class="dropdown-menu"
                         id="categoryDropdownMenu"
                         aria-labelledby="categoryDropDown"
@@ -310,10 +310,10 @@
                           class="dropdown-item"
                           href="#"
                           onclick="selectCategories('internet cafe')"
-                          >Internet Cafe</a
-                        >
+                          >Internet Cafe</a -->
+                        <!-- >
                       </div>
-                    </div>
+                    </div> -->
                     <div class="form-check form-switch my-4">
                       <input
                         name="open_now"
