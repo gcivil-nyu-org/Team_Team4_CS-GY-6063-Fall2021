@@ -117,6 +117,21 @@
         height: 100%;
         margin: 0;
         padding: 0;
+      }
+      nav {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 20px;
+      }
+      .btn-group {
+        gap: 10px;
+      }
+      .main {
+        height: 100%;
+        margin: 0;
+        padding: 0;
         display: flex;
         flex-direction: row;
       }
@@ -165,107 +180,116 @@
     </style>
   </head>
   <body>
-    <div id="map"></div>
-    <form method="get" class="form-group my-4">
-      <div class="container">
-        <label>Enter the location/Zip Code</label>
-        <input
-          class="form-control"
-          type="text"
-          name="place"
-          placeholder="Enter the location / zip code"
-          value="{% if params.location %}{{params.location}}{% else %}&nbsp;{% endif %}"
-        />
+    <nav>
+      <h1>Study City</h1>
 
-        <!-- <input type="submit" /> -->
-        <!--Search results can be displayed here-->
+      <div class="btn-group">
+        <a href="{% url 'register' %}">Register</a>
+        <a href="{% url 'login' %}">Login</a>
       </div>
+    </nav>
+    <div class="main">
+      <div id="map"></div>
+      <form method="get" class="form-group my-4">
+        <div class="container">
+          <label>Enter the location/Zip Code</label>
+          <input
+            class="form-control"
+            type="text"
+            name="place"
+            placeholder="Enter the location / zip code"
+            value="{% if params.location %}{{params.location}}{% else %}&nbsp;{% endif %}"
+          />
 
-      <div class="container">
-        <button
-          type="button"
-          class="btn btn-secondary my-4"
-          data-toggle="modal"
-          data-target="#filterModal"
-        >
-          Filter
-        </button>
-
-        <div class="my-4 container">
-          <div class="row">
-            {% for data in businesses %}
-            <div class="col-4 my-2">
-              <div class="card" style="width: 18rem">
-                <img
-                  class="card-img-top"
-                  src="{{ data.image_url }}"
-                  alt="Card image cap"
-                />
-                <div class="card-body">
-                  <h5 class="card-title">{{ data.name }}</h5>
-                  <p class="card-text my-0">Phone: {{ data.phone }}</p>
-                  <p class="card-text my-0">Rating: {{ data.rating }}</p>
-                  <p class="card-text my-0">Price Range: {{ data.price }}</p>
-                  <p class="card-text my-0">
-                    Address: {{ data.location.address1}}
-                  </p>
-                  <p class="card-text my-0">
-                    Zip Code: {{data.location.zip_code}}
-                  </p>
-                  <a
-                    href="{{data.url}}"
-                    target="_blank"
-                    class="card-text pointer"
-                    >Visit Website</a
-                  >
-                  <!-- <a href="#" class="btn btn-primary">Go somewhere</a> -->
-                </div>
-                <a
-                  class=""
-                  href="{% url 'locationDetail'%}?locationID={{data.id|default:''}}"
-                >
-                  View detail
-                </a>
-              </div>
-            </div>
-
-            {% endfor %}
-          </div>
+          <!-- <input type="submit" /> -->
+          <!--Search results can be displayed here-->
         </div>
-        <div
-          class="modal fade"
-          id="filterModal"
-          tabindex="-1"
-          role="dialog"
-          aria-labelledby="filterModal"
-          aria-hidden="true"
-        >
-          <div class="modal-dialog modal-dialog-slideout" role="document">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="filterModalLabel">Filter</h5>
-                <button
-                  type="button"
-                  class="close"
-                  data-dismiss="modal"
-                  aria-label="Close"
-                >
-                  <span aria-hidden="true">×</span>
-                </button>
+
+        <div class="container">
+          <button
+            type="button"
+            class="btn btn-secondary my-4"
+            data-toggle="modal"
+            data-target="#filterModal"
+          >
+            Filter
+          </button>
+
+          <div class="my-4 container">
+            <div class="row">
+              {% for data in businesses %}
+              <div class="col-4 my-2">
+                <div class="card" style="width: 18rem">
+                  <img
+                    class="card-img-top"
+                    src="{{ data.image_url }}"
+                    alt="Card image cap"
+                  />
+                  <div class="card-body">
+                    <h5 class="card-title">{{ data.name }}</h5>
+                    <p class="card-text my-0">Phone: {{ data.phone }}</p>
+                    <p class="card-text my-0">Rating: {{ data.rating }}</p>
+                    <p class="card-text my-0">Price Range: {{ data.price }}</p>
+                    <p class="card-text my-0">
+                      Address: {{ data.location.address1}}
+                    </p>
+                    <p class="card-text my-0">
+                      Zip Code: {{data.location.zip_code}}
+                    </p>
+                    <a
+                      href="{{data.url}}"
+                      target="_blank"
+                      class="card-text pointer"
+                      >Visit Website</a
+                    >
+                    <!-- <a href="#" class="btn btn-primary">Go somewhere</a> -->
+                  </div>
+                  <a
+                    class=""
+                    href="{% url 'locationDetail'%}?locationID={{data.id|default:''}}"
+                  >
+                    View detail
+                  </a>
+                </div>
               </div>
-              <div class="modal-body">
-                <div class="row">
-                  <div class="col-12">
-                    <div class="my-4">
-                      <label>Enter the search term</label>
-                      <input
-                        type="text"
-                        class="form-control"
-                        name="term"
-                        value="{% if params.term %}{{params.term}}{% else %}&nbsp;{% endif %}"
-                      />
-                    </div>
-                    <!-- <div class="my-4">
+
+              {% endfor %}
+            </div>
+          </div>
+          <div
+            class="modal fade"
+            id="filterModal"
+            tabindex="-1"
+            role="dialog"
+            aria-labelledby="filterModal"
+            aria-hidden="true"
+          >
+            <div class="modal-dialog modal-dialog-slideout" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="filterModalLabel">Filter</h5>
+                  <button
+                    type="button"
+                    class="close"
+                    data-dismiss="modal"
+                    aria-label="Close"
+                  >
+                    <span aria-hidden="true">×</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <div class="row">
+                    <div class="col-12">
+                      <div class="my-4">
+                        <label>Enter the search term</label>
+                        <input
+                          type="text"
+                          class="form-control"
+                          name="term"
+                          value="{% if params.term %}{{params.term}}{% else %}&nbsp;{% endif %}"
+                        />
+                      </div>
+                      <!-- <div class="my-4">
                       <input
                         type="hidden"
                         class="form-control"
@@ -274,7 +298,7 @@
                         value=""
                       />
                     </div> -->
-                    <!-- <div class="dropdown show my-4">
+                      <!-- <div class="dropdown show my-4">
                       <a
                         class="btn btn-secondary dropdown-toggle"
                         href="#"
@@ -311,99 +335,100 @@
                           href="#"
                           onclick="selectCategories('internet cafe')"
                           >Internet Cafe</a -->
-                        <!-- >
+                      <!-- >
                       </div>
                     </div> -->
-                    <div class="form-check form-switch my-4">
-                      <input
-                        name="open_now"
-                        class="form-check-input"
-                        type="checkbox"
-                        id="flexSwitchCheckChecked"
-                        checked="{{"
-                        params.open_now
-                        }}
-                      />
-                      <label
-                        class="form-check-label"
-                        for="flexSwitchCheckChecked"
-                        >Open Now</label
-                      >
-                    </div>
-                    <!-- <div class="my-4">
+                      <div class="form-check form-switch my-4">
+                        <input
+                          name="open_now"
+                          class="form-check-input"
+                          type="checkbox"
+                          id="flexSwitchCheckChecked"
+                          checked="{{"
+                          params.open_now
+                          }}
+                        />
+                        <label
+                          class="form-check-label"
+                          for="flexSwitchCheckChecked"
+                          >Open Now</label
+                        >
+                      </div>
+                      <!-- <div class="my-4">
                   <input type="time" class="form-control my-4" name="open_at" value="{% if params.open_at %}{{params.open_at}}{% else %}&nbsp;{% endif %}" />
                 </div> -->
-                    <div class="my-4">
+                      <div class="my-4">
+                        <input
+                          type="hidden"
+                          class="form-control my-4"
+                          id="ratingInput"
+                          name="rating"
+                          value="{{ params.rating }}"
+                        />
+                        <i
+                          class="fas fa-star pointer"
+                          id="rating1"
+                          onclick="selectRating(1)"
+                        ></i>
+                        <i
+                          class="fas fa-star pointer"
+                          id="rating2"
+                          onclick="selectRating(2)"
+                        ></i>
+                        <i
+                          class="fas fa-star pointer"
+                          id="rating3"
+                          onclick="selectRating(3)"
+                        ></i>
+                        <i
+                          class="fas fa-star pointer"
+                          id="rating4"
+                          onclick="selectRating(4)"
+                        ></i>
+                        <i
+                          class="fas fa-star pointer"
+                          id="rating5"
+                          onclick="selectRating(5)"
+                        ></i>
+                      </div>
+                      <div class="my-4">
+                        <input
+                          type="hidden"
+                          class="form-control my-4"
+                          id="priceInput"
+                          name="price"
+                          value="{{ params.price }}"
+                        />
+                        <i
+                          class="fas fa-dollar-sign dollar pointer mr-2"
+                          id="price1"
+                          onclick="selectDollar(1)"
+                        ></i>
+                        <i
+                          class="fas fa-dollar-sign dollar pointer mr-2"
+                          id="price2"
+                          onclick="selectDollar(2)"
+                        ></i>
+                        <i
+                          class="fas fa-dollar-sign dollar pointer mr-2"
+                          id="price3"
+                          onclick="selectDollar(3)"
+                        ></i>
+                      </div>
                       <input
-                        type="hidden"
-                        class="form-control my-4"
-                        id="ratingInput"
-                        name="rating"
-                        value="{{ params.rating }}"
+                        type="submit"
+                        class="btn btn-primary"
+                        value="Find me Study Spaces!"
                       />
-                      <i
-                        class="fas fa-star pointer"
-                        id="rating1"
-                        onclick="selectRating(1)"
-                      ></i>
-                      <i
-                        class="fas fa-star pointer"
-                        id="rating2"
-                        onclick="selectRating(2)"
-                      ></i>
-                      <i
-                        class="fas fa-star pointer"
-                        id="rating3"
-                        onclick="selectRating(3)"
-                      ></i>
-                      <i
-                        class="fas fa-star pointer"
-                        id="rating4"
-                        onclick="selectRating(4)"
-                      ></i>
-                      <i
-                        class="fas fa-star pointer"
-                        id="rating5"
-                        onclick="selectRating(5)"
-                      ></i>
                     </div>
-                    <div class="my-4">
-                      <input
-                        type="hidden"
-                        class="form-control my-4"
-                        id="priceInput"
-                        name="price"
-                        value="{{ params.price }}"
-                      />
-                      <i
-                        class="fas fa-dollar-sign dollar pointer mr-2"
-                        id="price1"
-                        onclick="selectDollar(1)"
-                      ></i>
-                      <i
-                        class="fas fa-dollar-sign dollar pointer mr-2"
-                        id="price2"
-                        onclick="selectDollar(2)"
-                      ></i>
-                      <i
-                        class="fas fa-dollar-sign dollar pointer mr-2"
-                        id="price3"
-                        onclick="selectDollar(3)"
-                      ></i>
-                    </div>
-                    <input
-                      type="submit"
-                      class="btn btn-primary"
-                      value="Find me Study Spaces!"
-                    />
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </form>
+      </form>
+    </div>
 
     <script
       src="https://maps.googleapis.com/maps/api/js?key={{google}}&callback=initMap&v=weekly"
