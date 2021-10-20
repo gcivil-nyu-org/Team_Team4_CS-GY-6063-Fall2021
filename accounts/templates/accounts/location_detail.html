@@ -1,0 +1,41 @@
+{% load crispy_forms_tags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>{{ business.name }}</title>
+    <style>
+        img {
+            max-width: 100%;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+<h1>{{ business.name }}</h1>
+{#<h2>{{ locationID }}</h2>#}
+<h2>{{ business.phone }}</h2>
+<h2>Rating: {{ business.rating }}</h2>
+<img src="{{ business.image_url }}"/>
+<h1>User Reviews:</h1>
+{% for review in reviews %}
+    <h2>{{review.user.username}} reviewed on {{ review.date_posted }} : {{ review.review_text }}</h2>
+{% endfor %}
+<h1>Post your review</h1>
+<form method="post">
+    {% csrf_token %}
+    <input type="text" style="width: 200px; height: 50px" name=review placeholder="Your review"/>
+    <input type=hidden name=locationid value={{ locationID }}/>
+    <input type=hidden name=locationname value={{ business.name }}/>
+    <input type="submit"/>
+</form>
+</body>
+</html>
