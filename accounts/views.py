@@ -14,6 +14,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from .models import Profile, Review
 from .yelp_api import yelp_search
+from .open_data_api import open_data_query
 import os
 
 
@@ -29,6 +30,15 @@ def index(request):
     # example 2: query yelp API through search_business_id method
     business_id = 'FEVQpbOPOwAPNIgO7D3xxw'
     search_object.search_business_id(business_id)
+
+    longitude_in = "-74.006172273791"
+    latitude_in = "40.639848504335"
+
+    open_data_object = open_data_query()
+    open_data_object.sanitation_query(longitude_in, latitude_in)
+    open_data_object.three_one_one_query(longitude_in, latitude_in)
+
+
 
     # #38
     cor_list = []
