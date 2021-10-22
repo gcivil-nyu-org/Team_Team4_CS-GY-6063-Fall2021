@@ -4,3 +4,4 @@ Pillow
 django-crispy-forms
 python-dotenv
 requests
+Socrata
