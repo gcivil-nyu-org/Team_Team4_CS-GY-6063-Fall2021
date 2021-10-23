@@ -5,3 +5,4 @@ django-crispy-forms
 python-dotenv
 requests
 Socrata
+python-dateutil

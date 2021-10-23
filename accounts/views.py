@@ -94,10 +94,11 @@ def locationDetail(request):
         zipcode = resultJSON['location']['zip_code']
         long_in = resultJSON['coordinates']['longitude']
         lat_in = resultJSON['coordinates']['latitude']
+
         # init open data query object, run sanitation/311 queries up init
         open_data_object = open_data_query(name, zipcode, long_in, lat_in)
-        open_data_sanitation = json.loads(json.dumps(open_data_object.sanitation[0], indent=4))
-        open_data_threeoneone = json.loads(json.dumps(open_data_object.three_one_one, indent=4))
+        open_data_sanitation = json.loads(json.dumps(open_data_object.sanitation[0]))
+        open_data_threeoneone = json.loads(json.dumps(open_data_object.three_one_one))
 
         context = {'business': resultJSON,
                    'locationID': business_id, 
