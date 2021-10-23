@@ -11,23 +11,27 @@ class open_data_query:
         self.client = Socrata("data.cityofnewyork.us", self.open_data_key)
     
     def sanitation_query(self, long_in, lat_in):
-        req = self.client.get("43nn-pn8j", longitude=long_in, latitude=lat_in, limit = 1)
-        output0 = json.dumps(req, indent=4)
-        print(output0)
-        output = {"name": str(req[0]['dba']),  
-                  "grade": str(req[0]['grade']),
-                  "grade date": str(req[0]['grade_date']), 
-                  "inspection date": str(req[0]['inspection_date']),
-                  "actions": str(req[0]['action']),
-                  "violation_description": str(req[0]['violation_description'])}
+        print("sanitation request...")
+        req = self.client.get("43nn-pn8j", longitude=long_in, latitude=lat_in, limit=1)
+         
+        if req:
+            output = json.dumps(req, indent=4)
+            print(output)
+            output = {"name": str(req[0]['dba']),  
+                    "grade": str(req[0]['grade']),
+                    "grade date": str(req[0]['grade_date']), 
+                    "inspection date": str(req[0]['inspection_date']),
+                    "actions": str(req[0]['action']),
+                    "violation_description": str(req[0]['violation_description'])}
 
         #for k, v in output:
-        print(output)
+            print(output)
 
-        return output
+            return output
 
     def three_one_one_query(self, long_in, lat_in):
         # return queries that are within ~25 meters of location's coordinates
+        print("311 request...")
         proximity = 0.00025
         long_float = float(long_in)
         lat_float = float(lat_in)
@@ -41,9 +45,10 @@ class open_data_query:
               " and (latitude between " + str(lat_bot) + " and " + str(lat_top) + ")" \
               " and (status= 'Open' or status= 'In Progress' )"
 
-        req2 = self.client.get("erm2-nwe9", select="complaint_type, descriptor, \
+        req = self.client.get("erm2-nwe9", select="complaint_type, descriptor, \
                   intersection_street_1, intersection_street_2, status", \
                   where=where_input, limit = 10)
         
-        output = json.dumps(req2, indent=4)
+        output = json.dumps(req, indent=4)
         print(output)
+        return output
