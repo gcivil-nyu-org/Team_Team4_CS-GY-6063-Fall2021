@@ -96,16 +96,14 @@ def locationDetail(request):
         lat_in = resultJSON['coordinates']['latitude']
         # init open data query object, run sanitation/311 queries up init
         open_data_object = open_data_query(name, zipcode, long_in, lat_in)
-        od_sanitation = json.loads(json.dumps(open_data_object.sanitation[0], indent=4))
-        od_threeoneone = json.loads(json.dumps(open_data_object.three_one_one, indent=4))
-
-        print(od_sanitation)
+        open_data_sanitation = json.loads(json.dumps(open_data_object.sanitation[0], indent=4))
+        open_data_threeoneone = json.loads(json.dumps(open_data_object.three_one_one, indent=4))
 
         context = {'business': resultJSON,
                    'locationID': business_id, 
                    'reviews': review_list,
-                   'sanitation': od_sanitation,
-                   'three_one_one': od_threeoneone
+                   'sanitation': open_data_sanitation,
+                   'three_one_one': open_data_threeoneone
                    }
     return render(request, "accounts/location_detail.html", context=context)
 
