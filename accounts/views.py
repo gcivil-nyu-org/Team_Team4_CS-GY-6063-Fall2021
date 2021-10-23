@@ -89,23 +89,24 @@ def locationDetail(request):
         yelp_result = search_object.search_business_id(business_id)
         resultJSON = json.loads(yelp_result)
 
-        # pull long/lat from yelp data
-        longitude_in = str(resultJSON['coordinates']['longitude'])
-        latitude_in = str(resultJSON['coordinates']['latitude'])
+        # open data query: pull name/zip/long/lat from Yelp data
+        name = resultJSON['name']
+        zipcode = resultJSON['location']['zip_code']
+        long_in = resultJSON['coordinates']['longitude']
+        lat_in = resultJSON['coordinates']['latitude']
+        # init open data query object, run sanitation/311 queries up init
+        open_data_object = open_data_query(name, zipcode, long_in, lat_in)
+        od_sanitation = json.loads(json.dumps(open_data_object.sanitation[0], indent=4))
+        od_threeoneone = json.loads(json.dumps(open_data_object.three_one_one, indent=4))
 
-        # perform Open Data queries and store
-        open_data_object = open_data_query()
-        # sanitation
-        open_data_object.sanitation_query(longitude_in, latitude_in)
-        # 311 complaints
-        open_data_object.three_one_one_query(longitude_in, latitude_in)
-
-        print(open_data_object)
-        # pass Open Data responses to context
-
+        print(od_sanitation)
 
         context = {'business': resultJSON,
-                   'locationID': business_id, 'reviews': review_list}
+                   'locationID': business_id, 
+                   'reviews': review_list,
+                   'sanitation': od_sanitation,
+                   'three_one_one': od_threeoneone
+                   }
     return render(request, "accounts/location_detail.html", context=context)
 
 

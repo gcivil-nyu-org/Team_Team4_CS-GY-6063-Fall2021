@@ -23,8 +23,10 @@
 <h1>{{ business.name }}</h1>
 {#<h2>{{ locationID }}</h2>#}
 <h2>{{ business.phone }}</h2>
-<h2>Rating: {{ business.rating }}</h2>
-<h2>Rating: {{ business.rating }}</h2>
+<h2>Yelp! rating: {{ business.rating }}</h2>
+<h2>Sanitation grade: {{ sanitation.grade }}</h2>
+<h3>Grade date: {{ sanitation.grade_date }}</h3>
+<h2>Local 311 complaints: {{ three_one_one }}</h2>
 <img src="{{ business.image_url }}"/>
 <h1>User Reviews:</h1>
 {% for review in reviews %}

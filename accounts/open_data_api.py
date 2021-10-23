@@ -1,37 +1,32 @@
+# sanitation points https://a816-health.nyc.gov/ABCEatsRestaurants/#!/faq
 
 from sodapy import Socrata
 import os
-import json
-
 
 class open_data_query:
 
-    def __init__(self):
+    def __init__(self, name, zipcode, long_in, lat_in):
         self.open_data_key = os.environ.get("OD_APP_TOKEN")
         self.client = Socrata("data.cityofnewyork.us", self.open_data_key)
-    
-    def sanitation_query(self, long_in, lat_in):
-        print("sanitation request...")
-        req = self.client.get("43nn-pn8j", longitude=long_in, latitude=lat_in, limit=1)
-         
+        self.name = name
+        self.zipcode = zipcode
+        self.long_in = long_in
+        self.lat_in = lat_in
+        self.sanitation = self.sanitation_query(self.name, self.zipcode)
+        self.three_one_one = self.three_one_one_query(self.long_in, self.lat_in)
+
+    def sanitation_query(self, name, zipcode):
+        name_upper = name.upper()
+        where_input = "(dba='" + name_upper + "') and (zipcode='" + zipcode + "') and (grade!='is null')"
+
+        req = self.client.get("43nn-pn8j", select="dba, grade, score, grade_date, violation_description", where=where_input, order="grade_date DESC", limit = 1)
         if req:
-            output = json.dumps(req, indent=4)
-            print(output)
-            output = {"name": str(req[0]['dba']),  
-                    "grade": str(req[0]['grade']),
-                    "grade date": str(req[0]['grade_date']), 
-                    "inspection date": str(req[0]['inspection_date']),
-                    "actions": str(req[0]['action']),
-                    "violation_description": str(req[0]['violation_description'])}
-
-        #for k, v in output:
-            print(output)
-
-            return output
+            return req
+        else:
+            return "NA"
 
     def three_one_one_query(self, long_in, lat_in):
-        # return queries that are within ~25 meters of location's coordinates
-        print("311 request...")
+        # return queries that are within ~25 meters square of location's coordinates
         proximity = 0.00025
         long_float = float(long_in)
         lat_float = float(lat_in)
@@ -47,8 +42,9 @@ class open_data_query:
 
         req = self.client.get("erm2-nwe9", select="complaint_type, descriptor, \
                   intersection_street_1, intersection_street_2, status", \
-                  where=where_input, limit = 10)
+                  where=where_input, limit = 5)
         
-        output = json.dumps(req, indent=4)
-        print(output)
-        return output
+        if req:
+            return req
+        else:
+            return "NA"
