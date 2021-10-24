@@ -17,7 +17,7 @@ class RegisterForm(UserCreationForm):
 class ReviewCreateForm(forms.ModelForm):
     class Meta:
         model = Review
-        fields = ['user', 'yelp_id', 'business_name', 'review_text']
+        fields = ['user', 'yelp_id', 'business_name', 'review_text', 'wifi_rating','general_rating', 'comfort_rating', 'food_rating','charging_rating']
 
 
 class UserUpdateForm(forms.ModelForm):

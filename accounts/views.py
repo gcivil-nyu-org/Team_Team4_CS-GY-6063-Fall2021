@@ -85,10 +85,16 @@ def locationDetail(request):
             business_id = business_id[:-1]
         review = request.POST.get('review')
         business_name = request.POST.get('locationname')
+        wifi_rating = request.POST.get('wifi_rating')
+        comfort_rating = request.POST.get('comfort_rating')
+        food_rating = request.POST.get('food_rating')
+        charging_rating = request.POST.get('charging_rating')
+        general_rating = request.POST.get('general_rating')
         post_user = request.user
         form_dict = {'user': post_user, 'yelp_id': business_id,
-                     'business_name': business_name, 'review_text': review}
+                     'business_name': business_name, 'review_text': review, 'wifi_rating':wifi_rating, 'general_rating':general_rating, 'food_rating': food_rating, 'comfort_rating': comfort_rating, 'charging_rating': charging_rating}
         form = ReviewCreateForm(form_dict)
+        print(form)
         if form.is_valid():
             form.save()
             print('form saved successfully')

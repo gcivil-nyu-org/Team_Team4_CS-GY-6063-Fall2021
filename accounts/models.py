@@ -17,6 +17,11 @@ class Review(models.Model):
     yelp_id = models.CharField(max_length=256)
     business_name = models.CharField(max_length=64, default='StudySpace')
     review_text = models.CharField(max_length=512)
+    wifi_rating = models.CharField(max_length=30, default='0')
+    general_rating = models.CharField(max_length=30, default='0')
+    food_rating = models.CharField(max_length=30, default='0')
+    charging_rating = models.CharField(max_length=30, default='0')
+    comfort_rating = models.CharField(max_length=30, default='0')
     date_posted = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
