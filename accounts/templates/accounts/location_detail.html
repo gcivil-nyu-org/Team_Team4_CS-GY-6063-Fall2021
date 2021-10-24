@@ -47,19 +47,18 @@
     <h2>{{ business.phone }}</h2>
     <h2>Rating: {{ business.rating }}</h2>
     <img src="{{ business.image_url }}" />
-    <h1>User Reviews:</h1>
+    <h1>User Comments</h1>
     {% for review in reviews %}
     <h2>
       {{review.user.username}} reviewed on {{ review.date_posted }} : {{review.review_text }}
     </h2>
     {% endfor %}
-    <h1>Post your review</h1>
+    <h1>Add Review</h1>
 
     <form method="post" class="form-section">
       {% csrf_token %}
       <input
         type="text"
-        
         name="review"
         placeholder="Your review"
         class="review-input"

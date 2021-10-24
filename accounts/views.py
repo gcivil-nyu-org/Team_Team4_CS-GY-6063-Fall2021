@@ -94,7 +94,7 @@ def locationDetail(request):
         form_dict = {'user': post_user, 'yelp_id': business_id,
                      'business_name': business_name, 'review_text': review, 'wifi_rating':wifi_rating, 'general_rating':general_rating, 'food_rating': food_rating, 'comfort_rating': comfort_rating, 'charging_rating': charging_rating}
         form = ReviewCreateForm(form_dict)
-        print(form)
+
         if form.is_valid():
             form.save()
             print('form saved successfully')
