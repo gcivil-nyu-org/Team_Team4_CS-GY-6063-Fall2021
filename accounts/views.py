@@ -1,8 +1,7 @@
 # views.py
 import json
 from django.shortcuts import render, redirect
-from django.template.loader import render_to_string
-from accounts.models import Profile
+#from accounts.models import Profile
 from .forms import RegisterForm, UserUpdateForm, ProfileUpdateForm, ReviewCreateForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
@@ -118,7 +117,6 @@ def locationDetail(request):
 
 def registerPage(request):
     form = RegisterForm()
-    # profile = Profile()
     if request.method == "POST":
         form = RegisterForm(request.POST)
         if form.is_valid():
@@ -126,15 +124,13 @@ def registerPage(request):
             # initialize profile
             user = form.cleaned_data.get("username")
             user_obj = User.objects.get(username=user)
-            # email = form.cleaned_data.get("email")
             business_account = form.cleaned_data["business_account"]
-            # profile.set(user, email, business_account)
-            # profile.save()
+
             # ack business account creation
             if business_account:
                 Profile.objects.filter(user=user_obj).update(
                     business_account=True)
-                profile_obj = Profile.objects.get(user=user_obj)
+                #profile_obj = Profile.objects.get(user=user_obj)
                 messages.success(
                     request, "Business account successfully created for " + user)
             else:
@@ -182,7 +178,7 @@ def profile(request):
         if u_form.is_valid() and p_form.is_valid():
             u_form.save()
             p_form.save()
-            messages.success(request, f'Your account has been updated!')
+            messages.success(request, 'Your account has been updated!')
             return redirect('profile')
 
     else:

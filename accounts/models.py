@@ -26,4 +26,7 @@ class Review(models.Model):
     date_posted = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
-        return f'{self.user.username} reviewed {self.business_name} as {self.review_text} on {self.date_posted}'
+        return f'{self.user.username} \
+                reviewed {self.business_name} \
+                as {self.review_text} \
+                on {self.date_posted}'
