@@ -18,10 +18,7 @@ class open_data_query:
             self.long_in, self.lat_in)
 
     def sanitation_query(self, name, zipcode):
-        # API source: https://data.cityofnewyork.us/Health/DOHMH-New-York-City-Restaurant-Inspection-Results/43nn-pn8j
-        # sanitation points https://a816-health.nyc.gov/ABCEatsRestaurants/#!/faq
         # SoQL escape single quote by doubling
-
         name = name.replace("'", "''")
         name_upper = name.upper()
 
@@ -29,18 +26,21 @@ class open_data_query:
             zipcode + "') and (grade!='is null')"
 
         try:
-            req = self.client.get("43nn-pn8j", select="dba, grade, score, grade_date, violation_description",
-                                  where=where_input, order="grade_date DESC", limit=5)
+            req = self.client.get("43nn-pn8j", select="dba, \
+                                                       grade, \
+                                                       score, \
+                                                       grade_date, \
+                                                       violation_description", \
+                                                       where=where_input, \
+                                                       order="grade_date DESC", limit=5)
             if req:
                 return req
             else:
                 return "NA"
-        except:
-            return "NA"
+        except IndexError:
+            return {'grade': 'NA'}
 
     def three_one_one_query(self, long_in, lat_in):
-        # API source: https://data.cityofnewyork.us/Social-Services/311-Service-Requests-from-2010-to-Present/erm2-nwe9
-
         # return queries that are within ~25 meters square of location's coordinates
         proximity = 0.00025
         long_float = float(long_in)
@@ -56,13 +56,22 @@ class open_data_query:
         date = date - relativedelta(months=+1)
         date = date.strftime('%Y-%m-%d')
 
-        where_input = "(longitude between " + str(long_bot) + " and " + str(long_top) + ")" \
-            " and (latitude between " + str(lat_bot) + " and " + str(lat_top) + ")" \
-            " and (status= 'Open' or status= 'In Progress' ) and (created_date > '" + str(date) + "')"
+        where_input = "(longitude between " + str(long_bot) + \
+                      " and " + str(long_top) + ")" \
+                      " and (latitude between " + str(lat_bot) + \
+                      " and " + str(lat_top) + ")" \
+                      " and (status= 'Open' or status= 'In Progress' )" \
+                      " and (created_date > '" + str(date) + "')"
 
-        req = self.client.get("erm2-nwe9", select="created_date, complaint_type, descriptor, \
-                  intersection_street_1, intersection_street_2, status",
-                              where=where_input, order="created_date DESC", limit=3)
+        req = self.client.get("erm2-nwe9", select="created_date, \
+                                                   complaint_type, \
+                                                   descriptor, \
+                                                   intersection_street_1, \
+                                                   intersection_street_2, \
+                                                   status", \
+                                                   where=where_input, \
+                                                   order="created_date DESC", \
+                                                   limit=3)
 
         if req:
             return req
