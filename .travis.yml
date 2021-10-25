@@ -1,0 +1,13 @@
+language: python
+
+before-install:
+  - pip install -r requirements.txt
+
+script:
+  - python manage.py migrate
+  - black -- check .
+  - flake8 --max-line-length=92
+  - coverage run --source='.' manage.py test
+
+after_success:
+  - coveralls

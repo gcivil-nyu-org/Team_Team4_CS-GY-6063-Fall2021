@@ -6,3 +6,7 @@ python-dotenv
 requests
 sodapy
 python-dateutil
+black
+flake8
+coverage
+coveralls
