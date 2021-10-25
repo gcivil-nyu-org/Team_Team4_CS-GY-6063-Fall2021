@@ -7,7 +7,6 @@ class yelp_search:
 
     def __init__(self):
         self.yelp_api_key = os.environ.get("YELP_API_KEY")
-        # self.yelp_api_key='olcINMU1sUDlSLJF1VKG_Hi9Sjr5TA7aZEx6SK7yNQ0iYsmeM2gVMytLiLZ8qJgSjUyzaylp6a5KG_cAjVZQmNSbgYhRLcSxaz5YzCDB5MgOiskSCFEprPuN6KVpYXYx'
         self.headers = {'Authorization': 'Bearer %s' % self.yelp_api_key}
 
     def search_location(self, term, location):

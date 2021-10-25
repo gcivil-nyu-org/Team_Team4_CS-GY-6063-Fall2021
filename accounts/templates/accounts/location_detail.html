@@ -72,20 +72,23 @@
       <a href="{% url 'login' %}">Login</a>
     </div>
   </nav>
+
   <h1>{{ business.name }}</h1>
-
   <h2>{{ business.phone }}</h2>
-  <h2>Rating: {{ business.rating }}</h2>
-  <img src="{{ business.image_url }}" />
-  <h1>User Comments</h1>
-  {% for review in reviews %}
-  <h2>
-    {{review.user.username}} reviewed on {{ review.date_posted }} : {{review.review_text }}
-  </h2>
+  <h2>Yelp! rating: {{ business.rating }}</h2>
+  <h2>NYC sanitation grade: {{ sanitation.grade }}</h2>
+  <h3>Grade date: {{ sanitation.grade_date }}</h3>
+  <h2>Local 311 complaints:</h2>
+  {% for complaint in three_one_one %}
+  <h3>{{complaint.complaint_type}} {{ complaint.created_date }} {{ complaint.description }} {{ complaint.status }}</h3>
   {% endfor %}
-  <h1>Add Review</h1>
-
-  <form method="post" class="form-section">
+  <img src="{{ business.image_url }}" />
+  <h1>User Reviews:</h1>
+  {% for review in reviews %}
+  <h2>{{review.user.username}} reviewed on {{ review.date_posted }} : {{ review.review_text }}</h2>
+  {% endfor %}
+  <h1>Post your review</h1>
+  <form method="post">
     {% csrf_token %}
     <input type="text" name="review" placeholder="Your review" class="review-input" />
     <br />
