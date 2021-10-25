@@ -2,7 +2,6 @@
 import json
 from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
-#from django.http import HttpResponse
 from accounts.models import Profile
 from .forms import RegisterForm, UserUpdateForm, ProfileUpdateForm, ReviewCreateForm
 from django.contrib.auth import authenticate, login, logout
@@ -69,12 +68,17 @@ def locationDetail(request):
 
         review = request.POST.get('review')
         business_name = request.POST.get('locationname')
+        wifi_rating = int(request.POST.get('wifi_rating'))
+        comfort_rating = request.POST.get('comfort_rating')
+        food_rating = request.POST.get('food_rating')
+        charging_rating = request.POST.get('charging_rating')
+        general_rating = request.POST.get('general_rating')
         post_user = request.user
 
         form_dict = {'user': post_user, 'yelp_id': business_id,
-                     'business_name': business_name, 'review_text': review}
+                     'business_name': business_name, 'review_text': review, 'wifi_rating': wifi_rating, 'general_rating': general_rating, 'food_rating': food_rating, 'comfort_rating': comfort_rating, 'charging_rating': charging_rating}
         form = ReviewCreateForm(form_dict)
-        
+
         if form.is_valid():
             form.save()
             print('form saved successfully')
@@ -97,11 +101,14 @@ def locationDetail(request):
 
         # init open data query object, run sanitation/311 queries up init
         open_data_object = open_data_query(name, zipcode, long_in, lat_in)
-        open_data_sanitation = json.loads(json.dumps(open_data_object.sanitation[0]))
-        open_data_threeoneone = json.loads(json.dumps(open_data_object.three_one_one))
+        open_data_sanitation = json.loads(
+            json.dumps(open_data_object.sanitation[0]))
+        open_data_threeoneone = json.loads(
+            json.dumps(open_data_object.three_one_one))
+        print(open_data_object.sanitation)
 
         context = {'business': resultJSON,
-                   'locationID': business_id, 
+                   'locationID': business_id,
                    'reviews': review_list,
                    'sanitation': open_data_sanitation,
                    'three_one_one': open_data_threeoneone
