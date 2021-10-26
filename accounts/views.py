@@ -1,7 +1,6 @@
 # views.py
 import json
 from django.shortcuts import render, redirect
-from django.contrib import messages
 
 # from accounts.models import Profile
 from .forms import RegisterForm, UserUpdateForm, ProfileUpdateForm, ReviewCreateForm
@@ -72,15 +71,15 @@ def locationDetail(request):
                 business_id = business_id[:-1]
             print(business_id)
             business_name = request.POST.get("fav_locationname")
-            favor_delete = Favorite.objects.filter(user=request.user, yelp_id=business_id)
-            print(Favorite.objects.filter(user=request.user).count(),"number")
+            favor_delete = Favorite.objects.filter(user=request.user,
+                                                   yelp_id=business_id)
             if favor_delete:
                 favor_delete.delete()
-                messages.info(request, f'Unfavorite successfully')
+                messages.info(request, 'Unfavorite successfully')
             elif Favorite.objects.filter(user=request.user).count() >= 5:
                 messages.info(request,
-                              f'Maximum of 5 favorited locations.' +
-                              f' Please unfavorite one location before adding another.')
+                              'Maximum of 5 favorited locations.' +
+                              ' Please unfavorite one location before adding another.')
             else:
                 form_dict = {
                     "user": request.user,
