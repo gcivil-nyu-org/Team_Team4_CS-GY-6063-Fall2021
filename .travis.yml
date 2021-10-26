@@ -6,7 +6,7 @@ before-install:
 script:
   - python manage.py migrate
   - black .
-  - flake8 .
+  - flake8 . --ignore=F401 accounts.signals
   - coverage run --source='.' manage.py test
 
 after_success:
