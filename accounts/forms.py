@@ -2,12 +2,14 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from .models import Profile
-from .models import Review
+from .models import Review, Favorite
 
 
 class RegisterForm(UserCreationForm):
     email = forms.EmailField()
-    business_account = forms.BooleanField(required=False)  # field added to registration form
+    business_account = forms.BooleanField(
+        required=False
+    )  # field added to registration form
 
     class Meta:
         model = User
@@ -17,7 +19,23 @@ class RegisterForm(UserCreationForm):
 class ReviewCreateForm(forms.ModelForm):
     class Meta:
         model = Review
-        fields = ['user', 'yelp_id', 'business_name', 'review_text', 'wifi_rating','general_rating', 'comfort_rating', 'food_rating','charging_rating']
+        fields = [
+            "user",
+            "yelp_id",
+            "business_name",
+            "review_text",
+            "wifi_rating",
+            "general_rating",
+            "comfort_rating",
+            "food_rating",
+            "charging_rating",
+        ]
+
+
+class FavoriteCreateForm(forms.ModelForm):
+    class Meta:
+        model = Favorite
+        fields = ["user", "yelp_id", "business_name"]
 
 
 class UserUpdateForm(forms.ModelForm):
@@ -25,10 +43,10 @@ class UserUpdateForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ['username', 'email']
+        fields = ["username", "email"]
 
 
 class ProfileUpdateForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ['image']
+        fields = ["image"]

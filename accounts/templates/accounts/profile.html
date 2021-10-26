@@ -15,8 +15,16 @@
     </div>
     <div>
         {% for review in reviews %}
-
             <h2>You reviewed <a  href="{% url 'locationDetail' %}?locationID={{ review.yelp_id }}">{{ review.business_name }}</a> on {{ review.date_posted }} : {{ review.review_text }}</h2>
+        {% endfor %}
+    </div>
+    <div>
+        {% if favorites %}
+            <p>These are your favorite locations!</p>
+        {% endif %}
+        {% for favorite in favorites %}
+            <p>{{ favorite.yelp_id }}</p>
+            <a  href="{% url 'locationDetail' %}?locationID={{ favorite.yelp_id }}">{{ favorite.business_name }}</a>
         {% endfor %}
     </div>
     <form method=" POST" enctype="multipart/form-data">
