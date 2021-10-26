@@ -20,7 +20,7 @@ def index(request):
                'location_list': cor_list}
     queryStr = request.GET
     if queryStr:
-        params = {'location': queryStr.get('place'), 'limit': 50}
+        params = {'location': queryStr.get('place'), 'limit': 25}
         params2={}
         if not queryStr.get('place'):
             return render(request, "accounts/index.html", context=context)
