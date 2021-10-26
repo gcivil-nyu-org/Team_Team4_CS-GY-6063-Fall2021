@@ -1,4 +1,3 @@
 [flake8]
 max-line-length=88
-per-file-ignores=
-    accounts/signals.py:F401
+per-file-ignores=accounts/apps.py:F401
