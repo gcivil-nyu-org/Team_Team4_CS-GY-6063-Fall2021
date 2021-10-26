@@ -21,8 +21,9 @@ def index(request):
     context = {"google": os.environ.get("GOOGLE_API"), "location_list": cor_list}
     queryStr = request.GET
     if queryStr:
-        params = {"location": queryStr.get("place"), "limit": 20}
-        if not queryStr.get("place"):
+        params = {'location': queryStr.get('place'), 'limit': 25}
+        params2={}
+        if not queryStr.get('place'):
             return render(request, "accounts/index.html", context=context)
 
         if queryStr.get("open_now"):
@@ -34,33 +35,87 @@ def index(request):
         if queryStr.get("rating"):
             params["rating"] = queryStr.get("rating")
 
-        if queryStr.get("price"):
-            params["price"] = queryStr.get("price")
+        if queryStr.get('price'):
+            params['price'] = queryStr.get('price')
+         
+        if queryStr.get('grade'):
+            params2['grade']=queryStr.get('grade')
 
         search_object = yelp_search()
         result = search_object.filter_location(params)
         resultJSON = json.loads(result)
 
-        for item in resultJSON["businesses"]:
+        for index, item in enumerate(resultJSON['businesses']):
+            long_in=item['coordinates']['longitude']
+            lat_in=item['coordinates']['latitude']
+            name=item['name']
+            zipcode=item['location']['zip_code']
+            
             cor_list.append(
-                {
-                    "lat": item["coordinates"]["latitude"],
-                    "lng": item["coordinates"]["longitude"],
-                }
-            )
+                {'lat': item['coordinates']['latitude'], 'lng': item['coordinates']['longitude']})
+            if queryStr.get('grade'):
+                open_data_object = open_data_query(name, zipcode, long_in, lat_in)
+
+                open_data_sanitation = json.loads(json.dumps(open_data_object.sanitation[0]))
+                if (type(open_data_sanitation) is dict):
+                    item['grade'] = open_data_sanitation['grade']
+                else:
+                    item['grade'] = ''
+
+            #  open_data_threeoneone = json.loads(
+            #  json.dumps(open_data_object.three_one_one))
+
+
+        response = resultJSON['businesses']
+        print(len(response), "==>! 1")
+
+        def filterByGrade(item):
+            print(queryStr.get('grade'), item.get('grade'))
+            return item['grade'] == queryStr.get('grade')
+        
+        if queryStr.get('grade'):
+            response = list(filter(filterByGrade, response))
+          
+        print(len(response), "==>! 2")
 
         context = {
-            "businesses": resultJSON["businesses"],
-            "count": resultJSON["total"],
-            "params": params,
-            "google": os.environ.get("GOOGLE_API"),
-            "location_list": cor_list,
+            'businesses': response,
+            'count': resultJSON['total'],
+            'params': params,
+            'google': os.environ.get('GOOGLE_API'),
+            'location_list': cor_list
         }
-
     return render(request, "accounts/index.html", context=context)
 
+    # if queryStr.get('grade'):
+    #    # open data query: pull name/zip/long/lat from Yelp data
+    #     name = resultJSON['name']
+    #     zipcode = resultJSON['location']['zip_code']
+    #     long_in = resultJSON['coordinates']['longitude']
+    #     lat_in = resultJSON['coordinates']['latitude']
 
-@login_required(login_url="login")
+    #     # init open data query object, run sanitation/311 queries up init
+    #     open_data_object = open_data_query(name, zipcode, long_in, lat_in)
+    #     open_data_sanitation = json.loads(
+    #         json.dumps(open_data_object.sanitation[0]))
+    #     # open_data_threeoneone = json.loads(
+    #     #     json.dumps(open_data_object.three_one_one))
+    #     print(open_data_object.sanitation)
+
+    # #     context = {'business': resultJSON,
+    # #                'locationID': business_id,
+    # #                'reviews': review_list,
+    # #                'sanitation': open_data_sanitation,
+    # #                'three_one_one': open_data_threeoneone
+    # #                }
+    # #     return render(request, "accounts/location_detail.html", context=context)
+
+    # # else:
+    # #     return render(request, "accounts/index.html", context=context)
+
+    
+    # return render(request, "accounts/index.html", context=context)
+@login_required(login_url='login')
 def locationDetail(request):
     if request.method == "GET":
         business_id = request.GET.get("locationID")
