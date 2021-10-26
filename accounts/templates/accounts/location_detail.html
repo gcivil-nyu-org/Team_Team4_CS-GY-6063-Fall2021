@@ -3,102 +3,119 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>{{ business.name }}</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous">
-  </script>
-  <style>
-    img {
-      max-width: 100%;
-    }
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>{{ business.name }}</title>
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="fav_locationid" value="{{ locationID }}"/>
+        <input type="hidden" name="fav_locationname" value="{{ business.name }}"/>
+        {% if has_favorite %}
+            <input type="submit" value="Unfavorite"/>
+        {% else %}
+            <input type="submit" value="Add to favorite list"/>
+        {% endif %}
+    </form>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous">
+    </script>
+    <style>
+        img {
+            max-width: 100%;
+        }
 
-    body {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-    }
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
 
-    .form-section {
-      width: 80%;
-      max-width: 1200px;
-      background-color: aliceblue;
-      padding: 10px;
-    }
+        .form-section {
+            width: 80%;
+            max-width: 1200px;
+            background-color: aliceblue;
+            padding: 10px;
+        }
 
-    .review-input {
-      width: 100%;
-      margin: auto;
-      height: 50px;
-      margin-bottom: 20px;
-    }
+        .review-input {
+            width: 100%;
+            margin: auto;
+            height: 50px;
+            margin-bottom: 20px;
+        }
 
-    .range {
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-    }
+        .range {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+        }
 
-    nav {
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      align-items: center;
-      padding: 10px 20px;
-      width: 100%;
-    }
+        nav {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            width: 100%;
+        }
 
-    .btn-group {
-      gap: 10px;
-    }
-  </style>
+        .btn-group {
+            gap: 10px;
+        }
+    </style>
 
 
 </head>
 
 <body>
-  <nav>
+<nav>
     <a href={% url 'index' %}>
-      <h1>Study City</h1>
+        <h1>Study City</h1>
     </a>
 
     <div class="btn-group">
-      <a href="{% url 'register' %}">Register</a>
-      <a href="{% url 'login' %}">Login</a>
+        <a href="{% url 'register' %}">Register</a>
+        <a href="{% url 'login' %}">Login</a>
     </div>
-  </nav>
+</nav>
 
-  <h1>{{ business.name }}</h1>
-  <h2>{{ business.phone }}</h2>
-  <h2>Yelp! rating: {{ business.rating }}</h2>
-  <h2>NYC sanitation grade: {{ sanitation.grade }}</h2>
-  <h3>Grade date: {{ sanitation.grade_date }}</h3>
-  <h2>Local 311 complaints:</h2>
-  {% for complaint in three_one_one %}
-  <h3>{{complaint.complaint_type}} {{ complaint.created_date }} {{ complaint.description }} {{ complaint.status }}</h3>
-  {% endfor %}
-  <img src="{{ business.image_url }}" />
-  <h1>User Reviews:</h1>
-  {% for review in reviews %}
-  <h2>{{review.user.username}} reviewed on {{ review.date_posted }} : {{ review.review_text }}</h2>
-  {% endfor %}
-  <h1>Post your review</h1>
-  <form method="post">
+<h1>{{ business.name }}</h1>
+<h2>{{ business.phone }}</h2>
+<h2>Yelp! rating: {{ business.rating }}</h2>
+<h2>NYC sanitation grade: {{ sanitation.grade }}</h2>
+<h3>Grade date: {{ sanitation.grade_date }}</h3>
+<h2>Local 311 complaints:</h2>
+{% for complaint in three_one_one %}
+    <h3>{{ complaint.complaint_type }} {{ complaint.created_date }} {{ complaint.description }} {{ complaint.status }}</h3>
+{% endfor %}
+<img src="{{ business.image_url }}"/>
+<h1>User Reviews:</h1>
+{% for review in reviews %}
+    <h2>{{ review.user.username }} reviewed on {{ review.date_posted }} : {{ review.review_text }}</h2>
+{% endfor %}
+<h1>Post your review</h1>
+<form method="post">
     {% csrf_token %}
-    <input type="text" name="review" placeholder="Your review" class="review-input" />
-    <br />
+    <input type="text" name="review" placeholder="Your review" class="review-input"/>
+    <br/>
     <div class="range">
-      <p>0</p>
-      <p>1</p>
-      <p>2</p>
-      <p>3</p>
-      <p>4</p>
-      <p>5</p>
+        <p>0</p>
+        <p>1</p>
+        <p>2</p>
+        <p>3</p>
+        <p>4</p>
+        <p>5</p>
     </div>
     <label for="comfort_rating" class="form-label">Comfort Rating</label>
     <input type="range" name="comfort_rating" class="form-range" min="0" max="5" id="comfort_rating">
@@ -111,10 +128,10 @@
     <input type="range" name="charging_rating" class="form-range" min="0" max="5" id="charging_rating">
     <label for="general_rating" class="form-label">Overall Recommendation</label>
     <input type="range" name="general_rating" class="form-range" min="0" max="5" id="general_rating">
-    <input type="hidden" name="locationid" value={{ locationID }} />
-    <input type="hidden" name="locationname" value={{ business.name }} />
-    <input type="submit" />
-  </form>
+    <input type="hidden" name="locationid" value="{{ locationID }}"/>
+    <input type="hidden" name="locationname" value="{{ business.name }}"/>
+    <input type="submit"/>
+</form>
 </body>
 
 </html>
