@@ -98,6 +98,17 @@
         $(`#price${index}`).css("color", "black");
       }
     };
+
+  
+    const selectGrade = (grade) => {
+     
+     let i="grade"+grade
+     $(`#${i}`).css("color", "blue");
+     $("#gradeInput").val(grade);
+      
+    };
+
+
   </script>
   <style>
     #map {
@@ -341,15 +352,17 @@
                       <i class="fas fa-dollar-sign dollar pointer mr-2" id="price2" onclick="selectDollar(2)"></i>
                       <i class="fas fa-dollar-sign dollar pointer mr-2" id="price3" onclick="selectDollar(3)"></i>
                     </div>
-
+                  
                     <div class="my-4">
-                      <input type="hidden" class="form-control my-4" id="priceInput" name="price"
-                        value="{{ params.price }}" />
-                      <i class="fas fa-dollar-sign dollar pointer mr-2" id="price1" onclick="selectDollar(1)"></i>
-                      <i class="fas fa-dollar-sign dollar pointer mr-2" id="price2" onclick="selectDollar(2)"></i>
-                      <i class="fas fa-dollar-sign dollar pointer mr-2" id="price3" onclick="selectDollar(3)"></i>
+                      <input type="hidden" class="form-control my-4" id="gradeInput" name="grade"
+                        value="{{ params.grade }}" />
+                      <span style="font-size: x-large; font-weight: bold;" class="mr-2" id="gradeA" onclick="selectGrade('A')">A</span>
+                      <span style="font-size: x-large; font-weight: bold;"class=" mr-2" id="gradeB" onclick="selectGrade('B')">B</span>
+                      <span style="font-size: x-large; font-weight: bold;"class="mr-2" id="gradeC" onclick="selectGrade('C')">C</span>
                     </div>
+
                     
+                  
                     <input type="submit" class="btn btn-primary" value="Find me Study Spaces!" />
                   </div>
                 </div>
