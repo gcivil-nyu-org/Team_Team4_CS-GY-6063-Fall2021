@@ -16,8 +16,8 @@
     {% endif %}
     <form method="post">
         {% csrf_token %}
-        <input type="hidden" name="fav_locationid" value={{ locationID }}/>
-        <input type="hidden" name="fav_locationname" value={{ business.name }}/>
+        <input type="hidden" name="fav_locationid" value="{{ locationID }}"/>
+        <input type="hidden" name="fav_locationname" value="{{ business.name }}"/>
         {% if has_favorite %}
             <input type="submit" value="Unfavorite"/>
         {% else %}
@@ -128,8 +128,8 @@
     <input type="range" name="charging_rating" class="form-range" min="0" max="5" id="charging_rating">
     <label for="general_rating" class="form-label">Overall Recommendation</label>
     <input type="range" name="general_rating" class="form-range" min="0" max="5" id="general_rating">
-    <input type="hidden" name="locationid" value={{ locationID }}/>
-    <input type="hidden" name="locationname" value={{ business.name }}/>
+    <input type="hidden" name="locationid" value="{{ locationID }}"/>
+    <input type="hidden" name="locationname" value="{{ business.name }}"/>
     <input type="submit"/>
 </form>
 </body>

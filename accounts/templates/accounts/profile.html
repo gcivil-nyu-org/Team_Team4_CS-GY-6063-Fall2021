@@ -24,6 +24,7 @@
         {% endif %}
         {% for favorite in favorites %}
 {#            <p>{{ favorite.yelp_id }}</p>#}
+            <p>{{ favorite.business_name }}</p>>
             <a  href="{% url 'locationDetail' %}?locationID={{ favorite.yelp_id }}">{{ favorite.business_name }}</a>
         {% endfor %}
     </div>

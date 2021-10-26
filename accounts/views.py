@@ -22,7 +22,7 @@ def index(request):
     queryStr = request.GET
     if queryStr:
         params = {'location': queryStr.get('place'), 'limit': 25}
-        params2={}
+        params2 = {}
         if not queryStr.get('place'):
             return render(request, "accounts/index.html", context=context)
 
@@ -37,20 +37,20 @@ def index(request):
 
         if queryStr.get('price'):
             params['price'] = queryStr.get('price')
-         
+
         if queryStr.get('grade'):
-            params2['grade']=queryStr.get('grade')
+            params2['grade'] = queryStr.get('grade')
 
         search_object = yelp_search()
         result = search_object.filter_location(params)
         resultJSON = json.loads(result)
 
         for index, item in enumerate(resultJSON['businesses']):
-            long_in=item['coordinates']['longitude']
-            lat_in=item['coordinates']['latitude']
-            name=item['name']
-            zipcode=item['location']['zip_code']
-            
+            long_in = item['coordinates']['longitude']
+            lat_in = item['coordinates']['latitude']
+            name = item['name']
+            zipcode = item['location']['zip_code']
+
             cor_list.append(
                 {'lat': item['coordinates']['latitude'], 'lng': item['coordinates']['longitude']})
             if queryStr.get('grade'):
@@ -65,17 +65,16 @@ def index(request):
             #  open_data_threeoneone = json.loads(
             #  json.dumps(open_data_object.three_one_one))
 
-
         response = resultJSON['businesses']
         print(len(response), "==>! 1")
 
         def filterByGrade(item):
             print(queryStr.get('grade'), item.get('grade'))
             return item['grade'] == queryStr.get('grade')
-        
+
         if queryStr.get('grade'):
             response = list(filter(filterByGrade, response))
-          
+
         print(len(response), "==>! 2")
 
         context = {
@@ -113,8 +112,9 @@ def index(request):
     # # else:
     # #     return render(request, "accounts/index.html", context=context)
 
-    
     # return render(request, "accounts/index.html", context=context)
+
+
 @login_required(login_url='login')
 def locationDetail(request):
     if request.method == "GET":
@@ -122,9 +122,8 @@ def locationDetail(request):
     elif request.method == "POST":
         business_id = request.POST.get("fav_locationid")
         if business_id:  # it is a adding favorite post
-            if business_id[-1] == "/":
-                business_id = business_id[:-1]
-            print(business_id)
+            # if business_id[-1] == "/":
+            #     business_id = business_id[:-1]
             business_name = request.POST.get("fav_locationname")
             favor_delete = Favorite.objects.filter(user=request.user,
                                                    yelp_id=business_id)
@@ -148,8 +147,8 @@ def locationDetail(request):
 
         else:  # it is a review post
             business_id = request.POST.get("locationid")
-            if business_id[-1] == "/":
-                business_id = business_id[:-1]
+            # if business_id[-1] == "/":
+            #     business_id = business_id[:-1]
 
             review = request.POST.get("review")
             business_name = request.POST.get("locationname")
