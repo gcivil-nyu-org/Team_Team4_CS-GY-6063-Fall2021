@@ -142,5 +142,5 @@ EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_PASS")
 
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-
-django_heroku.settings(locals())
+if '/app' in os.environ['HOME']:
+    django_heroku.settings(locals())
