@@ -21,7 +21,7 @@ def index(request):
     context = {"google": os.environ.get("GOOGLE_API"), "location_list": cor_list}
     queryStr = request.GET
     if queryStr:
-        params = {'location': queryStr.get('place'), 'limit': 10}
+        params = {'location': queryStr.get('place'), 'limit': 20}
         params2 = {}
         if not queryStr.get('place'):
             return render(request, "accounts/index.html", context=context)
@@ -54,30 +54,26 @@ def index(request):
             cor_list.append(
                 {'lat': item['coordinates']['latitude'], 'lng': item['coordinates']['longitude']})
 
-            # if queryStr.get('grade'):
-            #     open_data_object = open_data_query(name, zipcode, long_in, lat_in)
+            if queryStr.get('grade'):
+                open_data_object = open_data_query(name, zipcode, long_in, lat_in)
 
-            #     open_data_sanitation = json.loads(json.dumps(open_data_object.sanitation[0]))
-            #     if (type(open_data_sanitation) is dict):
-            #         item['grade'] = open_data_sanitation['grade']
-            #     else:
-            #         item['grade'] = ''
+                open_data_sanitation = json.loads(json.dumps(open_data_object.sanitation[0]))
+                if (type(open_data_sanitation) is dict):
+                    item['grade'] = open_data_sanitation['grade']
+                else:
+                    item['grade'] = ''
 
             if queryStr.get('311_check'):
-                # print("311 active")
+               
                 open_data_object = open_data_query(name, zipcode, long_in, lat_in)
                 open_data_threeoneone = json.loads(
-                    json.dumps(open_data_object.three_one_one))
-                # print("hellooo")
-                # print(open_data_threeoneone)
+                json.dumps(open_data_object.three_one_one))
                 if(open_data_threeoneone == "NA"):
                     item['check_311'] = True
                 else:
                     item['check_311'] = False
 
-            #  open_data_threeoneone = json.loads(
-            #  json.dumps(open_data_object.three_one_one))
-
+        
         response = resultJSON['businesses']
         # print(len(response), "==>! 1")
 
