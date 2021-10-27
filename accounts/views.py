@@ -62,20 +62,38 @@ def index(request):
                 else:
                     item['grade'] = ''
 
+            if queryStr.get('311_check'):
+                # print("311 active")
+                open_data_object = open_data_query(name, zipcode, long_in, lat_in)
+                open_data_threeoneone = json.loads(json.dumps(open_data_object.three_one_one))
+                # print("hellooo")
+                # print(open_data_threeoneone)
+                if(open_data_threeoneone=="NA"):
+                   item['check_311'] = True
+
+
             #  open_data_threeoneone = json.loads(
             #  json.dumps(open_data_object.three_one_one))
 
         response = resultJSON['businesses']
-        print(len(response), "==>! 1")
+        # print(len(response), "==>! 1")
 
         def filterByGrade(item):
-            print(queryStr.get('grade'), item.get('grade'))
+            # print(queryStr.get('grade'), item.get('grade'))
             return item['grade'] == queryStr.get('grade')
 
         if queryStr.get('grade'):
             response = list(filter(filterByGrade, response))
 
-        print(len(response), "==>! 2")
+        def filterBy311(item):
+            # print(queryStr.get('grade'), item.get('grade'))
+            if(item['check311']):
+               return True
+
+        if queryStr.get('311_check'):
+            response = list(filter(filterBy311, response))
+
+        # print(len(response), "==>! 2")
 
         context = {
             'businesses': response,
