@@ -3,6 +3,9 @@ language: python
 before-install:
   - pip install -r requirements.txt
 
+env:
+  - YELP_API_KEY=YELP_API_KEY
+
 script:
   - python manage.py migrate
   - black .
