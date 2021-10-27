@@ -29,5 +29,5 @@ class StudyCityAPITests(SimpleTestCase):
         resultJSON = json.loads(output)
         self.assertEqual(resultJSON['id'], 'E8RJkjfdcwgtyoPMjQ_Olg')
 
-    def test_open_data_api(self):
-        pass
+    # def test_open_data_api(self):
+    #     pass
