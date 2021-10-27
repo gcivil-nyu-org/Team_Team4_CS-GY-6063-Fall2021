@@ -11,7 +11,7 @@ class TestModels(TestCase):
             password='ss000000'
         )
         prof = Profile.objects.get(user=test_user)
-       
+        print(prof)
         self.assertFalse(prof.business_account)
 
 
@@ -32,6 +32,7 @@ class TestModels(TestCase):
             comfort_rating=4,
             charging_rating=5,
             )
+        print(review)
         self.assertEquals(review.yelp_id,"abcd")
         self.assertEquals(review.review_text,"good")
         self.assertEquals(review.wifi_rating,3)
@@ -58,6 +59,7 @@ class TestModels(TestCase):
             user=test_user,
             yelp_id='abcd',   
         )
+        print(fav)
         # user_prof=Favorite.objects.get(user=test_user)
         self.assertEquals(fav.yelp_id,"abcd")
         
