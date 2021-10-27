@@ -22,6 +22,7 @@ def index(request):
     queryStr = request.GET
     if queryStr:
         params = {'location': queryStr.get('place'), 'limit': 25}
+        print("params:\n", params )
         params2 = {}
         if not queryStr.get('place'):
             return render(request, "accounts/index.html", context=context)
