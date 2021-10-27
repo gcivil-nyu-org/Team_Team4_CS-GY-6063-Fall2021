@@ -34,9 +34,7 @@ class yelp_search:
         if status_code == 200:
             parsed = json.loads(req.text)
             output = json.dumps(parsed, indent=4)
-            # for terminal testing
-            # print(output)
         else:
             print("search error (see yelp_api.py):", status_code)
         # return json object
-        return output
+        return output, status_code
