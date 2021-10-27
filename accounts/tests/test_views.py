@@ -28,9 +28,16 @@ class StudyCityViewsTests(TestCase):
     def test_location_Get(self):
         logged_in = self.c.login(username='testuser', password='123456e')
         self.assertTrue(logged_in)
-        response = self.c.get(reverse('locationDetail') + '?locationID=uks5xzzN5F88a3OOibkYLg')
+        response = self.c.get(reverse('locationDetail') +
+                              '?locationID=uks5xzzN5F88a3OOibkYLg')
         self.assertEquals(response.status_code, 200)
         self.assertTemplateUsed(response, 'accounts/location_detail.html')
+
+    def test_index_Post(self):
+        searchURL = reverse('index') + '?place=tandon'
+        response = self.c.post(searchURL)
+        self.assertEquals(response.status_code, 200)
+        self.assertTemplateUsed(response, 'accounts/index.html')
 
     def test_favorite_Post(self):
         logged_in = self.c.login(username='testuser', password='123456e')
@@ -54,7 +61,8 @@ class StudyCityViewsTests(TestCase):
         self.assertTrue(logged_in)
         yelp_id = 'uks5xzzN5F88a3OOibkYLg'
         yelp_name = 'Jill Lindsey'
-        before_review_post_count = Review.objects.filter(user=self.user, yelp_id=yelp_id).count()
+        before_review_post_count = Review.objects.filter(
+            user=self.user, yelp_id=yelp_id).count()
         location_detail_url = reverse('locationDetail') + '?locationID=' + yelp_id
         review_post = {
             "locationid": yelp_id,
@@ -69,5 +77,6 @@ class StudyCityViewsTests(TestCase):
         response = self.c.post(location_detail_url,
                                review_post)
         self.assertEquals(response.status_code, 200)
-        after_review_post_count = Review.objects.filter(user=self.user, yelp_id=yelp_id).count()
+        after_review_post_count = Review.objects.filter(
+            user=self.user, yelp_id=yelp_id).count()
         self.assertEquals(before_review_post_count + 1, after_review_post_count)
