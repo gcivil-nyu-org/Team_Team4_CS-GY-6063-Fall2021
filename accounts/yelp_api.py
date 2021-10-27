@@ -9,20 +9,23 @@ class yelp_search:
         self.yelp_api_key = os.environ.get("YELP_API_KEY")
         self.headers = {'Authorization': 'Bearer %s' % self.yelp_api_key}
 
-    def search_location(self, term, location):
-        params = {'term': term, 'location': location}
-        url = 'https://api.yelp.com/v3/businesses/search'
-        output = self.request(url, params)
-        return output
+    # def search_location(self, term, location):
+    #     params = {'term': term, 'location': location}
+    #     url = 'https://api.yelp.com/v3/businesses/search'
+    #     output = self.request(url, params)
+    #     print("TEST:", output)
+    #     return output
 
     def filter_location(self, params):
         url = 'https://api.yelp.com/v3/businesses/search'
         output = self.request(url, params)
+        print("TEST:", output)
         return output
 
     def search_business_id(self, business_id):
         url = 'https://api.yelp.com/v3/businesses/' + business_id
         output = self.request(url)
+        #print("TEST:", output)
         return output
 
     def request(self, url, search_params=None):
@@ -34,7 +37,8 @@ class yelp_search:
         if status_code == 200:
             parsed = json.loads(req.text)
             output = json.dumps(parsed, indent=4)
-        else:
-            print("search error (see yelp_api.py):", status_code)
+            return output
+        
+        print("search error (see yelp_api.py):", status_code)
         # return json object
-        return output
+        
