@@ -16,6 +16,7 @@ class open_data_query:
         self.sanitation = self.sanitation_query(self.name, self.zipcode)
         self.three_one_one = self.three_one_one_query(
             self.long_in, self.lat_in)
+    
 
     def sanitation_query(self, name, zipcode):
         # SoQL escape single quote by doubling
