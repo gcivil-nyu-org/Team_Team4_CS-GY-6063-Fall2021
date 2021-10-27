@@ -14,22 +14,6 @@ class TestModels(TestCase):
        
         self.assertFalse(prof.business_account)
 
-    #     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    # yelp_id = models.CharField(max_length=256)
-    # business_name = models.CharField(max_length=64, default="StudySpace")
-    # review_text = models.CharField(max_length=512)
-    # wifi_rating = models.IntegerField(default=0)
-    # general_rating = models.IntegerField(default=0)
-    # food_rating = models.IntegerField(default=0)
-    # charging_rating = models.IntegerField(default=0)
-    # comfort_rating = models.IntegerField(default=0)
-    # date_posted = models.DateTimeField(default=timezone.now)
-
-    # def __str__(self):
-    #     return f"{self.user.username} \
-    #             reviewed {self.business_name} \
-    #             as {self.review_text} \
-    #             on {self.date_posted}"
 
         
     def test_review(self):
@@ -55,3 +39,25 @@ class TestModels(TestCase):
         self.assertEquals(review.food_rating,5)
         self.assertEquals(review.comfort_rating,4)
         self.assertEquals(review.charging_rating,5)
+
+# user = models.ForeignKey(User, on_delete=models.CASCADE)
+#     yelp_id = models.CharField(max_length=256)
+#     business_name = models.CharField(max_length=64, default="StudySpace")
+#     date_posted = models.DateTimeField(default=timezone.now)
+
+#     def __str__(self):
+#         return f"{self.business_name} is {self.user.username}'s favorite"
+
+    def test_favorites(self):
+        test_user = User.objects.create(
+            username='test_user',
+            email='xyz@gmail.com',
+            password='ss000000'
+        )
+        fav = Favorite.objects.create(
+            user=test_user,
+            yelp_id='abcd',   
+        )
+        # user_prof=Favorite.objects.get(user=test_user)
+        self.assertEquals(fav.yelp_id,"abcd")
+        
