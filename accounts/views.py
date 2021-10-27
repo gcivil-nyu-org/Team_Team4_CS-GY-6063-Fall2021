@@ -21,7 +21,7 @@ def index(request):
     context = {"google": os.environ.get("GOOGLE_API"), "location_list": cor_list}
     queryStr = request.GET
     if queryStr:
-        params = {'location': queryStr.get('place'), 'limit': 25}
+        params = {'location': queryStr.get('place'), 'limit': 20}
         params2 = {}
         if not queryStr.get('place'):
             return render(request, "accounts/index.html", context=context)
@@ -53,6 +53,7 @@ def index(request):
 
             cor_list.append(
                 {'lat': item['coordinates']['latitude'], 'lng': item['coordinates']['longitude']})
+
             if queryStr.get('grade'):
                 open_data_object = open_data_query(name, zipcode, long_in, lat_in)
 
@@ -62,20 +63,36 @@ def index(request):
                 else:
                     item['grade'] = ''
 
-            #  open_data_threeoneone = json.loads(
-            #  json.dumps(open_data_object.three_one_one))
+            if queryStr.get('311_check'):
+               
+                open_data_object = open_data_query(name, zipcode, long_in, lat_in)
+                open_data_threeoneone = json.loads(
+                json.dumps(open_data_object.three_one_one))
+                if(open_data_threeoneone == "NA"):
+                    item['check_311'] = True
+                else:
+                    item['check_311'] = False
 
+        
         response = resultJSON['businesses']
-        print(len(response), "==>! 1")
+        # print(len(response), "==>! 1")
 
         def filterByGrade(item):
-            print(queryStr.get('grade'), item.get('grade'))
+            # print(queryStr.get('grade'), item.get('grade'))
             return item['grade'] == queryStr.get('grade')
 
         if queryStr.get('grade'):
             response = list(filter(filterByGrade, response))
 
-        print(len(response), "==>! 2")
+        def filterBy311(item):
+            # print(queryStr.get('grade'), item.get('grade'))
+            if(item['check_311']):
+                return True
+
+        if queryStr.get('311_check'):
+            response = list(filter(filterBy311, response))
+
+        # print(len(response), "==>! 2")
 
         context = {
             'businesses': response,

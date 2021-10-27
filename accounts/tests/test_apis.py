@@ -48,9 +48,3 @@ class StudyCityAPITests(SimpleTestCase):
         resultJSON = response[0]
         if resultJSON:
             self.assertEqual(type(resultJSON['created_date']), str)
-
-
-
-        
-
-

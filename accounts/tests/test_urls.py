@@ -2,7 +2,6 @@ from django.test import SimpleTestCase
 from django.urls import reverse, resolve
 from accounts.views import index, loginPage, registerPage, \
                            logoutUser, user, profile, locationDetail
-#from accounts.templates.accounts import password_reset
                         
 
 class StudyCityURLTests(SimpleTestCase):
