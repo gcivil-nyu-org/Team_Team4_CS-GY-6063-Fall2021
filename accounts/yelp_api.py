@@ -12,7 +12,8 @@ class yelp_search:
     def search_location(self, term, location):
         params = {'term': term, 'location': location}
         url = 'https://api.yelp.com/v3/businesses/search'
-        self.request(url, params)
+        output = self.request(url, params)
+        return output
 
     def filter_location(self, params):
         url = 'https://api.yelp.com/v3/businesses/search'
@@ -30,7 +31,7 @@ class yelp_search:
         req = requests.get(url, params=search_params, headers=self.headers)
         # proceed only if the status code is 200
         status_code = req.status_code
-        if req.status_code == 200:
+        if status_code == 200:
             parsed = json.loads(req.text)
             output = json.dumps(parsed, indent=4)
             # for terminal testing
