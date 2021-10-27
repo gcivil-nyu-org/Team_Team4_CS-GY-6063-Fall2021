@@ -1,4 +1,4 @@
-from django.test import SimpleTestCase, TestCase
+from django.test import SimpleTestCase
 from accounts.forms import ReviewCreateForm
 from django.contrib.auth.models import User
 
