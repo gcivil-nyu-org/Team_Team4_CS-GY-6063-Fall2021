@@ -5,14 +5,14 @@ from accounts.open_data_api import  open_data_query
 
 class StudyCityAPITests(SimpleTestCase):
 
-    def test_yelp_api_filer(self):
+    def test_yelp_api_filter(self):
         test_yelp_query = yelp_search()
         params = {'location': '\xa0tandon', 'limit': 1}
         response = test_yelp_query.filter_location(params)
         resultJSON = json.loads(response)
         self.assertEqual(resultJSON['businesses'][0]['id'], 'ysqgdbSrezXgVwER2kQWKA')
 
-    def test_yelp_api_filer(self):
+    def test_yelp_api_search_business(self):
         test_yelp_query = yelp_search()
         business_id = 'gnXCEhcKF_rd5KmPUQXiYA'
         response = test_yelp_query.search_business_id(business_id)
