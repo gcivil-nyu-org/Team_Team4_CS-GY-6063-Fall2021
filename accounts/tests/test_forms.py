@@ -1,9 +1,11 @@
-from django.test import TestCase
+from django.test import SimpleTestCase, TestCase
 from accounts.forms import ReviewCreateForm
 from django.contrib.auth.models import User
 
 
-class TestForms(TestCase):
+class TestForms(SimpleTestCase):
+    databases = '__all__'
+
     def setUp(self):
         self.test_user = User.objects.create(
             username='test_user',
