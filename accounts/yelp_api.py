@@ -37,4 +37,4 @@ class yelp_search:
         else:
             print("search error (see yelp_api.py):", status_code)
         # return json object
-        return output, status_code
+        return output

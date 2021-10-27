@@ -1,5 +1,6 @@
 from django.test import SimpleTestCase
 from accounts.yelp_api import yelp_search
+import json
 # from accounts.open_data_api import  open_data_query
 
 class StudyCityAPITests(SimpleTestCase):
@@ -24,8 +25,9 @@ class StudyCityAPITests(SimpleTestCase):
         # response = test_yelp_query.search_business_id(business_id)
         # self.assertEqual(response.status_code, 200)
  
-        _, status_code = test_yelp_query.request(url)
-        self.assertEqual(status_code, 200)
-     
+        output = test_yelp_query.request(url)
+        resultJSON = json.loads(output)
+        self.assertEqual(resultJSON['id'], 'E8RJkjfdcwgtyoPMjQ_Olg')
+
     def test_open_data_api(self):
         pass
