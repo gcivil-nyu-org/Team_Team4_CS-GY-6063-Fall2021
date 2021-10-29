@@ -4,6 +4,8 @@
 <head>
 
   <title> Study City </title>
+  {% load static %}
+  <script src="{% static 'js/index.js' %}"> </script>
   <script src="https://polyfill.io/v3/polyfill.min.js?features=default">
   </script>
   <script src="https://unpkg.com/@googlemaps/markerclusterer/dist/index.min.js"></script>
@@ -16,6 +18,8 @@
 
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css"
     integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP" crossorigin="anonymous" />
+
+
   <script type="text/javascript">
     $(document).ready(function () {
       const urlSearchParams = new URLSearchParams(window.location.search);
@@ -69,6 +73,7 @@
     //   { lat: -33.851702, lng: 151.216968 },
     // ];
 
+
     function capitalize(string) {
       return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
     }
@@ -99,17 +104,16 @@
       }
     };
 
-  
-    const selectGrade = (grade) => {
-     
-     let i="grade"+grade
-     $(`#${i}`).css("color", "blue");
-     $("#gradeInput").val(grade);
-      
-    };
 
-   
+    const selectGrade = (grade) => {
+
+      let i = "grade" + grade
+      $(`#${i}`).css("color", "blue");
+      $("#gradeInput").val(grade);
+
+    };
   </script>
+
   <style>
     #map {
       height: 100%;
@@ -216,12 +220,26 @@
     <form method="get" class="form-group my-4">
       <div class="container">
         <label>Enter the location/Zip Code</label>
-        <input class="form-control" type="text" name="place" placeholder="Enter the location / zip code"
+        <input id="locationInput" class="form-control" type="text" name="place"
+          placeholder="Enter the location / zip code"
           value="{% if params.location %}{{params.location}}{% else %}&nbsp;{% endif %}" />
+        <div class="form-check">
+          <input name="useCurrentLocation" class="form-check-input" type="checkbox" value="" id="useCurrentLocation"
+            onclick="toggleCurrentLocation()">
+          <input type="hidden" name="longitude" id="longitude" />
+          <input type="hidden" name="latitude" id="latitude" />
+          <label class="form-check-label" for="useCurrentLocation">
+            Use Current Location
+          </label>
+        </div>
 
         <!-- <input type="submit" /> -->
         <!--Search results can be displayed here-->
       </div>
+      <div id="result">
+        <!--Position information will be inserted here-->
+      </div>
+      {% comment %} <button type="button" onclick="showPosition()">Show Position</button> {% endcomment %}
 
       <div class="container">
         <button type="button" class="btn btn-secondary my-4" data-toggle="modal" data-target="#filterModal">
@@ -326,12 +344,10 @@
                     </div> -->
                     <div class="form-check form-switch my-4">
                       <input name="open_now" class="form-check-input" type="checkbox" id="flexSwitchCheckChecked"
-                        checked="{{"
+                        checked={{
                           params.open_now
-                          }}
-                        />
-                        <label
-                          class=" form-check-label" for="flexSwitchCheckChecked">Open Now</label>
+                          }} />
+                      <label class=" form-check-label" for="flexSwitchCheckChecked">Open Now</label>
                     </div>
                     <!-- <div class="my-4">
                   <input type="time" class="form-control my-4" name="open_at" value="{% if params.open_at %}{{params.open_at}}{% else %}&nbsp;{% endif %}" />
@@ -352,27 +368,28 @@
                       <i class="fas fa-dollar-sign dollar pointer mr-2" id="price2" onclick="selectDollar(2)"></i>
                       <i class="fas fa-dollar-sign dollar pointer mr-2" id="price3" onclick="selectDollar(3)"></i>
                     </div>
-                  
-                    <div class="my-4">
+
+                    {% comment %} <div class="my-4">
                       <input type="hidden" class="form-control my-4" id="gradeInput" name="grade"
                         value="{{ params.grade }}" />
-                      <span style="font-size: x-large; font-weight: bold;" class="mr-2" id="gradeA" onclick="selectGrade('A')">A</span>
-                      <span style="font-size: x-large; font-weight: bold;"class=" mr-2" id="gradeB" onclick="selectGrade('B')">B</span>
-                      <span style="font-size: x-large; font-weight: bold;"class="mr-2" id="gradeC" onclick="selectGrade('C')">C</span>
+                      <span style="font-size: x-large; font-weight: bold;" class="mr-2" id="gradeA"
+                        onclick="selectGrade('A')">A</span>
+                      <span style="font-size: x-large; font-weight: bold;" class=" mr-2" id="gradeB"
+                        onclick="selectGrade('B')">B</span>
+                      <span style="font-size: x-large; font-weight: bold;" class="mr-2" id="gradeC"
+                        onclick="selectGrade('C')">C</span>
                     </div>
 
                     <div class="form-check 311-switch my-4">
                       <input name="311_check" class="form-check-input" type="checkbox" id="flexSwitchCheckChecked"
                         checked={{
                           params.311_check
-                          }}
-                        />
-                        <label
-                          class=" form-check-label" for="flexSwitchCheckChecked">311 Complains Check</label>
-                    </div>
+                          }} />
+                      <label class=" form-check-label" for="flexSwitchCheckChecked">311 Complains Check</label>
+                    </div> {% endcomment %}
 
-                    
-                  
+
+
                     <input type="submit" class="btn btn-primary" value="Find me Study Spaces!" />
                   </div>
                 </div>

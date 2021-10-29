@@ -1,7 +1,7 @@
 # views.py
 import json
 from django.shortcuts import render, redirect
-
+from django.contrib.gis.geoip2 import GeoIP2
 # from accounts.models import Profile
 from .forms import RegisterForm, UserUpdateForm, ProfileUpdateForm, ReviewCreateForm
 from .forms import FavoriteCreateForm
@@ -17,14 +17,50 @@ import os
 
 def index(request):
     # #38
+    # def get_client_ip(request):
+    #     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    #     if x_forwarded_for:
+    #         print("returning FORWARDED_FOR")
+    #         ip = x_forwarded_for.split(',')[-1].strip()
+    #     elif request.META.get('HTTP_X_REAL_IP'):
+    #         print("returning REAL_IP")
+    #         ip = request.META.get('HTTP_X_REAL_IP')
+    #     else:
+    #         print("returning REMOTE_ADDR")
+    #         ip = request.META.get('REMOTE_ADDR')
+    #     return ip
+    # g = GeoIP2()
+    # xff = request.META.get('HTTP_X_FORWARDED_FOR')
+    # if xff:
+    #     ip = xff.split(',')[0]
+    #     country = g.country(ip)
+    #     city = g.city(ip)
+    #     lat, long = g.lat_lon(ip)
+    # else:
+    #     ip = request.META.get('REMOTE_ADDR', None)
+    #     country = 'Your Country Name'
+    #     city = 'Your City'
+    #     lat, long = 'Your Latitude', 'Your Longitiude'
+
+    # print("IP: ", ip)
+
+    # print(country, city, lat, long)
+
     cor_list = []
     context = {"google": os.environ.get("GOOGLE_API"), "location_list": cor_list}
     queryStr = request.GET
     if queryStr:
-        params = {'location': queryStr.get('place'), 'limit': 20}
-        params2 = {}
-        if not queryStr.get('place'):
+        # params2 = {}
+        if not queryStr.get('place') and not queryStr.get('useCurrentLocation'):
             return render(request, "accounts/index.html", context=context)
+        if queryStr.get('useCurrentLocation'):
+            if queryStr.get('longitude') and queryStr.get('latitude'):
+                params = {'longitude': queryStr.get(
+                    'longitude'), 'latitude': queryStr.get('latitude'), 'limit': 20}
+            else:
+                return render(request, "accounts/index.html", context=context)
+        else:
+            params = {'location': queryStr.get('place'), 'limit': 20}
 
         if queryStr.get("open_now"):
             params["open_now"] = True
@@ -38,8 +74,8 @@ def index(request):
         if queryStr.get('price'):
             params['price'] = queryStr.get('price')
 
-        if queryStr.get('grade'):
-            params2['grade'] = queryStr.get('grade')
+        # if queryStr.get('grade'):
+        #     params2['grade'] = queryStr.get('grade')
 
         search_object = yelp_search()
         result = search_object.filter_location(params)
@@ -57,23 +93,23 @@ def index(request):
             if queryStr.get('grade'):
                 open_data_object = open_data_query(name, zipcode, long_in, lat_in)
 
-                open_data_sanitation = json.loads(json.dumps(open_data_object.sanitation[0]))
+                open_data_sanitation = json.loads(
+                    json.dumps(open_data_object.sanitation[0]))
                 if (type(open_data_sanitation) is dict):
                     item['grade'] = open_data_sanitation['grade']
                 else:
                     item['grade'] = ''
 
             if queryStr.get('311_check'):
-               
+
                 open_data_object = open_data_query(name, zipcode, long_in, lat_in)
                 open_data_threeoneone = json.loads(
-                json.dumps(open_data_object.three_one_one))
+                    json.dumps(open_data_object.three_one_one))
                 if(open_data_threeoneone == "NA"):
                     item['check_311'] = True
                 else:
                     item['check_311'] = False
 
-        
         response = resultJSON['businesses']
         # print(len(response), "==>! 1")
 
