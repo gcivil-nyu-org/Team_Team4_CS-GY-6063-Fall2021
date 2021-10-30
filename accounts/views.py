@@ -18,7 +18,10 @@ def index(request):
     context = {"google": os.environ.get("GOOGLE_API"), "location_list": cor_list}
     queryStr = request.GET
     if queryStr:
-        params = {'location': queryStr.get('place'), 'limit': 20}
+        # hard coded search terms as cafe, restaurant, and study; 
+        # narrows the scope of the returned applications in line with the value prop
+        search_terms = 'cafe restaurant study'
+        params = {'location': queryStr.get('place'), 'limit': 20, 'term': search_terms}
         params2 = {}
         if not queryStr.get('place'):
             return render(request, "accounts/index.html", context=context)
@@ -26,17 +29,21 @@ def index(request):
         if queryStr.get("open_now"):
             params["open_now"] = True
 
-        if queryStr.get("term"):
-            params["term"] = queryStr.get("term")
-
         if queryStr.get("rating"):
             params["rating"] = queryStr.get("rating")
 
         if queryStr.get('price'):
             params['price'] = queryStr.get('price')
 
-        if queryStr.get('grade'):
-            params2['grade'] = queryStr.get('grade')
+        if queryStr.get('comfort'):
+            params['comfort'] = queryStr.get('comfortRating')
+
+
+        # if queryStr.get('grade'):
+        #     params2['grade'] = queryStr.get('grade')
+
+
+        
 
         search_object = yelp_search()
         result = search_object.filter_location(params)
