@@ -48,4 +48,4 @@ class StudyCityAPITests(SimpleTestCase):
         response = test_od_query.three_one_one_query(long_in, lat_in)
         resultJSON = response[0]
         if resultJSON:
-            self.assertEqual(type(resultJSON), str)
+            self.assertEqual(type(resultJSON['created_date']), str)

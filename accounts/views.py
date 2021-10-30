@@ -78,7 +78,7 @@ def index(request):
 
         # if queryStr.get('grade'):
         #     params2['grade'] = queryStr.get('grade')
-        print(params)
+
         search_object = yelp_search()
         result = search_object.filter_location(params)
         resultJSON = json.loads(result)
