@@ -35,8 +35,7 @@ class StudyCityAPITests(SimpleTestCase):
         test_od_query = open_data_query(name, zipcode, long_in, lat_in)
 
         response = test_od_query.sanitation_query(name, zipcode)
-        resultJSON = json.loads(json.dumps(response[0]))
-        self.assertEqual(resultJSON['dba'], name.upper())
+        self.assertEqual(response['dba'], name.upper())
 
     def test_od_api_three_one_one(self):
         name = 'The Little Sweet Cafe'
@@ -44,8 +43,6 @@ class StudyCityAPITests(SimpleTestCase):
         long_in = "-73.9867324 "
         lat_in = "40.6881418"
         test_od_query = open_data_query(name, zipcode, long_in, lat_in)
-
         response = test_od_query.three_one_one_query(long_in, lat_in)
-        resultJSON = response[0]
-        if resultJSON:
-            self.assertEqual(type(resultJSON), str)
+        if response:
+            self.assertEqual(type(response[0]), dict)
