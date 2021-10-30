@@ -95,7 +95,7 @@
 <h2>Yelp! rating: {{ business.rating }}</h2>
 <h2>NYC sanitation grade: {{ sanitation.grade }}</h2>
 <h3>Grade date: {{ sanitation.grade_date }}</h3>
-<h2>Local 311 complaints:</h2>
+<h2>Local 311 complaints: </h2>
 {% for complaint in three_one_one %}
     <h3>{{ complaint.complaint_type }} {{ complaint.created_date }} {{ complaint.description }} {{ complaint.status }}</h3>
 {% endfor %}

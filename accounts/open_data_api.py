@@ -34,12 +34,15 @@ class open_data_query:
                                                        violation_description", \
                                                        where=where_input, \
                                                        order="grade_date DESC", limit=5)
-            if req:
-                return req
+
+            request_dict = req[0]                                                       
+            if request_dict:
+                return request_dict
             else:
-                return "NA"
+                return {'grade': 'NA'}
         except IndexError:
             return {'grade': 'NA'}
+
 
     def three_one_one_query(self, long_in, lat_in):
         # return queries that are within ~25 meters square of location's coordinates
@@ -64,17 +67,20 @@ class open_data_query:
                       " and (status= 'Open' or status= 'In Progress' )" \
                       " and (created_date > '" + str(date) + "')"
 
-        req = self.client.get("erm2-nwe9", select="created_date, \
-                                                   complaint_type, \
-                                                   descriptor, \
-                                                   intersection_street_1, \
-                                                   intersection_street_2, \
-                                                   status", \
-                                                   where=where_input, \
-                                                   order="created_date DESC", \
-                                                   limit=3)
-
-        if req:
-            return req
-        else:
-            return "NA"
+        try:
+            req = self.client.get("erm2-nwe9", select="created_date, \
+                                                    complaint_type, \
+                                                    descriptor, \
+                                                    intersection_street_1, \
+                                                    intersection_street_2, \
+                                                    status", \
+                                                    where=where_input, \
+                                                    order="created_date DESC", \
+                                                    limit=3)
+        
+            if req:
+                return req
+            else:
+                return [{'created_date': 'NA'}]
+        except IndexError:
+            return [{'created_date': 'NA'}]
