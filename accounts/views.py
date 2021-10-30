@@ -1,7 +1,7 @@
 # views.py
 import json
 from django.shortcuts import render, redirect
-from django.contrib.gis.geoip2 import GeoIP2
+
 # from accounts.models import Profile
 from .forms import RegisterForm, UserUpdateForm, ProfileUpdateForm, ReviewCreateForm
 from .forms import FavoriteCreateForm
@@ -47,20 +47,22 @@ def index(request):
     # print(country, city, lat, long)
 
     cor_list = []
+    params = {'limit': 20}
     context = {"google": os.environ.get("GOOGLE_API"), "location_list": cor_list}
     queryStr = request.GET
     if queryStr:
         # params2 = {}
+
         if not queryStr.get('place') and not queryStr.get('useCurrentLocation'):
             return render(request, "accounts/index.html", context=context)
+        if queryStr.get('place'):
+            params['location'] = queryStr.get('place')
         if queryStr.get('useCurrentLocation'):
             if queryStr.get('longitude') and queryStr.get('latitude'):
-                params = {'longitude': queryStr.get(
-                    'longitude'), 'latitude': queryStr.get('latitude'), 'limit': 20}
-            else:
+                params['longitude'] = queryStr.get('longitude')
+                params['latitude'] = queryStr.get('latitude')
+            elif not queryStr.get('place'):
                 return render(request, "accounts/index.html", context=context)
-        else:
-            params = {'location': queryStr.get('place'), 'limit': 20}
 
         if queryStr.get("open_now"):
             params["open_now"] = True
@@ -76,7 +78,7 @@ def index(request):
 
         # if queryStr.get('grade'):
         #     params2['grade'] = queryStr.get('grade')
-
+        print(params)
         search_object = yelp_search()
         result = search_object.filter_location(params)
         resultJSON = json.loads(result)

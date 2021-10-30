@@ -221,8 +221,7 @@
       <div class="container">
         <label>Enter the location/Zip Code</label>
         <input id="locationInput" class="form-control" type="text" name="place"
-          placeholder="Enter the location / zip code"
-          value="{% if params.location %}{{params.location}}{% else %}&nbsp;{% endif %}" />
+          placeholder="Enter the location / zip code" value="{% if params.location %}{{params.location}}{% endif %}" />
         <div class="form-check">
           <input name="useCurrentLocation" class="form-check-input" type="checkbox" value="" id="useCurrentLocation"
             onclick="toggleCurrentLocation()">
