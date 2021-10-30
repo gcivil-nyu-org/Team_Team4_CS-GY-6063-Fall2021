@@ -41,15 +41,41 @@
 
     function initMap() {
       const map = new google.maps.Map(document.getElementById("map"), {
-        zoom: 5,
+        zoom: 12,
         center: {
-          lat: 40,
-          lng: -70
+          lat: 40.7128,
+          lng: -74.0060
         },
       });
       // Create an array of alphabetical characters used to label the markers.
       const labels = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+      infoWindow = new google.maps.InfoWindow();
 
+      const useCurrentLocation = document.getElementById("useCurrentLocation");
+      useCurrentLocation.addEventListener("click", () => {
+        // Try HTML5 geolocation.
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            (position) => {
+              const pos = {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude,
+              };
+
+              infoWindow.setPosition(pos);
+              infoWindow.setContent("Location found.");
+              infoWindow.open(map);
+              map.setCenter(pos);
+            },
+            () => {
+              handleLocationError(true, infoWindow, map.getCenter());
+            }
+          );
+        } else {
+          // Browser doesn't support Geolocation
+          handleLocationError(false, infoWindow, map.getCenter());
+        }
+      })
       // Add some markers to the map.
       const markers = locations.map((location, i) => {
         return new google.maps.Marker({
@@ -65,13 +91,15 @@
       });
     }
 
-    // const locations = [
-    //   { lat: -31.56391, lng: 147.154312 },
-    //   { lat: -33.718234, lng: 150.363181 },
-    //   { lat: -33.727111, lng: 150.371124 },
-    //   { lat: -33.848588, lng: 151.209834 },
-    //   { lat: -33.851702, lng: 151.216968 },
-    // ];
+    function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+      infoWindow.setPosition(pos);
+      infoWindow.setContent(
+        browserHasGeolocation ?
+        "Error: The Geolocation service failed." :
+        "Error: Your browser doesn't support geolocation."
+      );
+      infoWindow.open(map);
+    }
 
 
     function capitalize(string) {

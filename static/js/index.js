@@ -5,6 +5,13 @@ function showPosition() {
       document.getElementById("latitude").value = position.coords.latitude;
       document.getElementById("result").innerHTML =
         position.coords.longitude + ", " + position.coords.latitude;
+      const map = document.getElementById("map");
+      map.setCenter(
+        new google.maps.LatLng(
+          position.coords.latitude,
+          position.coords.longitude
+        )
+      );
     });
   } else {
     alert("Sorry, your browser does not support HTML5 geolocation.");
@@ -16,7 +23,6 @@ function toggleCurrentLocation() {
   if (currentLocation.checked) {
     showPosition();
     currentLocation.value = "true";
-    // document.getElementById("locationInput").disabled = true;
   } else {
     currentLocation.value = "false";
     // document.getElementById("locationInput").disabled = false;
