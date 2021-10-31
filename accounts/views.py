@@ -16,43 +16,12 @@ import os
 
 
 def index(request):
-    # #38
-    # def get_client_ip(request):
-    #     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
-    #     if x_forwarded_for:
-    #         print("returning FORWARDED_FOR")
-    #         ip = x_forwarded_for.split(',')[-1].strip()
-    #     elif request.META.get('HTTP_X_REAL_IP'):
-    #         print("returning REAL_IP")
-    #         ip = request.META.get('HTTP_X_REAL_IP')
-    #     else:
-    #         print("returning REMOTE_ADDR")
-    #         ip = request.META.get('REMOTE_ADDR')
-    #     return ip
-    # g = GeoIP2()
-    # xff = request.META.get('HTTP_X_FORWARDED_FOR')
-    # if xff:
-    #     ip = xff.split(',')[0]
-    #     country = g.country(ip)
-    #     city = g.city(ip)
-    #     lat, long = g.lat_lon(ip)
-    # else:
-    #     ip = request.META.get('REMOTE_ADDR', None)
-    #     country = 'Your Country Name'
-    #     city = 'Your City'
-    #     lat, long = 'Your Latitude', 'Your Longitiude'
-
-    # print("IP: ", ip)
-
-    # print(country, city, lat, long)
-
     cor_list = []
     params = {'limit': 20}
     context = {"google": os.environ.get("GOOGLE_API"), "location_list": cor_list}
     queryStr = request.GET
     if queryStr:
         # params2 = {}
-
         if not queryStr.get('place') and not queryStr.get('useCurrentLocation'):
             return render(request, "accounts/index.html", context=context)
         if queryStr.get('place'):
