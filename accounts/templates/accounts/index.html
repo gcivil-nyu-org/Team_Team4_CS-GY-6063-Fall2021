@@ -106,12 +106,6 @@
       return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
     }
 
-    // const selectCategories = (val) => {
-    //   $("#categoryInput").val(val);
-    //   $("#categoryDropdownMenu").toggleClass("show");
-    //   $("#categoryDropDown").text(capitalize(val));
-    // };
-
     const selectRating = (rating) => {
       for (let index = 1; index <= rating; index++) {
         $(`#rating${index}`).css("color", "gold");

@@ -1,8 +1,6 @@
 # views.py
 import json
 from django.shortcuts import render, redirect
-
-# from accounts.models import Profile
 from .forms import RegisterForm, UserUpdateForm, ProfileUpdateForm, ReviewCreateForm
 from .forms import FavoriteCreateForm
 from django.contrib.auth import authenticate, login, logout
@@ -63,43 +61,38 @@ def index(request):
 
             if queryStr.get('grade'):
                 open_data_object = open_data_query(name, zipcode, long_in, lat_in)
+                open_data_sanitation = open_data_object.sanitation
 
-                open_data_sanitation = json.loads(
-                    json.dumps(open_data_object.sanitation[0]))
                 if (type(open_data_sanitation) is dict):
                     item['grade'] = open_data_sanitation['grade']
                 else:
                     item['grade'] = ''
 
             if queryStr.get('311_check'):
-
                 open_data_object = open_data_query(name, zipcode, long_in, lat_in)
                 open_data_threeoneone = json.loads(
                     json.dumps(open_data_object.three_one_one))
-                if(open_data_threeoneone == "NA"):
+
+                # check whether 311 query returns, if yes render value
+                if(open_data_threeoneone[0]['created_date'] == 'NA'):
                     item['check_311'] = True
                 else:
                     item['check_311'] = False
 
         response = resultJSON['businesses']
-        # print(len(response), "==>! 1")
 
         def filterByGrade(item):
-            # print(queryStr.get('grade'), item.get('grade'))
             return item['grade'] == queryStr.get('grade')
 
         if queryStr.get('grade'):
             response = list(filter(filterByGrade, response))
 
         def filterBy311(item):
-            # print(queryStr.get('grade'), item.get('grade'))
             if(item['check_311']):
                 return True
 
         if queryStr.get('311_check'):
             response = list(filter(filterBy311, response))
-
-        # print(len(response), "==>! 2")
 
         context = {
             'businesses': response,
@@ -108,35 +101,8 @@ def index(request):
             'google': os.environ.get('GOOGLE_API'),
             'location_list': cor_list
         }
+
     return render(request, "accounts/index.html", context=context)
-
-    # if queryStr.get('grade'):
-    #    # open data query: pull name/zip/long/lat from Yelp data
-    #     name = resultJSON['name']
-    #     zipcode = resultJSON['location']['zip_code']
-    #     long_in = resultJSON['coordinates']['longitude']
-    #     lat_in = resultJSON['coordinates']['latitude']
-
-    #     # init open data query object, run sanitation/311 queries up init
-    #     open_data_object = open_data_query(name, zipcode, long_in, lat_in)
-    #     open_data_sanitation = json.loads(
-    #         json.dumps(open_data_object.sanitation[0]))
-    #     # open_data_threeoneone = json.loads(
-    #     #     json.dumps(open_data_object.three_one_one))
-    #     print(open_data_object.sanitation)
-
-    # #     context = {'business': resultJSON,
-    # #                'locationID': business_id,
-    # #                'reviews': review_list,
-    # #                'sanitation': open_data_sanitation,
-    # #                'three_one_one': open_data_threeoneone
-    # #                }
-    # #     return render(request, "accounts/location_detail.html", context=context)
-
-    # # else:
-    # #     return render(request, "accounts/index.html", context=context)
-
-    # return render(request, "accounts/index.html", context=context)
 
 
 @login_required(login_url='login')
@@ -146,8 +112,6 @@ def locationDetail(request):
     elif request.method == "POST":
         business_id = request.POST.get("fav_locationid")
         if business_id:  # it is a adding favorite post
-            # if business_id[-1] == "/":
-            #     business_id = business_id[:-1]
             business_name = request.POST.get("fav_locationname")
             favor_delete = Favorite.objects.filter(user=request.user,
                                                    yelp_id=business_id)
@@ -171,9 +135,6 @@ def locationDetail(request):
 
         else:  # it is a review post
             business_id = request.POST.get("locationid")
-            # if business_id[-1] == "/":
-            #     business_id = business_id[:-1]
-
             review = request.POST.get("review")
             business_name = request.POST.get("locationname")
             wifi_rating = int(request.POST.get("wifi_rating"))
@@ -217,11 +178,11 @@ def locationDetail(request):
         long_in = resultJSON["coordinates"]["longitude"]
         lat_in = resultJSON["coordinates"]["latitude"]
 
-        # init open data query object, run sanitation/311 queries up init
+        # init open data query object, run sanitation/311 queries
         open_data_object = open_data_query(name, zipcode, long_in, lat_in)
-        open_data_sanitation = json.loads(json.dumps(open_data_object.sanitation[0]))
-        open_data_threeoneone = json.loads(json.dumps(open_data_object.three_one_one))
-        # print(open_data_object.sanitation)
+        open_data_sanitation = open_data_object.sanitation
+        open_data_threeoneone = open_data_object.three_one_one
+
         favorite_list = Favorite.objects.filter(user=request.user, yelp_id=business_id)
         has_favorite = False
         if favorite_list.count() > 0:
@@ -235,6 +196,7 @@ def locationDetail(request):
             "three_one_one": open_data_threeoneone,
             "has_favorite": has_favorite
         }
+
     return render(request, "accounts/location_detail.html", context=context)
 
 
@@ -252,7 +214,6 @@ def registerPage(request):
             # ack business account creation
             if business_account:
                 Profile.objects.filter(user=user_obj).update(business_account=True)
-                # profile_obj = Profile.objects.get(user=user_obj)
                 messages.success(
                     request, "Business account successfully created for " + user
                 )
