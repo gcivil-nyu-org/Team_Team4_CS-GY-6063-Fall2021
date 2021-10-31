@@ -41,7 +41,8 @@ class StudyCityViewsTests(TestCase):
 
     def test_index_with_currentLocation(self):
         searchURL = reverse(
-            'index') + '/?place=&useCurrentLocation=true&longitude=-73.9846658&latitude=40.6918129'
+            'index') + '/?place=&useCurrentLocation=true& \
+            longitude=-73.9846658&latitude=40.6918129'
         response = self.c.post(searchURL)
         self.assertEquals(response.status_code, 200)
         self.assertTemplateUsed(response, 'accounts/index.html')
