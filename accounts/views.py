@@ -37,10 +37,6 @@ def index(request):
  
         if queryStr.get('comfort'):
             params['comfort'] = queryStr.get('comfort')
-            print("comfort", params['comfort'])
-
-        # if queryStr.get('grade'):
-        #     params2['grade'] = queryStr.get('grade')
 
         search_object = yelp_search()
         result = search_object.filter_location(params)
@@ -107,23 +103,29 @@ def index(request):
                 return True
 
         '''
-        new comfort filter, referenced below.
+        new comfort filter, referenced below...
         '''
         def filterByComfort(item):
             return int(item['comfort']) >= int(queryStr.get('comfort'))
+        '''
+        '''
 
-        # conditionals to check on filter
+        # check if user filtered by grade
         if queryStr.get('grade'):
             response = list(filter(filterByGrade, response))
 
+        # check if user filtered out 311 complaints
         if queryStr.get('311_check'):
             response = list(filter(filterBy311, response))
 
         '''
         test comfort parameter here based on input...
         '''
+        # check if user filtered by comfort rating
         if queryStr.get('comfort'):
             response = list(filter(filterByComfort, response))
+        '''
+        '''
 
         
         context = {
