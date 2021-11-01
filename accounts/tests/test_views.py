@@ -39,6 +39,14 @@ class StudyCityViewsTests(TestCase):
         self.assertEquals(response.status_code, 200)
         self.assertTemplateUsed(response, 'accounts/index.html')
 
+    def test_index_with_currentLocation(self):
+        searchURL = reverse(
+            'index') + '/?place=&useCurrentLocation=true& \
+            longitude=-73.9846658&latitude=40.6918129'
+        response = self.c.post(searchURL)
+        self.assertEquals(response.status_code, 200)
+        self.assertTemplateUsed(response, 'accounts/index.html')
+
     def test_favorite_Post(self):
         logged_in = self.c.login(username='testuser', password='123456e')
         self.assertTrue(logged_in)
