@@ -19,7 +19,9 @@ def index(request):
     context = {"google": os.environ.get("GOOGLE_API"), "location_list": cor_list}
     queryStr = request.GET
     if queryStr:
-        # params2 = {}
+        # hard code search terms to narrow scope: cafe, restaurant, and study
+        search_terms = 'cafe restaurant study'
+        params = {'limit': 20, 'term': search_terms}
         if not queryStr.get('place') and not queryStr.get('useCurrentLocation'):
             return render(request, "accounts/index.html", context=context)
         if queryStr.get('place'):
@@ -34,23 +36,22 @@ def index(request):
         if queryStr.get("open_now"):
             params["open_now"] = True
 
-        if queryStr.get("term"):
-            params["term"] = queryStr.get("term")
-
         if queryStr.get("rating"):
             params["rating"] = queryStr.get("rating")
 
         if queryStr.get('price'):
             params['price'] = queryStr.get('price')
-
-        # if queryStr.get('grade'):
-        #     params2['grade'] = queryStr.get('grade')
+ 
+        if queryStr.get('comfort'):
+            params['comfort'] = queryStr.get('comfort')
 
         search_object = yelp_search()
         result = search_object.filter_location(params)
         resultJSON = json.loads(result)
 
+        # loop over returned businesses and
         for index, item in enumerate(resultJSON['businesses']):
+
             long_in = item['coordinates']['longitude']
             lat_in = item['coordinates']['latitude']
             name = item['name']
@@ -79,21 +80,57 @@ def index(request):
                 else:
                     item['check_311'] = False
 
+            '''
+            populate comfort parameter here...
+            '''
+            if queryStr.get('comfort'):
+                # define user rating param
+                rating_param = int(queryStr.get('comfort'))
+                # pull database object for location (i.e., item)
+                db_rating = Review.objects.filter(business_name=name)
+                # pull comfort_rating value from database object
+                db_rating = int(db_rating.values("comfort_rating")[0]['comfort_rating'])
+                if db_rating >= rating_param:
+                    item['comfort'] = db_rating
+                else:
+                    item['comfort'] = 0
+
         response = resultJSON['businesses']
 
+        # functions used to filter results
         def filterByGrade(item):
             return item['grade'] == queryStr.get('grade')
-
-        if queryStr.get('grade'):
-            response = list(filter(filterByGrade, response))
-
+    
         def filterBy311(item):
             if(item['check_311']):
                 return True
 
+        '''
+        new comfort filter, referenced below...
+        '''
+        def filterByComfort(item):
+            return int(item['comfort']) >= int(queryStr.get('comfort'))
+        '''
+        '''
+
+        # check if user filtered by grade
+        if queryStr.get('grade'):
+            response = list(filter(filterByGrade, response))
+
+        # check if user filtered out 311 complaints
         if queryStr.get('311_check'):
             response = list(filter(filterBy311, response))
 
+        '''
+        test comfort parameter here based on input...
+        '''
+        # check if user filtered by comfort rating
+        if queryStr.get('comfort'):
+            response = list(filter(filterByComfort, response))
+        '''
+        '''
+
+        
         context = {
             'businesses': response,
             'count': resultJSON['total'],

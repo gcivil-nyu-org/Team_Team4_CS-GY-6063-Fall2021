@@ -2,8 +2,7 @@
 <html>
 
 <head>
-
-  <title> Study City </title>
+  <title> StudyCity </title>
   {% load static %}
   <script src="{% static 'js/index.js' %}"> </script>
   <script src="https://polyfill.io/v3/polyfill.min.js?features=default">
@@ -24,14 +23,15 @@
     $(document).ready(function () {
       const urlSearchParams = new URLSearchParams(window.location.search);
       const params = Object.fromEntries(urlSearchParams.entries());
-      // if (params.category) {
-      //   $("#categoryDropDown").text(capitalize(params.category));
-      // }
+
       if (params.rating) {
         selectRating(params.rating);
       }
       if (params.price) {
         selectDollar(params.price);
+      }
+      if (params.comfort) {
+        selectComfort(params.comfort);
       }
     });
 
@@ -126,14 +126,16 @@
       }
     };
 
-
-    const selectGrade = (grade) => {
-
-      let i = "grade" + grade
-      $(`#${i}`).css("color", "blue");
-      $("#gradeInput").val(grade);
-
+    const selectComfort = (comfort) => {
+      for (let index = 1; index <= comfort; index++) {
+        $(`#comfort${index}`).css("color", "gold");
+        $("#comfortInput").val(comfort);
+      }
+      for (let index = comfort + 1; index <= 5; index++) {
+        $(`#comfort${index}`).css("color", "black");
+      }
     };
+  
   </script>
 
   <style>
@@ -230,7 +232,7 @@
 
 <body>
   <nav>
-    <h1>Study City</h1>
+    <h1>StudyCity</h1>
 
     <div class="btn-group">
       <a href="{% url 'register' %}">Register</a>
@@ -310,59 +312,10 @@
                 <div class="row">
                   <div class="col-12">
                     <div class="my-4">
-                      <label>Enter the search term</label>
-                      <input type="text" class="form-control" name="term"
-                        value="{% if params.term %}{{params.term}}{% else %}&nbsp;{% endif %}" />
+                      <!-- <label>Enter the search term</label> -->
+                      <!-- <input type="text" class="form-control" name="term"
+                        value="{% if params.term %}{{params.term}}{% else %}&nbsp;{% endif %}" /> -->
                     </div>
-                    <!-- <div class="my-4">
-                      <input
-                        type="hidden"
-                        class="form-control"
-                        id="categoryInput"
-                        name="category"
-                        value=""
-                      />
-                    </div> -->
-                    <!-- <div class="dropdown show my-4">
-                      <a
-                        class="btn btn-secondary dropdown-toggle"
-                        href="#"
-                        role="button"
-                        id="categoryDropDown"
-                        data-toggle="dropdown"
-                        aria-haspopup="true"
-                        aria-expanded="true"
-                        onclick="$('#categoryDropdownMenu').toggleClass('show')"
-                      >
-                        Categories
-                      </a> -->
-
-                    <!-- <div
-                        class="dropdown-menu"
-                        id="categoryDropdownMenu"
-                        aria-labelledby="categoryDropDown"
-                      >
-                        <a
-                          class="dropdown-item"
-                          href="#"
-                          onclick="selectCategories('cafe')"
-                          >Cafe</a
-                        >
-                        <a
-                          class="dropdown-item"
-                          value="restaurants"
-                          href="#"
-                          onclick="selectCategories('restaurants')"
-                          >Restaurants</a
-                        >
-                        <a
-                          class="dropdown-item"
-                          href="#"
-                          onclick="selectCategories('internet cafe')"
-                          >Internet Cafe</a -->
-                    <!-- >
-                      </div>
-                    </div> -->
                     <div class="form-check form-switch my-4">
                       <input name="open_now" class="form-check-input" type="checkbox" id="flexSwitchCheckChecked"
                         checked={{
@@ -370,9 +323,6 @@
                           }} />
                       <label class=" form-check-label" for="flexSwitchCheckChecked">Open Now</label>
                     </div>
-                    <!-- <div class="my-4">
-                  <input type="time" class="form-control my-4" name="open_at" value="{% if params.open_at %}{{params.open_at}}{% else %}&nbsp;{% endif %}" />
-                </div> -->
                     <div class="my-4">
                       <input type="hidden" class="form-control my-4" id="ratingInput" name="rating"
                         value="{{ params.rating }}" />
@@ -390,15 +340,20 @@
                       <i class="fas fa-dollar-sign dollar pointer mr-2" id="price3" onclick="selectDollar(3)"></i>
                     </div>
 
-                    {% comment %} <div class="my-4">
-                      <input type="hidden" class="form-control my-4" id="gradeInput" name="grade"
-                        value="{{ params.grade }}" />
-                      <span style="font-size: x-large; font-weight: bold;" class="mr-2" id="gradeA"
-                        onclick="selectGrade('A')">A</span>
-                      <span style="font-size: x-large; font-weight: bold;" class=" mr-2" id="gradeB"
-                        onclick="selectGrade('B')">B</span>
-                      <span style="font-size: x-large; font-weight: bold;" class="mr-2" id="gradeC"
-                        onclick="selectGrade('C')">C</span>
+                    <div class="my-4">
+                      <h4>Comfort Rating</h4>
+                      <input type="hidden" class="form-control my-4" id="comfortInput" name="comfort"
+                        value="{{ params.comfort }}" />
+                      <i class="fas fa-star pointer" id="comfort1" onclick="selectComfort(1)"></i>
+                      <i class="fas fa-star pointer" id="comfort2" onclick="selectComfort(2)"></i>
+                      <i class="fas fa-star pointer" id="comfort3" onclick="selectComfort(3)"></i>
+                      <i class="fas fa-star pointer" id="comfort4" onclick="selectComfort(4)"></i>
+                      <i class="fas fa-star pointer" id="comfort5" onclick="selectComfort(5)"></i>
+                    </div>
+
+                    <div class="form-check 311-switch my-4">
+                      <input name="311_check" class="form-check-input" type="checkbox" id="flexSwitchCheckChecked"/>
+                        <label class=" form-check-label" for="flexSwitchCheckChecked">No 311 Complaints</label>
                     </div>
 
                     <div class="form-check 311-switch my-4">
@@ -407,9 +362,7 @@
                           params.311_check
                           }} />
                       <label class=" form-check-label" for="flexSwitchCheckChecked">311 Complains Check</label>
-                    </div> {% endcomment %}
-
-
+                    </div>
 
                     <input type="submit" class="btn btn-primary" value="Find me Study Spaces!" />
                   </div>
