@@ -19,11 +19,10 @@ def index(request):
     context = {"google": os.environ.get("GOOGLE_API"), "location_list": cor_list}
     queryStr = request.GET
     if queryStr:
-        # hard coded search terms as cafe, restaurant, and study to narrow scope
+        # hard code search terms to narrow scope: cafe, restaurant, and study
         search_terms = 'cafe restaurant study'
         params = {'limit': 20, 'term': search_terms}
         if not queryStr.get('place') and not queryStr.get('useCurrentLocation'):
-
             return render(request, "accounts/index.html", context=context)
         if queryStr.get('place'):
             params['location'] = queryStr.get('place')
@@ -85,19 +84,15 @@ def index(request):
             populate comfort parameter here...
             '''
             if queryStr.get('comfort'):
-                try:
-                    # define user rating param
-                    rating_param = int(queryStr.get('comfort'))
-                    # pull database object for location (i.e., item)
-                    db_rating = Review.objects.filter(business_name=name)
-                    # pull comfort_rating value from database object
-                    db_rating = int(db_rating.values("comfort_rating")[0]['comfort_rating'])
-                    if db_rating >= rating_param:
-                        item['comfort'] = db_rating
-                        print("comfort rating: ", item['comfort'])
-                    else:
-                        item['comfort'] = 0
-                except:
+                # define user rating param
+                rating_param = int(queryStr.get('comfort'))
+                # pull database object for location (i.e., item)
+                db_rating = Review.objects.filter(business_name=name)
+                # pull comfort_rating value from database object
+                db_rating = int(db_rating.values("comfort_rating")[0]['comfort_rating'])
+                if db_rating >= rating_param:
+                    item['comfort'] = db_rating
+                else:
                     item['comfort'] = 0
 
         response = resultJSON['businesses']
