@@ -19,11 +19,9 @@ def index(request):
     context = {"google": os.environ.get("GOOGLE_API"), "location_list": cor_list}
     queryStr = request.GET
     if queryStr:
-        # hard coded search terms as cafe, restaurant, and study; 
-        # narrows the scope of the returned applications in line with the value prop
+        # hard coded search terms as cafe, restaurant, and study to narrow scope
         search_terms = 'cafe restaurant study'
-        params = {'location': queryStr.get('place'), 'limit': 20, 'term': search_terms}
-        params2 = {}
+        params = {'limit': 20, 'term': search_terms}
         if not queryStr.get('place') and not queryStr.get('useCurrentLocation'):
 
             return render(request, "accounts/index.html", context=context)
