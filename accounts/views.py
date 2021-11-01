@@ -15,13 +15,21 @@ import os
 
 def index(request):
     cor_list = []
+    params = {'limit': 20}
     context = {"google": os.environ.get("GOOGLE_API"), "location_list": cor_list}
     queryStr = request.GET
     if queryStr:
-        params = {'location': queryStr.get('place'), 'limit': 20}
-        params2 = {}
-        if not queryStr.get('place'):
+        # params2 = {}
+        if not queryStr.get('place') and not queryStr.get('useCurrentLocation'):
             return render(request, "accounts/index.html", context=context)
+        if queryStr.get('place'):
+            params['location'] = queryStr.get('place')
+        if queryStr.get('useCurrentLocation'):
+            if queryStr.get('longitude') and queryStr.get('latitude'):
+                params['longitude'] = queryStr.get('longitude')
+                params['latitude'] = queryStr.get('latitude')
+            elif not queryStr.get('place'):
+                return render(request, "accounts/index.html", context=context)
 
         if queryStr.get("open_now"):
             params["open_now"] = True
@@ -35,8 +43,8 @@ def index(request):
         if queryStr.get('price'):
             params['price'] = queryStr.get('price')
 
-        if queryStr.get('grade'):
-            params2['grade'] = queryStr.get('grade')
+        # if queryStr.get('grade'):
+        #     params2['grade'] = queryStr.get('grade')
 
         search_object = yelp_search()
         result = search_object.filter_location(params)
@@ -54,7 +62,7 @@ def index(request):
             if queryStr.get('grade'):
                 open_data_object = open_data_query(name, zipcode, long_in, lat_in)
                 open_data_sanitation = open_data_object.sanitation
-                                
+
                 if (type(open_data_sanitation) is dict):
                     item['grade'] = open_data_sanitation['grade']
                 else:
@@ -63,14 +71,14 @@ def index(request):
             if queryStr.get('311_check'):
                 open_data_object = open_data_query(name, zipcode, long_in, lat_in)
                 open_data_threeoneone = json.loads(
-                json.dumps(open_data_object.three_one_one))
+                    json.dumps(open_data_object.three_one_one))
 
                 # check whether 311 query returns, if yes render value
                 if(open_data_threeoneone[0]['created_date'] == 'NA'):
                     item['check_311'] = True
                 else:
                     item['check_311'] = False
-        
+
         response = resultJSON['businesses']
 
         def filterByGrade(item):
@@ -174,7 +182,7 @@ def locationDetail(request):
         open_data_object = open_data_query(name, zipcode, long_in, lat_in)
         open_data_sanitation = open_data_object.sanitation
         open_data_threeoneone = open_data_object.three_one_one
-        
+
         favorite_list = Favorite.objects.filter(user=request.user, yelp_id=business_id)
         has_favorite = False
         if favorite_list.count() > 0:
