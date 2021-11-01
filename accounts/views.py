@@ -92,7 +92,7 @@ def index(request):
                         item['comfort'] = db_rating
                         print("comfort rating: ", item['comfort'])
                     else:
-                            item['comfort'] = 0
+                        item['comfort'] = 0
                 except:
                     item['comfort'] = 0
                                 
