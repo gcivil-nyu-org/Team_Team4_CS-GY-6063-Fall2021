@@ -80,10 +80,11 @@
 
 <body>
 <nav>
-    <a href={% url 'index' %}>
-        <h1>Study City</h1>
-    </a>
+   
+        <h1>StudyCity</h1>
+    
     <div>
+        <a href={% url 'index' %}>Search</a>
     {% if user.is_authenticated %}
       <a href="{% url 'profile' %}">Profile</a>
       <a href="{% url 'logout' %}">Logout</a>
