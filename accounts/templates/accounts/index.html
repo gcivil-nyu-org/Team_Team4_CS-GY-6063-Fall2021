@@ -33,6 +33,15 @@
       if (params.comfort) {
         selectComfort(params.comfort);
       }
+      if (params.food) {
+        selectFood(params.food);
+      }
+      if (params.wifi) {
+        selectFood(params.wifi);
+      }
+      if (params.charging) {
+        selectFood(params.charging);
+      }
     });
 
     /* beautify preserve:start */
@@ -135,7 +144,37 @@
         $(`#comfort${index}`).css("color", "black");
       }
     };
-  
+
+    const selectFood = (food) => {
+      for (let index = 1; index <= food; index++) {
+        $(`#food${index}`).css("color", "gold");
+        $("#foodInput").val(food);
+      }
+      for (let index = food + 1; index <= 5; index++) {
+        $(`#food${index}`).css("color", "black");
+      }
+    };
+
+    const selectWifi = (wifi) => {
+      for (let index = 1; index <= wifi; index++) {
+        $(`#wifi${index}`).css("color", "gold");
+        $("#wifiInput").val(wifi);
+      }
+      for (let index = food + 1; index <= 5; index++) {
+        $(`#wifi${index}`).css("color", "black");
+      }
+    };
+
+    const selectCharging = (charging) => {
+      for (let index = 1; index <= charging; index++) {
+        $(`#charging${index}`).css("color", "gold");
+        $("#chargingInput").val(charging);
+      }
+      for (let index = charging + 1; index <= 5; index++) {
+        $(`#charging${index}`).css("color", "black");
+      }
+    };
+
   </script>
 
   <style>
@@ -359,6 +398,37 @@
                       <i class="fas fa-star pointer" id="comfort4" onclick="selectComfort(4)"></i>
                       <i class="fas fa-star pointer" id="comfort5" onclick="selectComfort(5)"></i>
                     </div>
+
+                    <div class="my-4">
+                      <h4>Food Rating</h4>
+                      <input type="hidden" class="form-control my-4" id="foodInput" name="food"
+                        value="{{ params.food }}" />
+                      <i class="fas fa-star pointer" id="food1" onclick="selectFood(1)"></i>
+                      <i class="fas fa-star pointer" id="food2" onclick="selectFood(2)"></i>
+                      <i class="fas fa-star pointer" id="food3" onclick="selectFood(3)"></i>
+                      <i class="fas fa-star pointer" id="food4" onclick="selectFood(4)"></i>
+                      <i class="fas fa-star pointer" id="food5" onclick="selectFood(5)"></i>
+                    </div>                   
+
+                    <div class="my-4">
+                      <input type="hidden" class="form-control my-4" id="wifiInput" name="wifi"
+                        value="{{ params.wifi }}" />
+                      <i class="fas fa-wifi" id="wifi1" onclick="selectWifi(1)"></i>
+                      <i class="fas fa-wifi" id="wifi2" onclick="selectWifi(2)"></i>
+                      <i class="fas fa-wifi" id="wifi3" onclick="selectWifi(3)"></i>
+                      <i class="fas fa-wifi" id="wifi4" onclick="selectWifi(4)"></i>
+                      <i class="fas fa-wifi" id="wifi5" onclick="selectWifi(5)"></i>
+                    </div> 
+
+                    <div class="my-4">
+                      <input type="hidden" class="form-control my-4" id="chargingInput" name="charging"
+                        value="{{ params.charging }}" />
+                      <i class="fas fa-plug" id="charging1" onclick="selectCharging(1)"></i>
+                      <i class="fas fa-plug" id="charging2" onclick="selectCharging(2)"></i>
+                      <i class="fas fa-plug" id="charging3" onclick="selectCharging(3)"></i>
+                      <i class="fas fa-plug" id="charging4" onclick="selectCharging(4)"></i>
+                      <i class="fas fa-plug" id="charging5" onclick="selectCharging(5)"></i>
+                    </div>                        
 
                     <!-- <div class="form-check 311-switch my-4">
                       <input name="311_check" class="form-check-input" type="checkbox" id="flexSwitchCheckChecked"/>

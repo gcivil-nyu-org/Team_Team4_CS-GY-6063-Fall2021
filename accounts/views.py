@@ -46,6 +46,15 @@ def index(request):
         if queryStr.get('comfort'):
             params['comfort'] = queryStr.get('comfort')
 
+        if queryStr.get('food'):
+            params['food'] = queryStr.get('food')
+
+        if queryStr.get('wifi'):
+            params['wifi'] = queryStr.get('wifi')
+
+        if queryStr.get('charging'):
+            params['charging'] = queryStr.get('charging')
+
         search_object = yelp_search()
         result = search_object.filter_location(params)
         resultJSON = json.loads(result)
@@ -100,6 +109,54 @@ def index(request):
                 except IndexError:
                     item['comfort'] = 0
 
+            if queryStr.get('food'):
+                try:
+                    # define user rating param
+                    rating_param = int(queryStr.get('food'))
+                    # pull database object for location (i.e., item)
+                    db_rating = Review.objects.filter(business_name=name)
+                    # pull food_rating value from database object
+                    print("TEST:", db_rating)
+                    db_rating = int(db_rating.values('food_rating')[0]['food_rating'])
+                    if db_rating >= rating_param:
+                        item['food'] = db_rating
+                    else:
+                        item['food'] = 0
+                except IndexError:
+                    item['food'] = 0
+            
+            if queryStr.get('wifi'):
+                try:
+                    # define user rating param
+                    rating_param = int(queryStr.get('wifi'))
+                    # pull database object for location (i.e., item)
+                    db_rating = Review.objects.filter(business_name=name)
+                    # pull wifi_rating value from database object
+                    print("TEST:", db_rating)
+                    db_rating = int(db_rating.values('wifi_rating')[0]['wifi_rating'])
+                    if db_rating >= rating_param:
+                        item['wifi'] = db_rating
+                    else:
+                        item['wifi'] = 0
+                except IndexError:
+                    item['wifi'] = 0
+
+            if queryStr.get('charging'):
+                try:
+                    # define user rating param
+                    rating_param = int(queryStr.get('charing'))
+                    # pull database object for location (i.e., item)
+                    db_rating = Review.objects.filter(business_name=name)
+                    # pull chargin_rating value from database object
+                    print("TEST:", db_rating)
+                    db_rating = int(db_rating.values('charging_rating')[0]['charging_rating'])
+                    if db_rating >= rating_param:
+                        item['charging'] = db_rating
+                    else:
+                        item['charging'] = 0
+                except IndexError:
+                    item['charging'] = 0
+                
         response = resultJSON['businesses']
 
         # functions used to filter results
@@ -136,7 +193,23 @@ def index(request):
             response = list(filter(filterByComfort, response))
         '''
         '''
+        def filterByFood(item):
+            return int(item['food']) >= int(queryStr.get('food')) 
+        if queryStr.get('food'):
+            response = list(filter(filterByFood, response))
 
+        def filterByWifi(item):
+            return int(item['wifi']) >= int(queryStr.get('wifi')) 
+        if queryStr.get('wifi'):
+            response = list(filter(filterByWifi, response))
+
+        def filterByCharging(item):
+            return int(item['charging']) >= int(queryStr.get('charging')) 
+        if queryStr.get('charging'):
+            response = list(filter(filterByCharging, response))
+
+
+    
         context = {
             'businesses': response,
             'count': resultJSON['total'],
