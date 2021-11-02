@@ -237,6 +237,7 @@
     <div class="btn-group">
       
       {% if user.is_authenticated %}
+      {{request.user}} <i class="fas fa-user"></i>
       <a href="{% url 'profile' %}">Profile</a>
       <a href="{% url 'logout' %}">Logout</a>
       
@@ -248,6 +249,9 @@
      
     </div>
   </nav>
+
+ 
+
   <div class="main">
     <div id="map"></div>
     <form method="get" class="form-group my-4">
