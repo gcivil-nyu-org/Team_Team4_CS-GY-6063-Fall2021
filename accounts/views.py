@@ -8,6 +8,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from .models import Profile, Review, Favorite
+from django.db.models import Avg
 from .yelp_api import yelp_search
 from .open_data_api import open_data_query
 import os
@@ -41,7 +42,7 @@ def index(request):
 
         if queryStr.get('price'):
             params['price'] = queryStr.get('price')
- 
+
         if queryStr.get('comfort'):
             params['comfort'] = queryStr.get('comfort')
 
@@ -75,14 +76,14 @@ def index(request):
                     json.dumps(open_data_object.three_one_one))
 
                 # check whether 311 query returns, if yes render value
-                if(open_data_threeoneone[0]['created_date'] == 'NA'):
+                if (open_data_threeoneone[0]['created_date'] == 'NA'):
                     item['check_311'] = True
                 else:
                     item['check_311'] = False
 
             '''
             populate comfort parameter here...
-            '''    
+            '''
             if queryStr.get('comfort'):
                 try:
                     # define user rating param
@@ -104,16 +105,18 @@ def index(request):
         # functions used to filter results
         def filterByGrade(item):
             return item['grade'] == queryStr.get('grade')
-    
+
         def filterBy311(item):
-            if(item['check_311']):
+            if (item['check_311']):
                 return True
 
         '''
         new comfort filter, referenced below...
         '''
+
         def filterByComfort(item):
             return int(item['comfort']) >= int(queryStr.get('comfort'))
+
         '''
         '''
 
@@ -134,7 +137,6 @@ def index(request):
         '''
         '''
 
-        
         context = {
             'businesses': response,
             'count': resultJSON['total'],
@@ -201,6 +203,8 @@ def locationDetail(request):
             if form.is_valid():
                 form.save()
                 print("Review form saved successfully")
+            else:
+                print("Review form is invalid")
 
     search_object = yelp_search()
     context = {}
@@ -208,6 +212,17 @@ def locationDetail(request):
         review_list = Review.objects.filter(yelp_id=business_id).order_by(
             "-date_posted"
         )
+        avg_field_list = ['wifi_rating', 'general_rating', 'food_rating', 'comfort_rating', 'charging_rating']
+        avg_dict = dict()
+        for field_name in avg_field_list:
+            avg_dict.update(Review.objects.filter(yelp_id=business_id).aggregate(Avg(field_name)))
+        for x in avg_dict:
+            if avg_dict[x] is None:
+                avg_dict[x] = '-'
+            else:
+                avg_dict[x] = round(avg_dict[x],2)
+
+        wifi_rating_avg = Review.objects.filter(yelp_id=business_id).aggregate(Avg('wifi_rating'))
 
         # get Yelp data
         yelp_result = search_object.search_business_id(business_id)
@@ -235,7 +250,8 @@ def locationDetail(request):
             "reviews": review_list,
             "sanitation": open_data_sanitation,
             "three_one_one": open_data_threeoneone,
-            "has_favorite": has_favorite
+            "has_favorite": has_favorite,
+            "avg_dict": avg_dict
         }
 
     return render(request, "accounts/location_detail.html", context=context)
