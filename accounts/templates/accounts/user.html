@@ -12,9 +12,11 @@
 
 <body>
     <nav>
+      <h1> StudyCity </h1>
+      
         <div class="btn-group">
 
-        <h2>Hello, {{request.user}}. Welcome to StudyCity.</h2>
+        <!-- <h2>Hello, {{request.user}}. Welcome to StudyCity.</h2> -->
           
           {% if user.is_authenticated %}
           <a href="{% url 'index' %}">Search</a>
@@ -25,9 +27,13 @@
           <a href="{% url 'register' %}">Register</a>
           <a href="{% url 'login' %}">Login</a>
           {% endif %}
+
+    
           
          
         </div>
     </nav>
+<div> <h3>Hello, {{request.user}}. Welcome to StudyCity.</h3> </div>
+    
 
 </body>
