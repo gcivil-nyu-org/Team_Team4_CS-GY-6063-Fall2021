@@ -157,7 +157,7 @@
 
     const selectWifi = (wifi) => {
       for (let index = 1; index <= wifi; index++) {
-        $(`#wifi${index}`).css("color", "DodgerBlue");
+        $(`#wifi${index}`).css("color", "gold");
         $("#wifiInput").val(wifi);
       }
       for (let index = food + 1; index <= 5; index++) {
@@ -167,7 +167,7 @@
 
     const selectCharging = (charging) => {
       for (let index = 1; index <= charging; index++) {
-        $(`#charging${index}`).css("color", "DodgerBlue");
+        $(`#charging${index}`).css("color", "gold");
         $("#chargingInput").val(charging);
       }
       for (let index = charging + 1; index <= 5; index++) {
@@ -406,7 +406,7 @@
                       <i class="fas fa-star pointer" id="food1" onclick="selectFood(1)"></i>
                       <i class="fas fa-star pointer" id="food2" onclick="selectFood(2)"></i>
                       <i class="fas fa-star pointer" id="food3" onclick="selectFood(3)"></i>
-                      <i class="fas fa-star pointer" id="food4" onclick="selectFood4)"></i>
+                      <i class="fas fa-star pointer" id="food4" onclick="selectFood(4)"></i>
                       <i class="fas fa-star pointer" id="food5" onclick="selectFood(5)"></i>
                     </div>                   
 
@@ -416,7 +416,7 @@
                       <i class="fas fa-wifi" id="wifi1" onclick="selectWifi(1)"></i>
                       <i class="fas fa-wifi" id="wifi2" onclick="selectWifi(2)"></i>
                       <i class="fas fa-wifi" id="wifi3" onclick="selectWifi(3)"></i>
-                      <i class="fas fa-wifi" id="wifi4" onclick="selectWifi4)"></i>
+                      <i class="fas fa-wifi" id="wifi4" onclick="selectWifi(4)"></i>
                       <i class="fas fa-wifi" id="wifi5" onclick="selectWifi(5)"></i>
                     </div> 
 
