@@ -94,7 +94,7 @@ def index(request):
                 try:
                     # pull database object for location (i.e., item)
                     db_rating = Review.objects.filter(business_name=name).aggregate(Avg('comfort_rating'))['comfort_rating__avg']
-                    if db_rating != None:
+                    if db_rating is not None:
                         item['comfort'] = int(db_rating)
                     else:
                         item['comfort'] = 0
@@ -105,7 +105,7 @@ def index(request):
                 try:
                     # pull database object for location (i.e., item)
                     db_rating = Review.objects.filter(business_name=name).aggregate(Avg('food_rating'))['food_rating__avg']
-                    if db_rating != None:
+                    if db_rating is not None:
                         item['food'] = int(db_rating)
                     else:
                         item['food'] = 0
@@ -116,7 +116,7 @@ def index(request):
                 try:
                     # pull database object for location (i.e., item)
                     db_rating = Review.objects.filter(business_name=name).aggregate(Avg('wifi_rating'))['wifi_rating__avg']
-                    if db_rating != None:
+                    if db_rating is not None:
                         item['wifi'] = int(db_rating)
                     else:
                         item['wifi'] = 0
@@ -127,7 +127,7 @@ def index(request):
                 try:
                     # pull database object for location (i.e., item)
                     db_rating = Review.objects.filter(business_name=name).aggregate(Avg('charging_rating'))['charging_rating__avg']
-                    if db_rating != None:
+                    if db_rating is not None:
                         item['charging'] = int(db_rating)
                     else:
                         item['charging'] = 0
