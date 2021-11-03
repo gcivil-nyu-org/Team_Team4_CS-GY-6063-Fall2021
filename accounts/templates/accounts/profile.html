@@ -1,6 +1,13 @@
 {% load crispy_forms_tags %}
 <!DOCTYPE html>
 <html>
+{% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
 
 <div class="content-section">
     <div class="media">
@@ -15,7 +22,9 @@
     </div>
     <div>
         {% for review in reviews %}
-            <p>You reviewed <a  href="{% url 'locationDetail' %}?locationID={{ review.yelp_id }}">{{ review.business_name }}</a> on {{ review.date_posted }} : {{ review.review_text }}</p>
+            <p>You reviewed <a
+                    href="{% url 'locationDetail' %}?locationID={{ review.yelp_id }}">{{ review.business_name }}</a>
+                on {{ review.date_posted }} : {{ review.review_text }}</p>
         {% endfor %}
     </div>
     <div>
@@ -23,12 +32,12 @@
             <p>These are your favorite locations!</p>
         {% endif %}
         {% for favorite in favorites %}
-{#            <p>{{ favorite.yelp_id }}</p>#}
+            {#            <p>{{ favorite.yelp_id }}</p>#}
             <p>{{ favorite.business_name }}</p>>
-            <a  href="{% url 'locationDetail' %}?locationID={{ favorite.yelp_id }}">{{ favorite.business_name }}</a>
+            <a href="{% url 'locationDetail' %}?locationID={{ favorite.yelp_id }}">{{ favorite.business_name }}</a>
         {% endfor %}
     </div>
-    <form method=" POST" enctype="multipart/form-data">
+    <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         <fieldset class="form-group">
             <legend class="border-bottom mb-4">Update Profile</legend>
@@ -39,8 +48,8 @@
         <div class="form-group">
             <button class="btn btn-outline-info" type="submit">Save Changes</button>
         </div>
-        </form>
-        <span><a href="{% url 'user' %}">Exit Profile</a></span>
-        <span><a href="{% url 'index' %}">Search</a></span>
-    </div>
+    </form>
+    <span><a href="{% url 'user' %}">Exit Profile</a></span>
+    <span><a href="{% url 'index' %}">Search</a></span>
+</div>
 </html>
