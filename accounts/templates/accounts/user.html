@@ -9,44 +9,47 @@
 
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css"
     integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP" crossorigin="anonymous" />
-    <style>
+  <style>
     nav {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-        padding: 10px 20px;
-      }
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px;
+      background-color: #f5f5f5;
+    }
 
-      .btn-group {
+    .btn-group {
       gap: 10px;
     }
-      </style>
+  </style>
 </head>
 
 <body>
-    <nav>
-      <h1> StudyCity </h1>
-      
-        <div class="btn-group">
+  <nav>
+    <h1> StudyCity </h1>
 
-          {% if user.is_authenticated %}
-          {{request.user}} <i class="fas fa-user"></i>
-          <a href="{% url 'index' %}">Search</a>
-          <a href="{% url 'profile' %}">Profile</a>
-          <a href="{% url 'logout' %}">Logout</a>
-          
-          {% else %}
-          <a href="{% url 'register' %}">Register</a>
-          <a href="{% url 'login' %}">Login</a>
-          {% endif %}
+    <div class="btn-group">
 
-    
-          
-         
-        </div>
-    </nav>
-<div> <h3>Hello, {{request.user}}. Welcome to StudyCity.</h3> </div>
-    
+      {% if user.is_authenticated %}
+      {{request.user}} <i class="fas fa-user"></i>
+      <a href="{% url 'index' %}">Search</a>
+      <a href="{% url 'profile' %}">Profile</a>
+      <a href="{% url 'logout' %}">Logout</a>
+
+      {% else %}
+      <a href="{% url 'register' %}">Register</a>
+      <a href="{% url 'login' %}">Login</a>
+      {% endif %}
+
+
+
+
+    </div>
+  </nav>
+  <div>
+    <h3>Hello, {{request.user}}. Welcome to StudyCity.</h3>
+  </div>
+
 
 </body>
