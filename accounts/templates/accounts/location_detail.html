@@ -138,15 +138,19 @@
     </div>
     <label for="comfort_rating" class="form-label">Comfort Rating(Average: {{ avg_dict.comfort_rating__avg }} )</label>
     <input type="range" name="comfort_rating" class="form-range" min="0" max="5" id="comfort_rating">
-
+    <br>
     <label for="food_rating" class="form-label">Food Rating(Average: {{ avg_dict.food_rating__avg }} )</label>
     <input type="range" name="food_rating" class="form-range" min="0" max="5" id="food_rating">
+    <br>
     <label for="wifi_rating" class="form-label">Wifi Rating(Average: {{ avg_dict.wifi_rating__avg }} )</label>
     <input type="range" name="wifi_rating" class="form-range" min="0" max="5" id="wifi_rating">
+    <br>
     <label for="charging_rating" class="form-label">Charging Rating(Average: {{ avg_dict.charging_rating__avg }} )</label>
     <input type="range" name="charging_rating" class="form-range" min="0" max="5" id="charging_rating">
+    <br>
     <label for="general_rating" class="form-label">Overall Recommendation(Average: {{ avg_dict.general_rating__avg }} )</label>
     <input type="range" name="general_rating" class="form-range" min="0" max="5" id="general_rating">
+    <br>
     <input type="hidden" name="locationid" value="{{ locationID }}"/>
     <input type="hidden" name="locationname" value="{{ business.name }}"/>
     <input type="submit"/>
