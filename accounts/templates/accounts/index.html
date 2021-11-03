@@ -321,9 +321,46 @@
           Filter
         </button>
 
+        <!-- filtered results -->
         <div class="my-4 container">
+          {% if businesses %}
+          <h4>Your Study Locations:</h4>
+          {% endif %}
           <div class="row">
             {% for data in businesses %}
+            <div class="col-4 my-2">
+              <div class="card" style="width: 18rem">
+                <img class="card-img-top" src="{{ data.image_url }}" alt="Card image cap" />
+                <div class="card-body">
+                  <h5 class="card-title">{{ data.name }}</h5>
+                  <p class="card-text my-0">Phone: {{ data.phone }}</p>
+                  <p class="card-text my-0">Rating: {{ data.rating }}</p>
+                  <p class="card-text my-0">Price Range: {{ data.price }}</p>
+                  <p class="card-text my-0">
+                    Address: {{ data.location.address1}}
+                  </p>
+                  <p class="card-text my-0">
+                    Zip Code: {{data.location.zip_code}}
+                  </p>
+                  <a href="{{data.url}}" target="_blank" class="card-text pointer">Visit Website</a>
+                  <!-- <a href="#" class="btn btn-primary">Go somewhere</a> -->
+                </div>
+                <a class="" href="{% url 'locationDetail'%}?locationID={{data.id|default:''}}">
+                  View detail
+                </a>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+        
+
+        <!-- recommended results -->
+        {% if recommendations %}
+        <div class="my-4 container">
+          <h4>Suggested Study Locations:</h4>
+          <div class="row">
+            {% for data in recommendations %}
             <div class="col-4 my-2">
               <div class="card" style="width: 18rem">
                 <img class="card-img-top" src="{{ data.image_url }}" alt="Card image cap" />
@@ -350,6 +387,8 @@
             {% endfor %}
           </div>
         </div>
+        {% endif %}
+
         <div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModal"
           aria-hidden="true">
           <div class="modal-dialog modal-dialog-slideout" role="document">
@@ -376,6 +415,7 @@
                       <label class=" form-check-label" for="flexSwitchCheckChecked">Open Now</label>
                     </div>
                     <div class="my-4">
+                      <h4>Yelp! Rating</h4>
                       <input type="hidden" class="form-control my-4" id="ratingInput" name="rating"
                         value="{{ params.rating }}" />
                       <i class="fas fa-star pointer" id="rating1" onclick="selectRating(1)"></i>
@@ -393,7 +433,7 @@
                     </div>
 
                     <div class="my-4">
-                      <h4>Comfort Rating</h4>
+                      <h4>Comfort</h4>
                       <input type="hidden" class="form-control my-4" id="comfortInput" name="comfort"
                         value="{{ params.comfort }}" />
                       <i class="fas fa-star pointer" id="comfort1" onclick="selectComfort(1)"></i>
@@ -404,7 +444,7 @@
                     </div>
 
                     <div class="my-4">
-                      <h4>Food Rating</h4>
+                      <h4>Food</h4>
                       <input type="hidden" class="form-control my-4" id="foodInput" name="food"
                         value="{{ params.food }}" />
                       <i class="fas fa-star pointer" id="food1" onclick="selectFood(1)"></i>
@@ -415,6 +455,7 @@
                     </div>                   
 
                     <div class="my-4">
+                      <h4>WiFi</h4>
                       <input type="hidden" class="form-control my-4" id="wifiInput" name="wifi"
                         value="{{ params.wifi }}" />
                       <i class="fas fa-wifi" id="wifi1" onclick="selectWifi(1)"></i>
@@ -425,6 +466,7 @@
                     </div> 
 
                     <div class="my-4">
+                      <h4>Charging</h4>
                       <input type="hidden" class="form-control my-4" id="chargingInput" name="charging"
                         value="{{ params.charging }}" />
                       <i class="fas fa-plug" id="charging1" onclick="selectCharging(1)"></i>

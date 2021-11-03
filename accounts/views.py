@@ -90,20 +90,12 @@ def index(request):
                 else:
                     item['check_311'] = False
 
-            '''
-            populate comfort parameter here...
-            '''
             if queryStr.get('comfort'):
                 try:
-                    # define user rating param
-                    rating_param = int(queryStr.get('comfort'))
                     # pull database object for location (i.e., item)
-                    db_rating = Review.objects.filter(business_name=name)
-                    # pull comfort_rating value from database object
-                    print("TEST:", db_rating)
-                    db_rating = int(db_rating.values('comfort_rating')[0]['comfort_rating'])
-                    if db_rating >= rating_param:
-                        item['comfort'] = db_rating
+                    db_rating = Review.objects.filter(business_name=name).aggregate(Avg('comfort_rating'))['comfort_rating__avg']
+                    if db_rating != None:
+                        item['comfort'] = int(db_rating)
                     else:
                         item['comfort'] = 0
                 except IndexError:
@@ -111,15 +103,10 @@ def index(request):
 
             if queryStr.get('food'):
                 try:
-                    # define user rating param
-                    rating_param = int(queryStr.get('food'))
                     # pull database object for location (i.e., item)
-                    db_rating = Review.objects.filter(business_name=name)
-                    # pull food_rating value from database object
-                    print("TEST:", db_rating)
-                    db_rating = int(db_rating.values('food_rating')[0]['food_rating'])
-                    if db_rating >= rating_param:
-                        item['food'] = db_rating
+                    db_rating = Review.objects.filter(business_name=name).aggregate(Avg('food_rating'))['food_rating__avg']
+                    if db_rating != None:
+                        item['food'] = int(db_rating)
                     else:
                         item['food'] = 0
                 except IndexError:
@@ -127,15 +114,10 @@ def index(request):
             
             if queryStr.get('wifi'):
                 try:
-                    # define user rating param
-                    rating_param = int(queryStr.get('wifi'))
                     # pull database object for location (i.e., item)
-                    db_rating = Review.objects.filter(business_name=name)
-                    # pull wifi_rating value from database object
-                    print("TEST:", db_rating)
-                    db_rating = int(db_rating.values('wifi_rating')[0]['wifi_rating'])
-                    if db_rating >= rating_param:
-                        item['wifi'] = db_rating
+                    db_rating = Review.objects.filter(business_name=name).aggregate(Avg('wifi_rating'))['wifi_rating__avg']
+                    if db_rating != None:
+                        item['wifi'] = int(db_rating)
                     else:
                         item['wifi'] = 0
                 except IndexError:
@@ -143,56 +125,36 @@ def index(request):
 
             if queryStr.get('charging'):
                 try:
-                    # define user rating param
-                    rating_param = int(queryStr.get('charing'))
                     # pull database object for location (i.e., item)
-                    db_rating = Review.objects.filter(business_name=name)
-                    # pull chargin_rating value from database object
-                    print("TEST:", db_rating)
-                    db_rating = int(db_rating.values('charging_rating')[0]['charging_rating'])
-                    if db_rating >= rating_param:
-                        item['charging'] = db_rating
+                    db_rating = Review.objects.filter(business_name=name).aggregate(Avg('charging_rating'))['charging_rating__avg']
+                    if db_rating != None:
+                        item['charging'] = int(db_rating)
                     else:
                         item['charging'] = 0
                 except IndexError:
                     item['charging'] = 0
                 
         response = resultJSON['businesses']
+        # save copy to provide recommended results
+        unfiltered_response = response
 
         # functions used to filter results
         def filterByGrade(item):
             return item['grade'] == queryStr.get('grade')
+        if queryStr.get('grade'):
+            response = list(filter(filterByGrade, response))
 
         def filterBy311(item):
             if (item['check_311']):
                 return True
-
-        '''
-        new comfort filter, referenced below...
-        '''
-
-        def filterByComfort(item):
-            return int(item['comfort']) >= int(queryStr.get('comfort'))
-
-        '''
-        '''
-
-        # check if user filtered by grade
-        if queryStr.get('grade'):
-            response = list(filter(filterByGrade, response))
-
-        # check if user filtered out 311 complaints
         if queryStr.get('311_check'):
             response = list(filter(filterBy311, response))
 
-        '''
-        test comfort parameter here based on input...
-        '''
-        # check if user filtered by comfort rating
+        def filterByComfort(item):
+            return int(item['comfort']) >= int(queryStr.get('comfort'))
         if queryStr.get('comfort'):
-            response = list(filter(filterByComfort, response))
-        '''
-        '''
+            response = list(filter(filterByComfort, response))   
+
         def filterByFood(item):
             return int(item['food']) >= int(queryStr.get('food')) 
         if queryStr.get('food'):
@@ -208,14 +170,19 @@ def index(request):
         if queryStr.get('charging'):
             response = list(filter(filterByCharging, response))
 
-
+        # if the filter returns less than 3 locations, provided suggestions
+        if len(response) < 3:
+            recommendations = unfiltered_response
+        else:
+            recommendations = []
     
         context = {
             'businesses': response,
             'count': resultJSON['total'],
             'params': params,
             'google': os.environ.get('GOOGLE_API'),
-            'location_list': cor_list
+            'location_list': cor_list,
+            'recommendations': recommendations
         }
 
     return render(request, "accounts/index.html", context=context)
