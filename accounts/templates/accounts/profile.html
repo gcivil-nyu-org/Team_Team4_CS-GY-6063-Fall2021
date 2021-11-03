@@ -1,46 +1,105 @@
 {% load crispy_forms_tags %}
-<!DOCTYPE html>
+<!-- <!DOCTYPE html> -->
 <html>
+{% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+    integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous" />
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+    integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous">
+</script>
 
-<div class="content-section">
-    <div class="media">
-        <img class="rounded-circle account-img" height="200" width="200" src="{{ user.profile.image.url }}">
-        <div class="media-body">
-            <h2 class="account-heading">{{ user.username }}</h2>
-            {% if user.profile.business_account %}
-                <p class="text-secondary">Business Account &#10004;&#65039;</p>
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css"
+    integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP" crossorigin="anonymous" />
+<style>
+    nav {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 20px;
+        background-color: #f5f5f5;
+    }
+
+    .btn-group {
+        gap: 10px;
+    }
+</style>
+</head>
+
+<body>
+    <nav>
+        <h1>StudyCity</h1>
+
+        <div class="btn-group">
+
+            {% if user.is_authenticated %}
+            {{request.user}} <i class="fas fa-user"></i>
+            <a href="{% url 'index' %}">Search</a>
+            <a href="{% url 'user' %}">Exit Profile</a>
+            <a href="{% url 'logout' %}">Logout</a>
+
+            {% else %}
+            <a href="{% url 'register' %}">Register</a>
+            <a href="{% url 'login' %}">Login</a>
             {% endif %}
-            <p class="text-secondary">{{ user.email }}</p>
+
+
         </div>
-    </div>
-    <div>
-        {% for review in reviews %}
-            <p>You reviewed <a  href="{% url 'locationDetail' %}?locationID={{ review.yelp_id }}">{{ review.business_name }}</a> on {{ review.date_posted }} : {{ review.review_text }}</p>
-        {% endfor %}
-    </div>
-    <div>
-        {% if favorites %}
+    </nav>
+
+
+
+    <div class="content-section">
+        <div class="media">
+            <img class="rounded-circle account-img" height="200" width="200" src="{{ user.profile.image.url }}">
+            <div class="media-body">
+                <h2 class="account-heading">{{ user.username }}</h2>
+                {% if user.profile.business_account %}
+                <p class="text-secondary">Business Account &#10004;&#65039;</p>
+                {% endif %}
+                <p class="text-secondary">{{ user.email }}</p>
+            </div>
+        </div>
+        <div>
+            {% for review in reviews %}
+            <p>You reviewed <a
+                    href="{% url 'locationDetail' %}?locationID={{ review.yelp_id }}">{{ review.business_name }}</a> on
+                {{ review.date_posted }} : {{ review.review_text }}</p>
+            {% endfor %}
+        </div>
+        <div>
+            {% if favorites %}
             <p>These are your favorite locations!</p>
-        {% endif %}
-        {% for favorite in favorites %}
-{#            <p>{{ favorite.yelp_id }}</p>#}
+            {% endif %}
+            {% for favorite in favorites %}
+            {#            <p>{{ favorite.yelp_id }}</p>#}
             <p>{{ favorite.business_name }}</p>>
-            <a  href="{% url 'locationDetail' %}?locationID={{ favorite.yelp_id }}">{{ favorite.business_name }}</a>
-        {% endfor %}
-    </div>
-    <form method=" POST" enctype="multipart/form-data">
-        {% csrf_token %}
-        <fieldset class="form-group">
-            <legend class="border-bottom mb-4">Update Profile</legend>
-            {#            {% crispy u_form %}#}
-            {{ u_form|crispy }}
-            {{ p_form|crispy }}
-        </fieldset>
-        <div class="form-group">
-            <button class="btn btn-outline-info" type="submit">Save Changes</button>
+            <a href="{% url 'locationDetail' %}?locationID={{ favorite.yelp_id }}">{{ favorite.business_name }}</a>
+            {% endfor %}
         </div>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Update Profile</legend>
+                {#            {% crispy u_form %}#}
+                {{ u_form|crispy }}
+                {{ p_form|crispy }}
+            </fieldset>
+            <div class="form-group">
+                <button class="btn btn-outline-info" type="submit">Save Changes</button>
+            </div>
         </form>
-        <span><a href="{% url 'user' %}">Exit Profile</a></span>
-        <span><a href="{% url 'index' %}">Search</a></span>
+        <!-- <span><a href="{% url 'user' %}">Exit Profile</a></span>
+        <span><a href="{% url 'index' %}">Search</a></span> -->
     </div>
+
+</body>
+
 </html>

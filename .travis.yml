@@ -5,6 +5,7 @@ before-install:
 
 script:
   - python manage.py migrate
+  - python manage.py collectstatic --noinput
   - black .
   - flake8 .
   - coverage run --source='.' manage.py test
