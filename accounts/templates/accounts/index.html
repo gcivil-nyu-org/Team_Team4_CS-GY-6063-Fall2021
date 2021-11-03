@@ -33,6 +33,15 @@
       if (params.comfort) {
         selectComfort(params.comfort);
       }
+      if (params.food) {
+        selectFood(params.food);
+      }
+      if (params.wifi) {
+        selectFood(params.wifi);
+      }
+      if (params.charging) {
+        selectFood(params.charging);
+      }
     });
 
     /* beautify preserve:start */
@@ -135,7 +144,36 @@
         $(`#comfort${index}`).css("color", "black");
       }
     };
-  
+
+    const selectFood = (food) => {
+      for (let index = 1; index <= food; index++) {
+        $(`#food${index}`).css("color", "gold");
+        $("#foodInput").val(food);
+      }
+      for (let index = food + 1; index <= 5; index++) {
+        $(`#food${index}`).css("color", "black");
+      }
+    };
+
+    const selectWifi = (wifi) => {
+      for (let index = 1; index <= wifi; index++) {
+        $(`#wifi${index}`).css("color", "gold");
+        $("#wifiInput").val(wifi);
+      }
+      for (let index = wifi + 1; index <= 5; index++) {
+        $(`#wifi${index}`).css("color", "black");
+      }
+    };
+
+    const selectCharging = (charging) => {
+      for (let index = 1; index <= charging; index++) {
+        $(`#charging${index}`).css("color", "gold");
+        $("#chargingInput").val(charging);
+      }
+      for (let index = charging + 1; index <= 5; index++) {
+        $(`#charging${index}`).css("color", "black");
+      }
+    };
   </script>
 
   <style>
@@ -162,6 +200,7 @@
       justify-content: space-between;
       align-items: center;
       padding: 10px 20px;
+      background-color: #f5f5f5;
     }
 
     .btn-group {
@@ -235,10 +274,23 @@
     <h1>StudyCity</h1>
 
     <div class="btn-group">
+
+      {% if user.is_authenticated %}
+      {{request.user}} <i class="fas fa-user"></i>
+      <a href="{% url 'profile' %}">Profile</a>
+      <a href="{% url 'logout' %}">Logout</a>
+
+      {% else %}
       <a href="{% url 'register' %}">Register</a>
       <a href="{% url 'login' %}">Login</a>
+      {% endif %}
+
+
     </div>
   </nav>
+
+
+
   <div class="main">
     <div id="map"></div>
     <form method="get" class="form-group my-4">
@@ -269,9 +321,46 @@
           Filter
         </button>
 
+        <!-- filtered results -->
         <div class="my-4 container">
+          {% if businesses %}
+          <h4>Your Study Locations:</h4>
+          {% endif %}
           <div class="row">
             {% for data in businesses %}
+            <div class="col-4 my-2">
+              <div class="card" style="width: 18rem">
+                <img class="card-img-top" src="{{ data.image_url }}" alt="Card image cap" />
+                <div class="card-body">
+                  <h5 class="card-title">{{ data.name }}</h5>
+                  <p class="card-text my-0">Phone: {{ data.phone }}</p>
+                  <p class="card-text my-0">Rating: {{ data.rating }}</p>
+                  <p class="card-text my-0">Price Range: {{ data.price }}</p>
+                  <p class="card-text my-0">
+                    Address: {{ data.location.address1}}
+                  </p>
+                  <p class="card-text my-0">
+                    Zip Code: {{data.location.zip_code}}
+                  </p>
+                  <a href="{{data.url}}" target="_blank" class="card-text pointer">Visit Website</a>
+                  <!-- <a href="#" class="btn btn-primary">Go somewhere</a> -->
+                </div>
+                <a class="" href="{% url 'locationDetail'%}?locationID={{data.id|default:''}}">
+                  View detail
+                </a>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+
+
+        <!-- recommended results -->
+        {% if recommendations %}
+        <div class="my-4 container">
+          <h4>Suggested Study Locations:</h4>
+          <div class="row">
+            {% for data in recommendations %}
             <div class="col-4 my-2">
               <div class="card" style="width: 18rem">
                 <img class="card-img-top" src="{{ data.image_url }}" alt="Card image cap" />
@@ -298,6 +387,8 @@
             {% endfor %}
           </div>
         </div>
+        {% endif %}
+
         <div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModal"
           aria-hidden="true">
           <div class="modal-dialog modal-dialog-slideout" role="document">
@@ -324,6 +415,7 @@
                       <label class=" form-check-label" for="flexSwitchCheckChecked">Open Now</label>
                     </div>
                     <div class="my-4">
+                      <h4>Yelp! Rating</h4>
                       <input type="hidden" class="form-control my-4" id="ratingInput" name="rating"
                         value="{{ params.rating }}" />
                       <i class="fas fa-star pointer" id="rating1" onclick="selectRating(1)"></i>
@@ -341,7 +433,7 @@
                     </div>
 
                     <div class="my-4">
-                      <h4>Comfort Rating</h4>
+                      <h4>Comfort</h4>
                       <input type="hidden" class="form-control my-4" id="comfortInput" name="comfort"
                         value="{{ params.comfort }}" />
                       <i class="fas fa-star pointer" id="comfort1" onclick="selectComfort(1)"></i>
@@ -349,6 +441,39 @@
                       <i class="fas fa-star pointer" id="comfort3" onclick="selectComfort(3)"></i>
                       <i class="fas fa-star pointer" id="comfort4" onclick="selectComfort(4)"></i>
                       <i class="fas fa-star pointer" id="comfort5" onclick="selectComfort(5)"></i>
+                    </div>
+
+                    <div class="my-4">
+                      <h4>Food</h4>
+                      <input type="hidden" class="form-control my-4" id="foodInput" name="food"
+                        value="{{ params.food }}" />
+                      <i class="fas fa-star pointer" id="food1" onclick="selectFood(1)"></i>
+                      <i class="fas fa-star pointer" id="food2" onclick="selectFood(2)"></i>
+                      <i class="fas fa-star pointer" id="food3" onclick="selectFood(3)"></i>
+                      <i class="fas fa-star pointer" id="food4" onclick="selectFood(4)"></i>
+                      <i class="fas fa-star pointer" id="food5" onclick="selectFood(5)"></i>
+                    </div>
+
+                    <div class="my-4">
+                      <h4>WiFi</h4>
+                      <input type="hidden" class="form-control my-4" id="wifiInput" name="wifi"
+                        value="{{ params.wifi }}" />
+                      <i class="fas fa-wifi" id="wifi1" onclick="selectWifi(1)"></i>
+                      <i class="fas fa-wifi" id="wifi2" onclick="selectWifi(2)"></i>
+                      <i class="fas fa-wifi" id="wifi3" onclick="selectWifi(3)"></i>
+                      <i class="fas fa-wifi" id="wifi4" onclick="selectWifi(4)"></i>
+                      <i class="fas fa-wifi" id="wifi5" onclick="selectWifi(5)"></i>
+                    </div>
+
+                    <div class="my-4">
+                      <h4>Charging</h4>
+                      <input type="hidden" class="form-control my-4" id="chargingInput" name="charging"
+                        value="{{ params.charging }}" />
+                      <i class="fas fa-plug" id="charging1" onclick="selectCharging(1)"></i>
+                      <i class="fas fa-plug" id="charging2" onclick="selectCharging(2)"></i>
+                      <i class="fas fa-plug" id="charging3" onclick="selectCharging(3)"></i>
+                      <i class="fas fa-plug" id="charging4" onclick="selectCharging(4)"></i>
+                      <i class="fas fa-plug" id="charging5" onclick="selectCharging(5)"></i>
                     </div>
 
                     <!-- <div class="form-check 311-switch my-4">

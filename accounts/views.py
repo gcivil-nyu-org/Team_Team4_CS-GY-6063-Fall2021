@@ -46,6 +46,15 @@ def index(request):
         if queryStr.get('comfort'):
             params['comfort'] = queryStr.get('comfort')
 
+        if queryStr.get('food'):
+            params['food'] = queryStr.get('food')
+
+        if queryStr.get('wifi'):
+            params['wifi'] = queryStr.get('wifi')
+
+        if queryStr.get('charging'):
+            params['charging'] = queryStr.get('charging')
+
         search_object = yelp_search()
         result = search_object.filter_location(params)
         resultJSON = json.loads(result)
@@ -81,68 +90,99 @@ def index(request):
                 else:
                     item['check_311'] = False
 
-            '''
-            populate comfort parameter here...
-            '''
             if queryStr.get('comfort'):
                 try:
-                    # define user rating param
-                    rating_param = int(queryStr.get('comfort'))
                     # pull database object for location (i.e., item)
-                    db_rating = Review.objects.filter(business_name=name)
-                    # pull comfort_rating value from database object
-                    print("TEST:", db_rating)
-                    db_rating = int(db_rating.values('comfort_rating')[0]['comfort_rating'])
-                    if db_rating >= rating_param:
-                        item['comfort'] = db_rating
+                    db_rating = Review.objects.filter(business_name=name).aggregate(Avg('comfort_rating'))['comfort_rating__avg']
+                    if db_rating is not None:
+                        item['comfort'] = int(db_rating)
                     else:
                         item['comfort'] = 0
                 except IndexError:
                     item['comfort'] = 0
 
+            if queryStr.get('food'):
+                try:
+                    # pull database object for location (i.e., item)
+                    db_rating = Review.objects.filter(business_name=name).aggregate(Avg('food_rating'))['food_rating__avg']
+                    if db_rating is not None:
+                        item['food'] = int(db_rating)
+                    else:
+                        item['food'] = 0
+                except IndexError:
+                    item['food'] = 0
+            
+            if queryStr.get('wifi'):
+                try:
+                    # pull database object for location (i.e., item)
+                    db_rating = Review.objects.filter(business_name=name).aggregate(Avg('wifi_rating'))['wifi_rating__avg']
+                    if db_rating is not None:
+                        item['wifi'] = int(db_rating)
+                    else:
+                        item['wifi'] = 0
+                except IndexError:
+                    item['wifi'] = 0
+
+            if queryStr.get('charging'):
+                try:
+                    # pull database object for location (i.e., item)
+                    db_rating = Review.objects.filter(business_name=name).aggregate(Avg('charging_rating'))['charging_rating__avg']
+                    if db_rating is not None:
+                        item['charging'] = int(db_rating)
+                    else:
+                        item['charging'] = 0
+                except IndexError:
+                    item['charging'] = 0
+                
         response = resultJSON['businesses']
+        # save copy to provide recommended results
+        unfiltered_response = response
 
         # functions used to filter results
         def filterByGrade(item):
             return item['grade'] == queryStr.get('grade')
+        if queryStr.get('grade'):
+            response = list(filter(filterByGrade, response))
 
         def filterBy311(item):
             if (item['check_311']):
                 return True
-
-        '''
-        new comfort filter, referenced below...
-        '''
-
-        def filterByComfort(item):
-            return int(item['comfort']) >= int(queryStr.get('comfort'))
-
-        '''
-        '''
-
-        # check if user filtered by grade
-        if queryStr.get('grade'):
-            response = list(filter(filterByGrade, response))
-
-        # check if user filtered out 311 complaints
         if queryStr.get('311_check'):
             response = list(filter(filterBy311, response))
 
-        '''
-        test comfort parameter here based on input...
-        '''
-        # check if user filtered by comfort rating
+        def filterByComfort(item):
+            return int(item['comfort']) >= int(queryStr.get('comfort'))
         if queryStr.get('comfort'):
-            response = list(filter(filterByComfort, response))
-        '''
-        '''
+            response = list(filter(filterByComfort, response))   
 
+        def filterByFood(item):
+            return int(item['food']) >= int(queryStr.get('food')) 
+        if queryStr.get('food'):
+            response = list(filter(filterByFood, response))
+
+        def filterByWifi(item):
+            return int(item['wifi']) >= int(queryStr.get('wifi')) 
+        if queryStr.get('wifi'):
+            response = list(filter(filterByWifi, response))
+
+        def filterByCharging(item):
+            return int(item['charging']) >= int(queryStr.get('charging')) 
+        if queryStr.get('charging'):
+            response = list(filter(filterByCharging, response))
+
+        # if the filter returns less than 3 locations, provided suggestions
+        if len(response) < 3:
+            recommendations = unfiltered_response
+        else:
+            recommendations = []
+    
         context = {
             'businesses': response,
             'count': resultJSON['total'],
             'params': params,
             'google': os.environ.get('GOOGLE_API'),
-            'location_list': cor_list
+            'location_list': cor_list,
+            'recommendations': recommendations
         }
 
     return render(request, "accounts/index.html", context=context)
@@ -308,13 +348,11 @@ def user(request):
 
 @login_required
 def profile(request):
-    print(request.method)
     if request.method == "POST":
         u_form = UserUpdateForm(request.POST, instance=request.user)
         p_form = ProfileUpdateForm(
             request.POST, request.FILES, instance=request.user.profile
         )
-        print("Post method test!")
         if u_form.is_valid() and p_form.is_valid():
             u_form.save()
             p_form.save()
