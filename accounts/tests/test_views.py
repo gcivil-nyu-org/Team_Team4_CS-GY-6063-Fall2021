@@ -98,7 +98,7 @@ class StudyCityViewsTests(TestCase):
         # response = self.c.get(reverse('logout'))
         self.assertEquals(response.status_code, 200)
 
-    def test_profile_Get(self):
+    def test_profile1_Get(self):
         logged_in = self.c.login(username='testuser', password='123456e')
         self.assertTrue(logged_in)
         response = self.c.get(reverse('profile'))
