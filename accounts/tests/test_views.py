@@ -33,7 +33,17 @@ class StudyCityViewsTests(TestCase):
         self.assertEquals(response.status_code, 200)
         self.assertTemplateUsed(response, 'accounts/location_detail.html')
 
-    def test_index_Post(self):
+    def test_index_all(self):
+        logged_in = self.c.login(username='testuser', password='123456e')
+        self.assertTrue(logged_in)
+        searchURL = reverse('index')+ '?place=11201&longitude=&latitude=&open_now=on&rating=5&price=3&comfort=5&food=5&wifi=5&charging=5'
+        response = self.c.get(searchURL)
+        self.assertEquals(response.status_code, 200)
+        searchURL = reverse('index') + '?place=11201&useCurrentLocation=true&longitude=-73.9847963&latitude=40.6893136&open_now=on&rating=5&price=2&comfort=4&food=5&wifi=5&charging=5'
+        response = self.c.get(searchURL)
+        self.assertEquals(response.status_code, 200)
+
+    def test_index_place(self):
         searchURL = reverse('index') + '?place=tandon'
         response = self.c.post(searchURL)
         self.assertEquals(response.status_code, 200)
