@@ -250,6 +250,10 @@ def locationDetail(request):
                 "comfort_rating": comfort_rating,
                 "charging_rating": charging_rating,
             }
+            
+            previous_review=Review.objects.filter(user=post_user,yelp_id=business_id)
+            previous_review.delete()
+
             form = ReviewCreateForm(form_dict)
 
             if form.is_valid():
@@ -274,7 +278,7 @@ def locationDetail(request):
             if avg_dict[x] is None:
                 avg_dict[x] = '-'
             else:
-                avg_dict[x] = round(avg_dict[x], 2)
+                avg_dict[x] = round(avg_dict[x], 1)
 
         # get Yelp data
         yelp_result = search_object.search_business_id(business_id)
