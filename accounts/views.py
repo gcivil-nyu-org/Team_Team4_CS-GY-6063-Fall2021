@@ -264,10 +264,12 @@ def locationDetail(request):
         review_list = Review.objects.filter(yelp_id=business_id).order_by(
             "-date_posted"
         )
-        avg_field_list = ['wifi_rating', 'general_rating', 'food_rating', 'comfort_rating', 'charging_rating']
+        avg_field_list = ['wifi_rating', 'general_rating',
+                          'food_rating', 'comfort_rating', 'charging_rating']
         avg_dict = dict()
         for field_name in avg_field_list:
-            avg_dict.update(Review.objects.filter(yelp_id=business_id).aggregate(Avg(field_name)))
+            avg_dict.update(Review.objects.filter(
+                yelp_id=business_id).aggregate(Avg(field_name)))
         for x in avg_dict:
             if avg_dict[x] is None:
                 avg_dict[x] = '-'
@@ -294,6 +296,9 @@ def locationDetail(request):
         if favorite_list.count() > 0:
             has_favorite = True
 
+        # check if the user is a business account
+        is_business = Profile.objects.get(user=request.user).business_account
+
         context = {
             "business": resultJSON,
             "locationID": business_id,
@@ -301,7 +306,8 @@ def locationDetail(request):
             "sanitation": open_data_sanitation,
             "three_one_one": open_data_threeoneone,
             "has_favorite": has_favorite,
-            "avg_dict": avg_dict
+            "avg_dict": avg_dict,
+            "is_business": is_business
         }
 
     return render(request, "accounts/location_detail.html", context=context)
