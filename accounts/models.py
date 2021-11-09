@@ -26,6 +26,10 @@ class Review(models.Model):
     comfort_rating = models.IntegerField(default=0)
     date_posted = models.DateTimeField(default=timezone.now)
 
+    class Meta:
+        unique_together = ('user', 'yelp_id')
+        # unique_together = [['user', 'yelp_id']]
+
     def __str__(self):
         return f"{self.user.username} \
                 reviewed {self.business_name} \

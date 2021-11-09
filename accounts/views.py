@@ -238,7 +238,7 @@ def locationDetail(request):
             charging_rating = request.POST.get("charging_rating")
             general_rating = request.POST.get("general_rating")
             post_user = request.user
-
+            Review.objects.filter(user = post_user,)
             form_dict = {
                 "user": post_user,
                 "yelp_id": business_id,
