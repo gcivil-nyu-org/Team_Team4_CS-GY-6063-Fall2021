@@ -272,7 +272,7 @@ def locationDetail(request):
             if avg_dict[x] is None:
                 avg_dict[x] = '-'
             else:
-                avg_dict[x] = round(avg_dict[x], 2)
+                avg_dict[x] = round(avg_dict[x], 1)
 
         # get Yelp data
         yelp_result = search_object.search_business_id(business_id)
