@@ -298,7 +298,6 @@ def locationDetail(request):
         # check if the user is a business account
         is_business = Profile.objects.get(user=request.user).business_account
 
-        print("biz id: ", business_id)
         # check if location is verified
         try: is_verified = Profile.objects.filter(verified_yelp_id=business_id).values('verified')[0]['verified']
         except IndexError: is_verified = False
