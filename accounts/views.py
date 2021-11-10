@@ -272,11 +272,8 @@ def locationDetail(request):
                 "charging_rating": charging_rating,
             }
 
-
-
             form = ReviewCreateForm(form_dict)
             previous_review = Review.objects.filter(user=post_user, yelp_id=business_id)
-            # previous_review = Review.objects.filter(user=post_user, yelp_id=business_id)
             # previous_review.delete()
             if previous_review:
                 messages.info(request, 'You have reviewed this place before, please just update that one')
@@ -329,8 +326,10 @@ def locationDetail(request):
         is_business = Profile.objects.get(user=request.user).business_account
 
         # check if location is verified
-        try: is_verified = Profile.objects.filter(verified_yelp_id=business_id).values('verified')[0]['verified']
-        except IndexError: is_verified = False
+        try:
+            is_verified = Profile.objects.filter(verified_yelp_id=business_id).values('verified')[0]['verified']
+        except IndexError:
+            is_verified = False
 
         context = {
             "business": resultJSON,
