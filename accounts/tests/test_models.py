@@ -14,8 +14,6 @@ class TestModels(TestCase):
         print(prof)
         self.assertFalse(prof.business_account)
 
-
-        
     def test_review(self):
         test_user = User.objects.create(
             username='test_user',
@@ -41,14 +39,6 @@ class TestModels(TestCase):
         self.assertEquals(review.comfort_rating,4)
         self.assertEquals(review.charging_rating,5)
 
-# user = models.ForeignKey(User, on_delete=models.CASCADE)
-#     yelp_id = models.CharField(max_length=256)
-#     business_name = models.CharField(max_length=64, default="StudySpace")
-#     date_posted = models.DateTimeField(default=timezone.now)
-
-#     def __str__(self):
-#         return f"{self.business_name} is {self.user.username}'s favorite"
-
     def test_favorites(self):
         test_user = User.objects.create(
             username='test_user',
@@ -62,4 +52,24 @@ class TestModels(TestCase):
         print(fav)
         # user_prof=Favorite.objects.get(user=test_user)
         self.assertEquals(fav.yelp_id,"abcd")
+
+
+    # def test_slug(self):
+    #     test_user = User.objects.create(
+    #         username='test_user',
+    #         email='xyz@gmail.com',
+    #         password='ss000000'
+    #     )
+    #     profile = Profile.objects.create(
+    #         user=test_user,
+    #         business_account = True,
+    #         claimed_business_name = 'food_shop',
+    #         verified_yelp_id = 'defg',
+    #         verified = True,
+    #     )
         
+    #     prof = Profile.objects.get(user=test_user)
+    #     prof.business_account = False
+    #     slug = prof.profile.verified_yelp_id
+    #     print("slug: ", slug)
+    #     self.assertEqual(type(slug), str)

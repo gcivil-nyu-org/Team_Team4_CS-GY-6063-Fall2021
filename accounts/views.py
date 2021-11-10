@@ -12,6 +12,27 @@ from django.db.models import Avg
 from .yelp_api import yelp_search
 from .open_data_api import open_data_query
 import os
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.views.generic import UpdateView
+
+
+def review_update(request):
+    return render(request, "accounts/review_update_suc.html")
+
+
+class ReviewUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Review
+    fields = ['review_text']
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+
+    def test_func(self):
+        review = self.get_object()
+        if self.request.user == review.user:
+            return True
+        return False
 
 
 def index(request):
@@ -61,7 +82,6 @@ def index(request):
 
         # loop over returned businesses and
         for index, item in enumerate(resultJSON['businesses']):
-
             long_in = item['coordinates']['longitude']
             lat_in = item['coordinates']['latitude']
             name = item['name']
@@ -79,21 +99,23 @@ def index(request):
                 else:
                     item['grade'] = ''
 
-            if queryStr.get('311_check'):
-                open_data_object = open_data_query(name, zipcode, long_in, lat_in)
-                open_data_threeoneone = json.loads(
-                    json.dumps(open_data_object.three_one_one))
-
-                # check whether 311 query returns, if yes render value
-                if (open_data_threeoneone[0]['created_date'] == 'NA'):
-                    item['check_311'] = True
-                else:
-                    item['check_311'] = False
+            # Comment 311_check, by Hang
+            # if queryStr.get('311_check'):
+            #     open_data_object = open_data_query(name, zipcode, long_in, lat_in)
+            #     open_data_threeoneone = json.loads(
+            #         json.dumps(open_data_object.three_one_one))
+            #
+            #     # check whether 311 query returns, if yes render value
+            #     if (open_data_threeoneone[0]['created_date'] == 'NA'):
+            #         item['check_311'] = True
+            #     else:
+            #         item['check_311'] = False
 
             if queryStr.get('comfort'):
                 try:
                     # pull database object for location (i.e., item)
-                    db_rating = Review.objects.filter(business_name=name).aggregate(Avg('comfort_rating'))['comfort_rating__avg']
+                    db_rating = Review.objects.filter(business_name=name).aggregate(Avg('comfort_rating'))[
+                        'comfort_rating__avg']
                     if db_rating is not None:
                         item['comfort'] = int(db_rating)
                     else:
@@ -104,18 +126,20 @@ def index(request):
             if queryStr.get('food'):
                 try:
                     # pull database object for location (i.e., item)
-                    db_rating = Review.objects.filter(business_name=name).aggregate(Avg('food_rating'))['food_rating__avg']
+                    db_rating = Review.objects.filter(business_name=name).aggregate(Avg('food_rating'))[
+                        'food_rating__avg']
                     if db_rating is not None:
                         item['food'] = int(db_rating)
                     else:
                         item['food'] = 0
                 except IndexError:
                     item['food'] = 0
-            
+
             if queryStr.get('wifi'):
                 try:
                     # pull database object for location (i.e., item)
-                    db_rating = Review.objects.filter(business_name=name).aggregate(Avg('wifi_rating'))['wifi_rating__avg']
+                    db_rating = Review.objects.filter(business_name=name).aggregate(Avg('wifi_rating'))[
+                        'wifi_rating__avg']
                     if db_rating is not None:
                         item['wifi'] = int(db_rating)
                     else:
@@ -126,14 +150,15 @@ def index(request):
             if queryStr.get('charging'):
                 try:
                     # pull database object for location (i.e., item)
-                    db_rating = Review.objects.filter(business_name=name).aggregate(Avg('charging_rating'))['charging_rating__avg']
+                    db_rating = Review.objects.filter(business_name=name).aggregate(Avg('charging_rating'))[
+                        'charging_rating__avg']
                     if db_rating is not None:
                         item['charging'] = int(db_rating)
                     else:
                         item['charging'] = 0
                 except IndexError:
                     item['charging'] = 0
-                
+
         response = resultJSON['businesses']
         # save copy to provide recommended results
         unfiltered_response = response
@@ -141,41 +166,48 @@ def index(request):
         # functions used to filter results
         def filterByGrade(item):
             return item['grade'] == queryStr.get('grade')
+
         if queryStr.get('grade'):
             response = list(filter(filterByGrade, response))
 
-        def filterBy311(item):
-            if (item['check_311']):
-                return True
-        if queryStr.get('311_check'):
-            response = list(filter(filterBy311, response))
+        # Comment 311, by Hang
+        # def filterBy311(item):
+        #     if (item['check_311']):
+        #         return True
+        # if queryStr.get('311_check'):
+        #     response = list(filter(filterBy311, response))
 
         def filterByComfort(item):
             return int(item['comfort']) >= int(queryStr.get('comfort'))
+
         if queryStr.get('comfort'):
-            response = list(filter(filterByComfort, response))   
+            response = list(filter(filterByComfort, response))
 
         def filterByFood(item):
-            return int(item['food']) >= int(queryStr.get('food')) 
+            return int(item['food']) >= int(queryStr.get('food'))
+
         if queryStr.get('food'):
             response = list(filter(filterByFood, response))
 
         def filterByWifi(item):
-            return int(item['wifi']) >= int(queryStr.get('wifi')) 
+            return int(item['wifi']) >= int(queryStr.get('wifi'))
+
         if queryStr.get('wifi'):
             response = list(filter(filterByWifi, response))
 
         def filterByCharging(item):
-            return int(item['charging']) >= int(queryStr.get('charging')) 
+            return int(item['charging']) >= int(queryStr.get('charging'))
+
         if queryStr.get('charging'):
             response = list(filter(filterByCharging, response))
 
         # if the filter returns less than 3 locations, provided suggestions
-        if len(response) < 3:
-            recommendations = unfiltered_response
-        else:
-            recommendations = []
-    
+        recommendations = [i for i in unfiltered_response if i not in response] if len(response) < 3 else []
+        # if len(response) < 3:
+        #     recommendations = unfiltered_response
+        # else:
+        #     recommendations = []
+
         context = {
             'businesses': response,
             'count': resultJSON['total'],
@@ -200,7 +232,7 @@ def locationDetail(request):
                                                    yelp_id=business_id)
             if favor_delete:
                 favor_delete.delete()
-                messages.info(request, 'Unfavorite successfully')
+                messages.info(request, 'Unfavorite successfully!')
             elif Favorite.objects.filter(user=request.user).count() >= 5:
                 messages.info(request,
                               'Maximum of 5 favorited locations.' +
@@ -214,6 +246,7 @@ def locationDetail(request):
                 form = FavoriteCreateForm(form_dict)
                 if form.is_valid():
                     form.save()
+                    messages.info(request, 'Favorite successfully!')
                     print("Favorite object has been created successfully")
 
         else:  # it is a review post
@@ -226,7 +259,7 @@ def locationDetail(request):
             charging_rating = request.POST.get("charging_rating")
             general_rating = request.POST.get("general_rating")
             post_user = request.user
-
+            Review.objects.filter(user=post_user, )
             form_dict = {
                 "user": post_user,
                 "yelp_id": business_id,
@@ -238,8 +271,18 @@ def locationDetail(request):
                 "comfort_rating": comfort_rating,
                 "charging_rating": charging_rating,
             }
-            form = ReviewCreateForm(form_dict)
 
+            form = ReviewCreateForm(form_dict)
+            previous_review = Review.objects.filter(user=post_user, yelp_id=business_id)
+            # previous_review.delete()
+            if previous_review:
+                previous_review.delete()
+                messages.info(request,
+                              'The new review is posted' +
+                              ' and your earlier review is deleted.')
+            else:
+                messages.info(request,
+                              'Your review is posted')
             if form.is_valid():
                 form.save()
                 print("Review form saved successfully")
@@ -252,15 +295,17 @@ def locationDetail(request):
         review_list = Review.objects.filter(yelp_id=business_id).order_by(
             "-date_posted"
         )
-        avg_field_list = ['wifi_rating', 'general_rating', 'food_rating', 'comfort_rating', 'charging_rating']
+        avg_field_list = ['wifi_rating', 'general_rating',
+                          'food_rating', 'comfort_rating', 'charging_rating']
         avg_dict = dict()
         for field_name in avg_field_list:
-            avg_dict.update(Review.objects.filter(yelp_id=business_id).aggregate(Avg(field_name)))
+            avg_dict.update(Review.objects.filter(
+                yelp_id=business_id).aggregate(Avg(field_name)))
         for x in avg_dict:
             if avg_dict[x] is None:
                 avg_dict[x] = '-'
             else:
-                avg_dict[x] = round(avg_dict[x], 2)
+                avg_dict[x] = round(avg_dict[x], 1)
 
         # get Yelp data
         yelp_result = search_object.search_business_id(business_id)
@@ -282,6 +327,15 @@ def locationDetail(request):
         if favorite_list.count() > 0:
             has_favorite = True
 
+        # check if the user is a business account
+        is_business = Profile.objects.get(user=request.user).business_account
+
+        # check if location is verified
+        try:
+            is_verified = Profile.objects.filter(verified_yelp_id=business_id).values('verified')[0]['verified']
+        except IndexError:
+            is_verified = False
+
         context = {
             "business": resultJSON,
             "locationID": business_id,
@@ -289,7 +343,9 @@ def locationDetail(request):
             "sanitation": open_data_sanitation,
             "three_one_one": open_data_threeoneone,
             "has_favorite": has_favorite,
-            "avg_dict": avg_dict
+            "avg_dict": avg_dict,
+            "is_business": is_business,
+            "is_verified": is_verified
         }
 
     return render(request, "accounts/location_detail.html", context=context)
@@ -328,7 +384,7 @@ def loginPage(request):
 
         if user is not None:
             login(request, user)
-            return redirect("user")
+            return redirect("index")
         else:
             messages.info(request, "Username OR password is incorrect")
 
