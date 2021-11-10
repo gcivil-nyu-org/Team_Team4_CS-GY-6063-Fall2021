@@ -1,5 +1,5 @@
 from django.test import TestCase
-from accounts.models import Profile, Review, Favorite, _slug_strip, unique_slugify
+from accounts.models import Profile, Review, Favorite
 from django.contrib.auth.models import User
 
 

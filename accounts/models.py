@@ -4,6 +4,7 @@ from django.utils import timezone
 from django.template.defaultfilters import slugify
 import re
 
+
 # using slugify to create unique values if business account is removed
 def unique_slugify(instance, value, slug_field_name='slug', queryset=None,
                    slug_separator='-'):
@@ -84,7 +85,7 @@ class Profile(models.Model):
     verified = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
-        if self.business_account == False:
+        if not self.business_account:
             self.verified = False
             unique_slugify(self, self.verified_yelp_id, slug_field_name='verified_yelp_id')
         super(Profile, self).save(*args, **kwargs)
