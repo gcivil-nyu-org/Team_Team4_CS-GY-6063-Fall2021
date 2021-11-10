@@ -276,13 +276,18 @@ def locationDetail(request):
             previous_review = Review.objects.filter(user=post_user, yelp_id=business_id)
             # previous_review.delete()
             if previous_review:
-                messages.info(request, 'You have reviewed this place before, please just update that one')
+                previous_review.delete()
+                messages.info(request,
+                              'The new review is posted' +
+                              ' and your earlier review is deleted.')
             else:
-                if form.is_valid():
-                    form.save()
-                    print("Review form saved successfully")
-                else:
-                    print("Review form is invalid")
+                messages.info(request,
+                              'Your review is posted')
+            if form.is_valid():
+                form.save()
+                print("Review form saved successfully")
+            else:
+                print("Review form is invalid")
 
     search_object = yelp_search()
     context = {}
