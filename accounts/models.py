@@ -30,9 +30,6 @@ class Review(models.Model):
     class Meta:
         unique_together = ('user', 'yelp_id')
 
-    class Meta:
-        unique_together = ('user', 'yelp_id')
-
     def get_absolute_url(self):
         return reverse('review-update-suc')
 
