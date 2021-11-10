@@ -26,7 +26,14 @@
         padding: 10px 20px;
         background-color: #f5f5f5;
     }
-
+    .logo a {
+      color: #000000;
+      text-decoration: none;
+    }
+    .logo:hover {
+      color: #000000;
+      text-decoration: none;
+    }
     .btn-group {
         gap: 10px;
     }
@@ -35,14 +42,13 @@
 
 <body>
     <nav>
-        <h1>StudyCity</h1>
+        <div class="logo"><a href="{% url 'index' %}" text><h1>StudyCity</h1></a> </div>
 
         <div class="btn-group">
 
             {% if user.is_authenticated %}
             {{request.user}} <i class="fas fa-user"></i>
-            <a href="{% url 'index' %}">Search</a>
-            <a href="{% url 'user' %}">Exit Profile</a>
+            <a href="{% url 'index' %}">Exit Profile</a>
             <a href="{% url 'logout' %}">Logout</a>
 
             {% else %}
