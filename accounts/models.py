@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
+from django.urls import reverse
 
 
 class Profile(models.Model):
@@ -28,7 +29,12 @@ class Review(models.Model):
 
     class Meta:
         unique_together = ('user', 'yelp_id')
-        # unique_together = [['user', 'yelp_id']]
+
+    class Meta:
+        unique_together = ('user', 'yelp_id')
+
+    def get_absolute_url(self):
+        return reverse('review-update-suc')
 
     def __str__(self):
         return f"{self.user.username} \
