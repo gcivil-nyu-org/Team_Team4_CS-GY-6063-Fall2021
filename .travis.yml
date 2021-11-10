@@ -5,7 +5,6 @@ before-install:
 
 script:
   - python manage.py migrate
-  - python manage.py makemigrations --merge
   - python manage.py collectstatic --noinput
   - black .
   - flake8 .
