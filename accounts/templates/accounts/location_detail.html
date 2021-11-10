@@ -99,13 +99,13 @@
                         {% for review in reviews %}
 
                             {% if user == review.user %}
-                                <h3>You reviewed on {{ review.date_posted }} :
+                                <h3>You reviewed on {{ review.date_posted|date:'Y-m-d' }} :
                                     {{ review.review_text }} <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'review-update' review.id %}"
                                    target="_blank">Update</a>
                                 </h3>
 
                             {% else %}
-                                <h3>{{ review.user.username }} reviewed on {{ review.date_posted }} :
+                                <h3>{{ review.user.username }} reviewed on {{ review.date_posted|date:'Y-m-d' }} :
                                     {{ review.review_text }}
                                 </h3>
                             {% endif %}
