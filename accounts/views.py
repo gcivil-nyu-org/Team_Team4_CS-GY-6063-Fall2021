@@ -20,7 +20,6 @@ def index(request):
     context = {"google": os.environ.get("GOOGLE_API"), "location_list": cor_list}
     queryStr = request.GET
     if queryStr:
-        # print(queryStr)
         # hard code search terms to narrow scope: cafe, restaurant, and study
         search_terms = 'cafe restaurant study'
         params = {'limit': 20, 'term': search_terms}
@@ -299,6 +298,11 @@ def locationDetail(request):
         # check if the user is a business account
         is_business = Profile.objects.get(user=request.user).business_account
 
+        print("biz id: ", business_id)
+        # check if location is verified
+        try: is_verified = Profile.objects.filter(verified_yelp_id=business_id).values('verified')[0]['verified']
+        except IndexError: is_verified = False
+
         context = {
             "business": resultJSON,
             "locationID": business_id,
@@ -307,7 +311,8 @@ def locationDetail(request):
             "three_one_one": open_data_threeoneone,
             "has_favorite": has_favorite,
             "avg_dict": avg_dict,
-            "is_business": is_business
+            "is_business": is_business,
+            "is_verified": is_verified
         }
 
     return render(request, "accounts/location_detail.html", context=context)
