@@ -12,6 +12,27 @@ from django.db.models import Avg
 from .yelp_api import yelp_search
 from .open_data_api import open_data_query
 import os
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.views.generic import UpdateView
+
+
+def review_update(request):
+    return render(request, "accounts/review_update_suc.html")
+
+
+class ReviewUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Review
+    fields = ['review_text']
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+
+    def test_func(self):
+        review = self.get_object()
+        if self.request.user == review.user:
+            return True
+        return False
 
 
 def index(request):
@@ -238,7 +259,7 @@ def locationDetail(request):
             charging_rating = request.POST.get("charging_rating")
             general_rating = request.POST.get("general_rating")
             post_user = request.user
-
+            Review.objects.filter(user=post_user, )
             form_dict = {
                 "user": post_user,
                 "yelp_id": business_id,
@@ -250,8 +271,8 @@ def locationDetail(request):
                 "comfort_rating": comfort_rating,
                 "charging_rating": charging_rating,
             }
-            
-            previous_review=Review.objects.filter(user=post_user,yelp_id=business_id)
+
+            previous_review = Review.objects.filter(user=post_user, yelp_id=business_id)
             previous_review.delete()
 
             form = ReviewCreateForm(form_dict)

@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
+from django.urls import reverse
 
 
 class Profile(models.Model):
@@ -25,18 +26,19 @@ class Review(models.Model):
     charging_rating = models.IntegerField(default=0)
     comfort_rating = models.IntegerField(default=0)
     date_posted = models.DateTimeField(default=timezone.now)
-    
+
     class Meta:
-         unique_together = ('user','yelp_id')
-    
+        unique_together = ('user', 'yelp_id')
+
+    def get_absolute_url(self):
+        return reverse('review-update-suc')
 
     def __str__(self):
-        
         return f"{self.user.username} \
                 reviewed {self.business_name} \
                 as {self.review_text} \
                 on {self.date_posted}"
-    
+
 
 class Favorite(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
