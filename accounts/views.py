@@ -202,7 +202,7 @@ def index(request):
             response = list(filter(filterByCharging, response))
 
         # if the filter returns less than 3 locations, provided suggestions
-        recommendations = unfiltered_response if len(response) < 3 else []
+        recommendations = [i for i in unfiltered_response if i not in response] if len(response) < 3 else []
         # if len(response) < 3:
         #     recommendations = unfiltered_response
         # else:
@@ -384,7 +384,7 @@ def loginPage(request):
 
         if user is not None:
             login(request, user)
-            return redirect("user")
+            return redirect("index")
         else:
             messages.info(request, "Username OR password is incorrect")
 

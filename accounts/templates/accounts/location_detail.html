@@ -24,11 +24,21 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css"
           integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP" crossorigin="anonymous"/>
 
+<style>
+    .logo a {
+      color: #000000;
+      text-decoration: none;
+    }
+    .logo:hover {
+      color: #000000;
+      text-decoration: none;
+    }
+</style>
 </head>
 <body>
 <nav>
 
-    <h1>StudyCity</h1>
+    <div class="logo"><a href="{% url 'index' %}" text><h1>StudyCity</h1></a></div>
 
     <div class="btn-group">
         {% if user.is_authenticated %}
