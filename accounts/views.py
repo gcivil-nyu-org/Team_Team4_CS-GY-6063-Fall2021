@@ -41,7 +41,6 @@ def index(request):
     context = {"google": os.environ.get("GOOGLE_API"), "location_list": cor_list}
     queryStr = request.GET
     if queryStr:
-        # print(queryStr)
         # hard code search terms to narrow scope: cafe, restaurant, and study
         search_terms = 'cafe restaurant study'
         params = {'limit': 20, 'term': search_terms}
@@ -233,7 +232,7 @@ def locationDetail(request):
                                                    yelp_id=business_id)
             if favor_delete:
                 favor_delete.delete()
-                messages.info(request, 'Unfavorite successfully')
+                messages.info(request, 'Unfavorite successfully!')
             elif Favorite.objects.filter(user=request.user).count() >= 5:
                 messages.info(request,
                               'Maximum of 5 favorited locations.' +
@@ -247,6 +246,7 @@ def locationDetail(request):
                 form = FavoriteCreateForm(form_dict)
                 if form.is_valid():
                     form.save()
+                    messages.info(request, 'Favorite successfully!')
                     print("Favorite object has been created successfully")
 
         else:  # it is a review post
@@ -272,16 +272,20 @@ def locationDetail(request):
                 "charging_rating": charging_rating,
             }
 
-            previous_review = Review.objects.filter(user=post_user, yelp_id=business_id)
-            previous_review.delete()
+
 
             form = ReviewCreateForm(form_dict)
-
-            if form.is_valid():
-                form.save()
-                print("Review form saved successfully")
+            previous_review = Review.objects.filter(user=post_user, yelp_id=business_id)
+            # previous_review = Review.objects.filter(user=post_user, yelp_id=business_id)
+            # previous_review.delete()
+            if previous_review:
+                messages.info(request, 'You have reviewed this place before, please just update that one')
             else:
-                print("Review form is invalid")
+                if form.is_valid():
+                    form.save()
+                    print("Review form saved successfully")
+                else:
+                    print("Review form is invalid")
 
     search_object = yelp_search()
     context = {}
@@ -324,6 +328,10 @@ def locationDetail(request):
         # check if the user is a business account
         is_business = Profile.objects.get(user=request.user).business_account
 
+        # check if location is verified
+        try: is_verified = Profile.objects.filter(verified_yelp_id=business_id).values('verified')[0]['verified']
+        except IndexError: is_verified = False
+
         context = {
             "business": resultJSON,
             "locationID": business_id,
@@ -332,7 +340,8 @@ def locationDetail(request):
             "three_one_one": open_data_threeoneone,
             "has_favorite": has_favorite,
             "avg_dict": avg_dict,
-            "is_business": is_business
+            "is_business": is_business,
+            "is_verified": is_verified
         }
 
     return render(request, "accounts/location_detail.html", context=context)
