@@ -82,6 +82,8 @@ def index(request):
 
         search_object = yelp_search()
         result = search_object.filter_location(params)
+
+        # exception handling for invalid search terms
         invalid_search = False
         try: 
             resultJSON = json.loads(result)
@@ -178,8 +180,10 @@ def index(request):
                 except IndexError:
                     item['charging'] = 0
 
+        # function to filter only locations within NYC boroughs
         def inNYC(item):
-            return item['in_nyc'] == True
+            if item['in_nyc']:
+                return True
 
         response = resultJSON['businesses']
         # filter for locations outside of NYC 
