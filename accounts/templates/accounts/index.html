@@ -299,7 +299,6 @@
   </nav>
 
 
-
   <div class="main">
     <div id="map"></div>
     <form method="get" class="form-group my-4">
@@ -331,7 +330,9 @@
 
         <!-- filtered results -->
         <div class="my-4 container">
-          {% if businesses %}
+          {% if invalid_search %}
+          <h4>Please enter a valid New York City location :)</h4>
+          {% elif businesses %}
           <h4>Your Study Locations:</h4>
           {% endif %}
           <div class="row">
