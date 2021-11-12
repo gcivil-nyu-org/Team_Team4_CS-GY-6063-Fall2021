@@ -90,9 +90,13 @@ def index(request):
         except TypeError:
             invalid_search = True
             context = {
+                'businesses': [],
+                'count': 0,
+                'params': params,
                 'google': os.environ.get('GOOGLE_API'),
                 'location_list': cor_list,
-                'invalid_search': invalid_search
+                'invalid_search': invalid_search,
+                'recommendations': [],
             }
             return render(request, "accounts/index.html", context=context)
 
@@ -184,6 +188,8 @@ def index(request):
         def inNYC(item):
             if item['in_nyc']:
                 return True
+            else:
+                return False
 
         response = resultJSON['businesses']
         # filter for locations outside of NYC 
