@@ -20,7 +20,6 @@ for idu, user_name in enumerate(usernames):
     user = User.objects.filter(username = user_name)
     if not user:
         user = User.objects.create(username = user_name, password = password, email = user_name+"@gmail.com")
-        print("Create "+ user_name+"!")
         user.save()
     else:
         user = user[0]
