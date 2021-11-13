@@ -11,7 +11,7 @@ django.setup()
 from accounts.models import Profile
 from django.contrib.auth.models import User
 
-usernames = ["prof_test","ta_test","test1","test2","test3","test4","test_5"]
+usernames = ["prof_test","ta_test","test1","test2","test3","test4","test5"]
 business = [True, False, True, True, False, False, False]
 password = "studycity"
 for idu, user_name in enumerate(usernames):
