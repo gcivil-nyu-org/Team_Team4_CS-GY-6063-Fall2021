@@ -11,7 +11,7 @@ from .models import Profile, Review, Favorite
 from django.db.models import Avg
 from .yelp_api import yelp_search
 from .open_data_api import open_data_query
-from .zipcodes import nyc_zipcodes
+from .zip_codes import filterInNYC, zipcodeInNYC
 import os
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import UpdateView
@@ -47,7 +47,6 @@ def index(request):
                "location_list": cor_list}
     queryStr = request.GET
     if queryStr:
-        print(queryStr)
         if not queryStr.get('place') and not queryStr.get('useCurrentLocation'):
             return render(request, "accounts/index.html", context=context)
         if queryStr.get('place'):
@@ -107,10 +106,7 @@ def index(request):
             name = item['name']
             zipcode = item['location']['zip_code']
 
-            if zipcode in nyc_zipcodes:
-                item['in_nyc'] = True
-            else:
-                item['in_nyc'] = False
+            zipcodeInNYC(item, zipcode)
 
             cor_list.append(
                 {'lat': item['coordinates']['latitude'], 'lng': item['coordinates']['longitude']})
@@ -184,16 +180,9 @@ def index(request):
                 except IndexError:
                     item['charging'] = 0
 
-        # function to filter only locations within NYC boroughs
-        def inNYC(item):
-            if item['in_nyc']:
-                return True
-            else:
-                return False
-
         response = resultJSON['businesses']
         # filter for locations outside of NYC 
-        response = list(filter(inNYC, response))
+        response = list(filter(filterInNYC, response))
         # save copy to provide recommended results
         unfiltered_response = response
 

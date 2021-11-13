@@ -1,4 +1,17 @@
-nyc_zipcodes = {
+
+def filterInNYC(item):
+    if item['in_nyc']:
+        return True
+    else:
+        return False
+
+def zipcodeInNYC(item, zipcode):
+    if zipcode in nyc_zip_codes:
+        item['in_nyc'] = True
+    else:
+        item['in_nyc'] = False
+
+nyc_zip_codes = {
 '10451',
 '10452',
 '10453',
