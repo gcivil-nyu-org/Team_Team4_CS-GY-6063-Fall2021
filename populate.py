@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # coding=utf-8
-
 import sys
 import os
 import django
@@ -26,7 +25,3 @@ for idu, user_name in enumerate(usernames):
         print(user_name+" has been created before.")
         user = user[0]
     Profile.objects.filter(user=user).update(business_account=business[idu]) 
-cnt = 0
-for x in range(7):
-    cnt+=x;
-print(cnt)
