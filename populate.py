@@ -21,6 +21,12 @@ for idu, user_name in enumerate(usernames):
         user = User.objects.create(username = user_name,
             password = password, email = user_name+"@gmail.com")
         user.save()
+        print("Create an account for " + user_name + ".")
     else:
+        print(user_name+" has been created before.")
         user = user[0]
     Profile.objects.filter(user=user).update(business_account=business[idu]) 
+cnt = 0
+for x in range(7):
+    cnt+=x;
+print(cnt)
