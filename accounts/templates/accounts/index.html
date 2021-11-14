@@ -1,9 +1,15 @@
 <!DOCTYPE html>
+{% load static %}
 <html>
 
+
 <head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title> StudyCity </title>
-  {% load static %}
+
+
   <script src="{% static 'js/index.js' %}"> </script>
   <script src="https://polyfill.io/v3/polyfill.min.js?features=default">
   </script>
@@ -15,8 +21,6 @@
     integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous">
   </script>
 
-  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css"
-    integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP" crossorigin="anonymous" />
 
 
   <script type="text/javascript">
@@ -175,136 +179,20 @@
       }
     };
   </script>
-
-  <style>
-    #map {
-      height: 100%;
-      width: 50vw;
-      flex: 1;
-    }
-
-    img {
-      max-width: 100%;
-    }
-
-    html,
-    body {
-      height: 100%;
-      margin: 0;
-      padding: 0;
-    }
-
-    nav {
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      align-items: center;
-      padding: 10px 20px;
-      background-color: #f5f5f5;
-    }
-
-    .btn-group {
-      gap: 10px;
-    }
-
-    .main {
-      height: 100%;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      flex-direction: row;
-    }
-
-    .logo a {
-      color: #000000;
-      text-decoration: none;
-    }
-    .logo:hover {
-      color: #000000;
-      text-decoration: none;
-
-    }
-    .container {
-      width: 50vw;
-      flex: 1;
-    }
-
-    .dollar {
-      font-size: 25px;
-    }
-
-    .pointer {
-      cursor: pointer;
-    }
-
-    .modal-dialog-slideout {
-      min-height: 100%;
-      margin: 0 0 0 auto;
-      background: #fff;
-    }
-
-    .modal.fade .modal-dialog.modal-dialog-slideout {
-      -webkit-transform: translate(100%, 0) scale(1);
-      transform: translate(100%, 0) scale(1);
-    }
-
-    .modal.fade.show .modal-dialog.modal-dialog-slideout {
-      -webkit-transform: translate(0, 0);
-      transform: translate(0, 0);
-      display: flex;
-      align-items: stretch;
-      -webkit-box-align: stretch;
-      height: 100%;
-    }
-
-    .modal.fade.show .modal-dialog.modal-dialog-slideout .modal-body {
-      overflow-y: auto;
-      overflow-x: hidden;
-    }
-
-    .modal-dialog-slideout .modal-content {
-      border: 0;
-    }
-
-    .modal-dialog-slideout .modal-header,
-    .modal-dialog-slideout .modal-footer {
-      height: 69px;
-      display: block;
-    }
-
-    .modal-dialog-slideout .modal-header h5 {
-      float: left;
-    }
-  </style>
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css"
+    integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP" crossorigin="anonymous" />
+  <link rel="stylesheet" type="text/css" href="{% static 'css/index.css' %}">
 </head>
 
 <body>
-  <nav>
-    <div class="logo"><a href="{% url 'index' %}" text><h1>StudyCity</h1></a> </div>
-
-    <div class="btn-group">
-
-      {% if user.is_authenticated %}
-      {{request.user}} <i class="fas fa-user"></i>
-      <a href="{% url 'profile' %}">Profile</a>
-      <a href="{% url 'logout' %}">Logout</a>
-
-      {% else %}
-      <a href="{% url 'register' %}">Register</a>
-      <a href="{% url 'login' %}">Login</a>
-      {% endif %}
-
-
-    </div>
-  </nav>
-
-
+  {% include 'nav.html'%}
   <div class="main">
     <div id="map"></div>
     <form method="get" class="form-group my-4">
       <div class="container">
         <input id="locationInput" class="form-control" type="text" name="place"
-          placeholder="{% if invalid_search %}Please enter a valid New York City zip code or street address 🗽 {% else %}Enter the location / zip code{% endif %}" value="{% if params.location and not invalid_search %}{{params.location}}{% endif %}" />
+          placeholder="{% if invalid_search %}Please enter a valid New York City zip code or street address 🗽 {% else %}Enter the location / zip code{% endif %}"
+          value="{% if params.location and not invalid_search %}{{params.location}}{% endif %}" />
         <div class="form-check">
           <input name="useCurrentLocation" class="form-check-input" type="checkbox" value="" id="useCurrentLocation"
             onclick="toggleCurrentLocation()">
@@ -483,10 +371,10 @@
                       <i class="fas fa-plug" id="charging5" onclick="selectCharging(5)"></i>
                     </div>
 
-                    {% comment %} <div class = "form-check 311-switch my-4">
-                      <input name ="311_check" class="form-check-input" type="checkbox" id="flexSwitchCheck"/>
+                    {% comment %} <div class="form-check 311-switch my-4">
+                      <input name="311_check" class="form-check-input" type="checkbox" id="flexSwitchCheck" />
                       <label for="311_check">311 Noise Complaints</label>
-                    </div>  {% endcomment %}
+                    </div> {% endcomment %}
 
                     <input type="submit" class="btn btn-primary" value="Find me Study Spaces!" />
                   </div>
