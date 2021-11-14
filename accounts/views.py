@@ -11,6 +11,7 @@ from .models import Profile, Review, Favorite
 from django.db.models import Avg
 from .yelp_api import yelp_search
 from .open_data_api import open_data_query
+from .zip_codes import filterInNYC, zipcodeInNYC
 import os
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import UpdateView
@@ -37,13 +38,15 @@ class ReviewUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
 def index(request):
     cor_list = []
-    params = {'limit': 20}
-    context = {"google": os.environ.get("GOOGLE_API"), "location_list": cor_list}
+    # params = {'limit': 20} 
+    '''this seems redundant; should apply all of following before conditional'''
+    # hard code search terms to narrow scope: cafe, restaurant, and study
+    search_terms = 'cafe restaurant study'
+    params = {'limit': 20, 'term': search_terms}
+    context = {"google": os.environ.get("GOOGLE_API"), 
+               "location_list": cor_list}
     queryStr = request.GET
     if queryStr:
-        # hard code search terms to narrow scope: cafe, restaurant, and study
-        search_terms = 'cafe restaurant study'
-        params = {'limit': 20, 'term': search_terms}
         if not queryStr.get('place') and not queryStr.get('useCurrentLocation'):
             return render(request, "accounts/index.html", context=context)
         if queryStr.get('place'):
@@ -78,7 +81,23 @@ def index(request):
 
         search_object = yelp_search()
         result = search_object.filter_location(params)
-        resultJSON = json.loads(result)
+
+        # exception handling for invalid search terms
+        invalid_search = False
+        try: 
+            resultJSON = json.loads(result)
+        except TypeError:
+            invalid_search = True
+            context = {
+                'businesses': [],
+                'count': 0,
+                'params': params,
+                'google': os.environ.get('GOOGLE_API'),
+                'location_list': cor_list,
+                'invalid_search': invalid_search,
+                'recommendations': [],
+            }
+            return render(request, "accounts/index.html", context=context)
 
         # loop over returned businesses and
         for index, item in enumerate(resultJSON['businesses']):
@@ -86,6 +105,8 @@ def index(request):
             lat_in = item['coordinates']['latitude']
             name = item['name']
             zipcode = item['location']['zip_code']
+
+            zipcodeInNYC(item, zipcode)
 
             cor_list.append(
                 {'lat': item['coordinates']['latitude'], 'lng': item['coordinates']['longitude']})
@@ -160,6 +181,8 @@ def index(request):
                     item['charging'] = 0
 
         response = resultJSON['businesses']
+        # filter for locations outside of NYC 
+        response = list(filter(filterInNYC, response))
         # save copy to provide recommended results
         unfiltered_response = response
 
@@ -203,10 +226,6 @@ def index(request):
 
         # if the filter returns less than 3 locations, provided suggestions
         recommendations = [i for i in unfiltered_response if i not in response] if len(response) < 3 else []
-        # if len(response) < 3:
-        #     recommendations = unfiltered_response
-        # else:
-        #     recommendations = []
 
         context = {
             'businesses': response,
@@ -214,7 +233,8 @@ def index(request):
             'params': params,
             'google': os.environ.get('GOOGLE_API'),
             'location_list': cor_list,
-            'recommendations': recommendations
+            'recommendations': recommendations,
+            'invalid_search': invalid_search
         }
 
     return render(request, "accounts/index.html", context=context)
