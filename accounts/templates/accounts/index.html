@@ -202,14 +202,9 @@
             Use Current Location
           </label>
         </div>
+      </div>
+      <div class="ml-3" id="locationLoading"></div>
 
-        <!-- <input type="submit" /> -->
-        <!--Search results can be displayed here-->
-      </div>
-      <div id="result">
-        <!--Position information will be inserted here-->
-      </div>
-      {% comment %} <button type="button" onclick="showPosition()">Show Position</button> {% endcomment %}
 
       <div class="container">
         <button type="button" class="btn btn-secondary my-4" data-toggle="modal" data-target="#filterModal">
@@ -376,7 +371,7 @@
                       <label for="311_check">311 Noise Complaints</label>
                     </div> {% endcomment %}
 
-                    <input type="submit" class="btn btn-primary" value="Find me Study Spaces!" />
+                    <input type="submit" id="searchLocation" class="btn btn-primary" value="Find me Study Spaces!" />
                   </div>
                 </div>
               </div>
