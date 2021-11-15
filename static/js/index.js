@@ -22,5 +22,7 @@ function toggleCurrentLocation() {
     currentLocation.value = "true";
   } else {
     currentLocation.value = "false";
+    document.getElementById("locationLoading").innerHTML = "";
+    document.getElementById("searchLocation").disabled = false;
   }
 }
