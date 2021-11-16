@@ -41,7 +41,8 @@
                 {% if messages %}
                 <ul class="messages">
                     {% for message in messages %}
-                    <li{% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
+                    <p{% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</p>
+{#                        Kathy: change li to p#}
                         {% endfor %}
                 </ul>
                 {% endif %}
@@ -101,7 +102,8 @@
                             <div>
                                 <form method="post">
                                     {% csrf_token %}
-                                    <input type="text" name="review" placeholder="Your review" class="review-input" />
+{#                                    Kathy: add required field #}
+                                    <input type="text" name="review" required="required" placeholder="Your review" class="review-input" />
                                     <br />
                                     <div class="range">
                                         <p>0</p>
