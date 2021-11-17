@@ -57,7 +57,7 @@
                 </form>
                 {% if is_business and not is_verified %}
                 <div class="mt-2">
-                    <a href="https://forms.gle/AgdyCzyWNXJPLrN56">Claim this place</a>
+                    <a href="https://forms.gle/Dd1JsW9UfY9PowhJA">Claim this place</a>
                 </div>
                 {% endif %}
 
@@ -101,7 +101,8 @@
                             <div>
                                 <form method="post">
                                     {% csrf_token %}
-                                    <input type="text" name="review" required="required" placeholder="Your review" class="review-input" />
+                                    <input type="text" name="review" required="required" placeholder="Your review"
+                                        class="review-input" />
                                     <br />
                                     <div class="range">
                                         <p>0</p>
