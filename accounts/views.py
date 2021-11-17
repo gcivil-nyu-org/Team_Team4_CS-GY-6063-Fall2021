@@ -11,7 +11,7 @@ from .models import Profile, Review, Favorite
 from django.db.models import Avg
 from .yelp_api import yelp_search
 from .open_data_api import open_data_query
-from .zip_codes import filterInNYC, zipcodeInNYC
+from .zip_codes import filterInNYC, zipcodeInNYC, noNYCResults
 import os
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import UpdateView
@@ -183,6 +183,8 @@ def index(request):
         response = resultJSON['businesses']
         # filter for locations outside of NYC 
         response = list(filter(filterInNYC, response))
+        # if response is empty, also consider search invalid
+        invalid_search = noNYCResults(response)
         # save copy to provide recommended results
         unfiltered_response = response
 
