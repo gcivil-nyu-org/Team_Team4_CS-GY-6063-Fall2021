@@ -2,6 +2,7 @@ from django.test import TestCase, Client
 from django.urls import reverse
 from django.contrib.auth.models import User
 from accounts.models import Review, Favorite
+from accounts.zip_codes import zipcodeInNYC, filterInNYC, noNYCResults
 
 
 class StudyCityViewsTests(TestCase):
@@ -61,7 +62,6 @@ class StudyCityViewsTests(TestCase):
         data = {'place': [''], 'useCurrentLocation': ['true'], 'longitude': ['-73.9848232'], 'latitude': ['40.6893135'], 'open_now': ['on'], 'rating': ['4'], 'price': [''], 'comfort': ['4'], 'food': ['4'], 'wifi': ['4'], 'charging': ['4']}
         response = self.c.get(searchURL, data)
         self.assertEquals(response.status_code, 200)
-
 
     def test_index_place(self):
         searchURL = reverse('index') + '?place=tandon'
@@ -134,15 +134,19 @@ class StudyCityViewsTests(TestCase):
         response = self.c.get(reverse('profile'))
         self.assertEquals(response.status_code, 200)
 
-    # def test_register(self):
-    #     user_info = {"username": "testuser1",
-    #                  "email": "abcdef@gmail.com",
-    #                  "password1": "test000000",
-    #                  "password2": "test000000",
-    #                  "business_account": True}
-    #     print(reverse("register"))
-    #     response = self.c.post(reverse("register"), user_info)
-    #     self.assertEquals(response.status_code, 200)
-    #     logged_in = self.c.login(username='testuser1', password='test000000')
-    #     self.assertTrue(logged_in)
+    def test_zipcodeInNYC(self):
+        zipcode = '10001'
+        item = {}
+        zipcodeInNYC(item, zipcode)
+        self.assertEquals(item['in_nyc'], True)
 
+    def test_filterInNYC(self):
+        item = {}
+        item['in_nyc'] = True
+        response = filterInNYC(item)
+        self.assertEquals(response, True)
+
+    def test_noNYCResults(self):
+        empty_list = []
+        response = noNYCResults(empty_list)
+        self.assertEquals(response, True)

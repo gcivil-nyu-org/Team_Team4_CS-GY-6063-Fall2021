@@ -11,3 +11,5 @@ flake8
 coverage
 coveralls
 datetime
+boto3
+django-storages
