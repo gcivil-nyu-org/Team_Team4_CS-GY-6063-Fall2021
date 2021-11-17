@@ -1,0 +1,39 @@
+body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.form-section {
+  width: 80%;
+  max-width: 1200px;
+  background-color: aliceblue;
+  padding: 10px;
+}
+
+.review-input {
+  width: 100%;
+  margin: auto;
+  height: 50px;
+  margin-bottom: 20px;
+}
+
+.range {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+img {
+  max-width: 100%;
+  height: 500px;
+}
+
+.row {
+  display: flex;
+}
+
+.column {
+  flex: 50%;
+}
