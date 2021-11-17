@@ -29,9 +29,6 @@
       const urlSearchParams = new URLSearchParams(window.location.search);
       const params = Object.fromEntries(urlSearchParams.entries());
 
-
-      // console.log(params)
-
       if (params.rating) {
         selectRating(params.rating);
       }
@@ -405,9 +402,9 @@
                     </div>
 
 
-                    <div>
-                      <input name="311_check" type="checkbox" style="width:15px;height:20px;">
-                      <label for="311_check"> <h4>No 311 Complaints</h4></label>
+                   <div class="form-check 311-switch my-4">
+                      <input name="311_check" class="form-check-input" type="checkbox" style="width:15px;height:20px; "  id="flexSwitchCheck" />
+                      <label for="311_check"> <h4>311 Noise Complaints</h4></label>
                     </div>
 
 
