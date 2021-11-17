@@ -46,6 +46,9 @@ def index(request):
     context = {"google": os.environ.get("GOOGLE_API"), 
                "location_list": cor_list}
     queryStr = request.GET
+
+  
+
     if queryStr:
         if not queryStr.get('place') and not queryStr.get('useCurrentLocation'):
             return render(request, "accounts/index.html", context=context)
@@ -78,6 +81,8 @@ def index(request):
 
         if queryStr.get('charging'):
             params['charging'] = queryStr.get('charging')
+  
+        
 
         search_object = yelp_search()
         result = search_object.filter_location(params)
@@ -120,17 +125,34 @@ def index(request):
                 else:
                     item['grade'] = ''
 
-            # Comment 311_check, by Hang
+           
             # if queryStr.get('311_check'):
             #     open_data_object = open_data_query(name, zipcode, long_in, lat_in)
             #     open_data_threeoneone = json.loads(
             #         json.dumps(open_data_object.three_one_one))
-            #
+            
             #     # check whether 311 query returns, if yes render value
             #     if (open_data_threeoneone[0]['created_date'] == 'NA'):
             #         item['check_311'] = True
             #     else:
             #         item['check_311'] = False
+
+            if queryStr.get('311_check'):
+               
+                open_data_object = open_data_query(name, zipcode, long_in, lat_in)
+                open_data_threeoneone = json.loads(
+                json.dumps(open_data_object.three_one_one))
+                if(open_data_threeoneone[0]['created_date'] == "NA"):
+                    item['check_311'] = True
+                else:
+                    item['check_311'] = False
+              
+                
+         
+ 
+
+
+            
 
             if queryStr.get('comfort'):
                 try:
@@ -193,12 +215,16 @@ def index(request):
         if queryStr.get('grade'):
             response = list(filter(filterByGrade, response))
 
-        # Comment 311, by Hang
-        # def filterBy311(item):
-        #     if (item['check_311']):
-        #         return True
-        # if queryStr.get('311_check'):
-        #     response = list(filter(filterBy311, response))
+       
+
+        def filterBy311(item):
+            # print(queryStr.get('grade'), item.get('grade'))
+             
+            if(item['check_311']):
+                return True
+
+        if queryStr.get('311_check'):
+            response = list(filter(filterBy311, response))
 
         def filterByComfort(item):
             return int(item['comfort']) >= int(queryStr.get('comfort'))
