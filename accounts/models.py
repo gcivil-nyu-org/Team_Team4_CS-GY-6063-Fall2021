@@ -31,7 +31,7 @@ class Review(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     yelp_id = models.CharField(max_length=256)
     business_name = models.CharField(max_length=64, default="StudySpace")
-    review_text = models.CharField(max_length=256)  # Kathy: change 512 to 256
+    review_text = models.CharField(max_length=256)
     wifi_rating = models.IntegerField(default=0)
     general_rating = models.IntegerField(default=0)
     food_rating = models.IntegerField(default=0)
