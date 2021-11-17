@@ -18,13 +18,13 @@ class StudyCityViewsTests(TestCase):
         self.assertEquals(response.status_code, 200)
         self.assertTemplateUsed(response, 'accounts/index.html')
 
-    def test_profile_Get(self):
-        logged_in = self.c.login(username='testuser', password='123456e')
-        self.assertTrue(logged_in)
-        response = self.c.get(reverse('user'))
-        self.assertEquals(response.status_code, 200)
-        response = self.c.get(reverse('profile'))
-        self.assertEquals(response.status_code, 200)
+    # def test_profile_Get(self):
+    #     logged_in = self.c.login(username='testuser', password='123456e')
+    #     self.assertTrue(logged_in)
+    #     response = self.c.get(reverse('user'))
+    #     self.assertEquals(response.status_code, 200)
+    #     response = self.c.get(reverse('profile'))
+    #     self.assertEquals(response.status_code, 200)
 
     def test_location_Get(self):
         logged_in = self.c.login(username='testuser', password='123456e')
