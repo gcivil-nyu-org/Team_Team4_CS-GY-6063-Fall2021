@@ -329,11 +329,13 @@
                         value="{% if params.term %}{{params.term}}{% else %}&nbsp;{% endif %}" /> -->
                     </div>
                     <div class="form-check form-switch my-4">
-                      <input name="open_now" class="form-check-input" type="checkbox" style="width:15px;height:20px;" id="flexSwitchCheckChecked"
-                        checked={{
+                      <input name="open_now" class="form-check-input" type="checkbox" style="width:15px;height:20px;"
+                        id="flexSwitchCheckChecked" checked={{
                           params.open_now
                           }} />
-                      <label class=" form-check-label" for="flexSwitchCheckChecked"> <h4> Open Now </h4> </label>
+                      <label class=" form-check-label" for="flexSwitchCheckChecked">
+                        <h4> Open Now </h4>
+                      </label>
                     </div>
                     <div class="my-4">
                       <h4>Yelp! Rating</h4>
@@ -402,10 +404,13 @@
                     </div>
 
 
-                   <div class="form-check 311-switch my-4">
-                      <input name="311_check" class="form-check-input" type="checkbox" style="width:15px;height:20px; "  id="flexSwitchCheck" />
-                      <label for="311_check"> <h4>311 Noise Complaints</h4></label>
-                    </div>
+                    {% comment %} <div class="form-check 311-switch my-4">
+                      <input name="311_check" class="form-check-input" type="checkbox" style="width:15px;height:20px; "
+                        id="flexSwitchCheck" />
+                      <label for="311_check">
+                        <h4>311 Noise Complaints</h4>
+                      </label>
+                    </div> {% endcomment %}
 
 
                     <input type="submit" id="searchLocation" class="btn btn-primary" value="Find me Study Spaces!" />
