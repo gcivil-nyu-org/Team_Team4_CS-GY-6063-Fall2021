@@ -135,7 +135,7 @@
 
     const selectDollar = (price) => {
       if (price == 0) {
-        $("dollarInput").val("");
+        $("#priceInput").val("");
       }
       for (let index = 1; index <= price; index++) {
         $(`#price${index}`).css("color", "green");
@@ -148,7 +148,7 @@
 
     const selectComfort = (comfort) => {
       if (comfort == 0) {
-        $("comfortInput").val("");
+        $("#comfortInput").val("");
       }
       for (let index = 1; index <= comfort; index++) {
         $(`#comfort${index}`).css("color", "gold");
@@ -161,7 +161,7 @@
 
     const selectFood = (food) => {
       if (food == 0) {
-        $("foodInput").val("");
+        $("#foodInput").val("");
       }
       for (let index = 1; index <= food; index++) {
         $(`#food${index}`).css("color", "gold");
@@ -174,7 +174,7 @@
 
     const selectWifi = (wifi) => {
       if (wifi == 0) {
-        $("wifiInput").val("");
+        $("#wifiInput").val("");
       }
       for (let index = 1; index <= wifi; index++) {
         $(`#wifi${index}`).css("color", "gold");
@@ -187,7 +187,7 @@
 
     const selectCharging = (charging) => {
       if (charging == 0) {
-        $("chargingInput").val("");
+        $("#chargingInput").val("");
       }
       for (let index = 1; index <= charging; index++) {
         $(`#charging${index}`).css("color", "gold");
@@ -199,7 +199,6 @@
     };
 
     function clearFilter() {
-      console.log("clearFilter");
       selectRating(0);
       selectDollar(0);
       selectComfort(0);
