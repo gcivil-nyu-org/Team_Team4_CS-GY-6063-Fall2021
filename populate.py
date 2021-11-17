@@ -19,6 +19,7 @@ for idu, user_name in enumerate(usernames):
     if not user:
         user = User.objects.create(username = user_name,
             password = password, email = user_name+"@gmail.com")
+        user.set_password(password)
         user.save()
         print("Create an account for " + user_name + ".")
     else:
