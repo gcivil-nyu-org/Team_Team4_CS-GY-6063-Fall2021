@@ -8,7 +8,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title> StudyCity </title>
-  <link rel="shortcut icon" type="image/jpg" href="media/profile_pics/default.jpg"/>
+  <link rel="shortcut icon" type="image/jpg" href="media/profile_pics/default.jpg" />
 
 
   <script src="{% static 'js/index.js' %}"> </script>
@@ -42,10 +42,10 @@
         selectFood(params.food);
       }
       if (params.wifi) {
-        selectFood(params.wifi);
+        selectWifi(params.wifi);
       }
       if (params.charging) {
-        selectFood(params.charging);
+        selectCharging(params.charging);
       }
     });
 
@@ -134,7 +134,7 @@
     };
 
     const selectDollar = (price) => {
-      if (dollar == 0) {
+      if (price == 0) {
         $("dollarInput").val("");
       }
       for (let index = 1; index <= price; index++) {
@@ -199,14 +199,15 @@
     };
 
     function clearFilter() {
+      console.log("clearFilter");
       selectRating(0);
       selectDollar(0);
       selectComfort(0);
       selectFood(0);
       selectWifi(0);
       selectCharging(0);
-      
-        }
+
+    }
   </script>
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css"
     integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP" crossorigin="anonymous" />
@@ -243,9 +244,9 @@
         <!-- filtered results -->
         <div class="my-4 container">
           {% if businesses %}
-            <h4>Your Study Locations:</h4>
+          <h4>Your Study Locations:</h4>
           {% elif recommendations %}
-            <h6>We're sorry, no study locations met your criteria</h6>
+          <h6>We're sorry, no study locations met your criteria</h6>
           {% endif %}
           <div class="row">
             {% for data in businesses %}
@@ -396,7 +397,7 @@
                       <i class="fas fa-plug" id="charging4" onclick="selectCharging(4)"></i>
                       <i class="fas fa-plug" id="charging5" onclick="selectCharging(5)"></i>
                     </div>
-                    
+
                     <div class="btn btn-primary" onclick="clearFilter()"> Clear Filter
                     </div>
 
