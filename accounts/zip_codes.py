@@ -11,6 +11,12 @@ def zipcodeInNYC(item, zipcode):
     else:
         item['in_nyc'] = False
 
+def noNYCResults(input_list):
+    if not input_list:
+        return True
+    else:
+        return False
+
 nyc_zip_codes = {
 '10451',
 '10452',
