@@ -12,3 +12,5 @@ coverage
 coveralls
 datetime
 whitenoise
+boto3
+django-storages
