@@ -214,7 +214,9 @@
         <!-- filtered results -->
         <div class="my-4 container">
           {% if businesses %}
-          <h4>Your Study Locations:</h4>
+            <h4>Your Study Locations:</h4>
+          {% elif recommendations %}
+            <h6>We're sorry, no study locations met your criteria</h6>
           {% endif %}
           <div class="row">
             {% for data in businesses %}
