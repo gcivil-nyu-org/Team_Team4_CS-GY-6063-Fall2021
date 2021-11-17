@@ -8,6 +8,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title> StudyCity </title>
+  <link rel="shortcut icon" type="image/jpg" href="media/profile_pics/default.jpg"/>
 
 
   <script src="{% static 'js/index.js' %}"> </script>
@@ -120,6 +121,9 @@
     }
 
     const selectRating = (rating) => {
+      if (rating == 0) {
+        $("ratingInput").val("");
+      }
       for (let index = 1; index <= rating; index++) {
         $(`#rating${index}`).css("color", "gold");
         $("#ratingInput").val(rating);
@@ -130,6 +134,9 @@
     };
 
     const selectDollar = (price) => {
+      if (dollar == 0) {
+        $("dollarInput").val("");
+      }
       for (let index = 1; index <= price; index++) {
         $(`#price${index}`).css("color", "green");
         $("#priceInput").val(price);
@@ -140,6 +147,9 @@
     };
 
     const selectComfort = (comfort) => {
+      if (comfort == 0) {
+        $("comfortInput").val("");
+      }
       for (let index = 1; index <= comfort; index++) {
         $(`#comfort${index}`).css("color", "gold");
         $("#comfortInput").val(comfort);
@@ -150,6 +160,9 @@
     };
 
     const selectFood = (food) => {
+      if (food == 0) {
+        $("foodInput").val("");
+      }
       for (let index = 1; index <= food; index++) {
         $(`#food${index}`).css("color", "gold");
         $("#foodInput").val(food);
@@ -160,6 +173,9 @@
     };
 
     const selectWifi = (wifi) => {
+      if (wifi == 0) {
+        $("wifiInput").val("");
+      }
       for (let index = 1; index <= wifi; index++) {
         $(`#wifi${index}`).css("color", "gold");
         $("#wifiInput").val(wifi);
@@ -170,6 +186,9 @@
     };
 
     const selectCharging = (charging) => {
+      if (charging == 0) {
+        $("chargingInput").val("");
+      }
       for (let index = 1; index <= charging; index++) {
         $(`#charging${index}`).css("color", "gold");
         $("#chargingInput").val(charging);
@@ -178,6 +197,16 @@
         $(`#charging${index}`).css("color", "black");
       }
     };
+
+    function clearFilter() {
+      selectRating(0);
+      selectDollar(0);
+      selectComfort(0);
+      selectFood(0);
+      selectWifi(0);
+      selectCharging(0);
+      
+        }
   </script>
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css"
     integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP" crossorigin="anonymous" />
@@ -364,6 +393,9 @@
                       <i class="fas fa-plug" id="charging3" onclick="selectCharging(3)"></i>
                       <i class="fas fa-plug" id="charging4" onclick="selectCharging(4)"></i>
                       <i class="fas fa-plug" id="charging5" onclick="selectCharging(5)"></i>
+                    </div>
+                    
+                    <div class="btn btn-primary" onclick="clearFilter()"> Clear Filter
                     </div>
 
                     {% comment %} <div class="form-check 311-switch my-4">

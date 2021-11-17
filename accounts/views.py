@@ -291,7 +291,7 @@ def locationDetail(request):
                 "comfort_rating": comfort_rating,
                 "charging_rating": charging_rating,
             }
-
+            
             form = ReviewCreateForm(form_dict)
             previous_review = Review.objects.filter(user=post_user, yelp_id=business_id)
             # previous_review.delete()
