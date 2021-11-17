@@ -153,8 +153,7 @@ EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_PASS")
 
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-if '/app' in os.environ['HOME']:
-    django_heroku.settings(locals())
+
 
 AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
@@ -164,3 +163,6 @@ AWS_DEFAULT_ACL = None
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 AWS_S3_SIGNATURE_VERSION = "s3v4"
 AWS_S3_REGION_NAME = "us-east-2"
+
+if '/app' in os.environ['HOME']:
+    django_heroku.settings(locals())
