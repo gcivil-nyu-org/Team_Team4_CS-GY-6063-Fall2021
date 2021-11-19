@@ -60,17 +60,25 @@
                 Profile
             </button>
         </a>
-        <a href="{% url 'logout' %}" class="text-light">
+        <a href="{% url 'logout' %}">
             <button class="btn btn-outline-secondary">
                 Logout
             </button>
         </a>
 
         {% else %}
-        <a href="{% url 'register' %}">Register</a>
 
+        <a href="{% url 'register' %}">
+            <button class="btn btn-secondary">
+                Register
+            </button>
+        </a>
 
-        <a href="{% url 'login' %}">Login</a>
+        <a href="{% url 'login' %}">
+            <button class="btn btn-outline-secondary">
+                Login
+            </button>
+        </a>
 
         {% endif %}
         {% comment %} <a href={% url 'index' %}>Search</a> {% endcomment %}

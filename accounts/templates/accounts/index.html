@@ -221,212 +221,211 @@
 <body>
   {% include 'nav.html'%}
   <div class="main">
-    <div id="map"></div>
-    <form method="get" class="form-group my-4">
-      <div class="container">
-        <input id="locationInput" class="form-control" type="text" name="place"
-          placeholder="{% if invalid_search %}Please enter a valid New York City zip code or street address 🗽 {% else %}Enter the location / zip code{% endif %}"
-          value="{% if params.location and not invalid_search %}{{params.location}}{% endif %}" />
-        <div class="form-check">
-          <input name="useCurrentLocation" class="form-check-input" type="checkbox" value="" id="useCurrentLocation"
-            onclick="toggleCurrentLocation()">
-          <input type="hidden" name="longitude" id="longitude" />
-          <input type="hidden" name="latitude" id="latitude" />
-          <label class="form-check-label" for="useCurrentLocation">
-            Use Current Location
-          </label>
+
+
+    <form method="get" class="form-group">
+      <div class="searchBar-wrapper">
+        <div class="searchBar">
+          <h1>Find perfect study space in NYC</h1>
+          <input id="locationInput" class="form-control" type="text" name="place"
+            placeholder="{% if invalid_search %}Please enter a valid New York City zip code or street address 🗽 {% else %}Enter the location / zip code{% endif %}"
+            value="{% if params.location and not invalid_search %}{{params.location}}{% endif %}" />
+          <input type="submit" id="searchLocation" class="submit-btn" value="Find me Study Spaces!" />
+          <div class="form-check mt-3">
+            <input name="useCurrentLocation" class="form-check-input" type="checkbox" value="" id="useCurrentLocation"
+              onclick="toggleCurrentLocation()">
+            <input type="hidden" name="longitude" id="longitude" />
+            <input type="hidden" name="latitude" id="latitude" />
+            <label class="form-check-label" for="useCurrentLocation">
+              Use Current Location
+            </label>
+          </div>
+          <div class="ml-3" id="locationLoading"></div>
+          <button type="button" class="btn btn-secondary mt-3" data-bs-toggle="modal" data-bs-target="#filterModal">
+            Filter
+          </button>
+
         </div>
       </div>
-      <div class="ml-3" id="locationLoading"></div>
-
-
+      <div id="map"></div>
       <div class="container">
-        <button type="button" class="btn btn-secondary my-4" data-bs-toggle="modal" data-bs-target="#filterModal">
-          Filter
-        </button>
 
-        <!-- filtered results -->
         <div class="my-4 container">
-          {% if businesses %}
-          <h4>Your Study Locations:</h4>
-          {% elif recommendations %}
-          <h6>We're sorry, no study locations met your criteria</h6>
-          {% endif %}
-          <div class="row">
-            {% for data in businesses %}
-            <div class="col-4 my-2">
-              <div class="card" style="width: 18rem">
-                <img class="card-img-top" src="{{ data.image_url }}" alt="Card image cap" />
-                <div class="card-body">
-                  <h5 class="card-title">{{ data.name }}</h5>
-                  <p class="card-text my-0">Phone: {{ data.phone }}</p>
-                  <p class="card-text my-0">Rating: {{ data.rating }}</p>
-                  <p class="card-text my-0">Price Range: {{ data.price }}</p>
-                  <p class="card-text my-0">
-                    Address: {{ data.location.address1}}
-                  </p>
-                  <p class="card-text my-0">
-                    Zip Code: {{data.location.zip_code}}
-                  </p>
-                  <a href="{{data.url}}" target="_blank" class="card-text pointer">Visit Website</a>
-                  <!-- <a href="#" class="btn btn-primary">Go somewhere</a> -->
+          <div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModal"
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-slideout" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="filterModalLabel">Filter</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"></span>
+                  </button>
                 </div>
-                <a class="" href="{% url 'locationDetail'%}?locationID={{data.id|default:''}}">
-                  View detail
-                </a>
-              </div>
-            </div>
-            {% endfor %}
-          </div>
-        </div>
-
-
-        <!-- recommended results -->
-        {% if recommendations %}
-        <div class="my-4 container">
-          <h4>Suggested Study Locations:</h4>
-          <div class="row">
-            {% for data in recommendations %}
-            <div class="col-4 my-2">
-              <div class="card" style="width: 18rem">
-                <img class="card-img-top" src="{{ data.image_url }}" alt="Card image cap" />
-                <div class="card-body">
-                  <h5 class="card-title">{{ data.name }}</h5>
-                  <p class="card-text my-0">Phone: {{ data.phone }}</p>
-                  <p class="card-text my-0">Rating: {{ data.rating }}</p>
-                  <p class="card-text my-0">Price Range: {{ data.price }}</p>
-                  <p class="card-text my-0">
-                    Address: {{ data.location.address1}}
-                  </p>
-                  <p class="card-text my-0">
-                    Zip Code: {{data.location.zip_code}}
-                  </p>
-                  <a href="{{data.url}}" target="_blank" class="card-text pointer">Visit Website</a>
-                  <!-- <a href="#" class="btn btn-primary">Go somewhere</a> -->
-                </div>
-                <a class="" href="{% url 'locationDetail'%}?locationID={{data.id|default:''}}">
-                  View detail
-                </a>
-              </div>
-            </div>
-
-            {% endfor %}
-          </div>
-        </div>
-        {% endif %}
-
-        <div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModal"
-          aria-hidden="true">
-          <div class="modal-dialog modal-dialog-slideout" role="document">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="filterModalLabel">Filter</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true"></span>
-                </button>
-              </div>
-              <div class="modal-body">
-                <div class="row">
-                  <div class="col-12">
-                    <div class="my-4">
-                      <!-- <label>Enter the search term</label> -->
-                      <!-- <input type="text" class="form-control" name="term"
+                <div class="modal-body">
+                  <div class="row">
+                    <div class="col-12">
+                      <div class="my-4">
+                        <!-- <label>Enter the search term</label> -->
+                        <!-- <input type="text" class="form-control" name="term"
                         value="{% if params.term %}{{params.term}}{% else %}&nbsp;{% endif %}" /> -->
-                    </div>
-                    <div class="form-check form-switch my-4">
-                      <input name="open_now" class="form-check-input" type="checkbox" style="width:15px;height:20px;"
-                        id="flexSwitchCheckChecked" checked={{
+                      </div>
+                      <div class="form-check form-switch my-4">
+                        <input name="open_now" class="form-check-input" type="checkbox" id="flexSwitchCheckChecked"
+                          checked={{
                           params.open_now
                           }} />
-                      <label class=" form-check-label" for="flexSwitchCheckChecked">
-                        <h4> Open Now </h4>
-                      </label>
-                    </div>
-                    <div class="my-4">
-                      <h4>Yelp! Rating</h4>
-                      <input type="hidden" class="form-control my-4" id="ratingInput" name="rating"
-                        value="{{ params.rating }}" />
-                      <i class="fas fa-star pointer" id="rating1" onclick="selectRating(1)"></i>
-                      <i class="fas fa-star pointer" id="rating2" onclick="selectRating(2)"></i>
-                      <i class="fas fa-star pointer" id="rating3" onclick="selectRating(3)"></i>
-                      <i class="fas fa-star pointer" id="rating4" onclick="selectRating(4)"></i>
-                      <i class="fas fa-star pointer" id="rating5" onclick="selectRating(5)"></i>
-                    </div>
-                    <div class="my-4">
-                      <input type="hidden" class="form-control my-4" id="priceInput" name="price"
-                        value="{{ params.price }}" />
-                      <i class="fas fa-dollar-sign dollar pointer mr-2" id="price1" onclick="selectDollar(1)"></i>
-                      <i class="fas fa-dollar-sign dollar pointer mr-2" id="price2" onclick="selectDollar(2)"></i>
-                      <i class="fas fa-dollar-sign dollar pointer mr-2" id="price3" onclick="selectDollar(3)"></i>
-                    </div>
-
-                    <div class="my-4">
-                      <h4>Comfort</h4>
-                      <input type="hidden" class="form-control my-4" id="comfortInput" name="comfort"
-                        value="{{ params.comfort }}" />
-                      <i class="fas fa-star pointer" id="comfort1" onclick="selectComfort(1)"></i>
-                      <i class="fas fa-star pointer" id="comfort2" onclick="selectComfort(2)"></i>
-                      <i class="fas fa-star pointer" id="comfort3" onclick="selectComfort(3)"></i>
-                      <i class="fas fa-star pointer" id="comfort4" onclick="selectComfort(4)"></i>
-                      <i class="fas fa-star pointer" id="comfort5" onclick="selectComfort(5)"></i>
-                    </div>
-
-                    <div class="my-4">
-                      <h4>Food</h4>
-                      <input type="hidden" class="form-control my-4" id="foodInput" name="food"
-                        value="{{ params.food }}" />
-                      <i class="fas fa-star pointer" id="food1" onclick="selectFood(1)"></i>
-                      <i class="fas fa-star pointer" id="food2" onclick="selectFood(2)"></i>
-                      <i class="fas fa-star pointer" id="food3" onclick="selectFood(3)"></i>
-                      <i class="fas fa-star pointer" id="food4" onclick="selectFood(4)"></i>
-                      <i class="fas fa-star pointer" id="food5" onclick="selectFood(5)"></i>
-                    </div>
-
-                    <div class="my-4">
-                      <h4>WiFi</h4>
-                      <input type="hidden" class="form-control my-4" id="wifiInput" name="wifi"
-                        value="{{ params.wifi }}" />
-                      <i class="fas fa-wifi" id="wifi1" onclick="selectWifi(1)"></i>
-                      <i class="fas fa-wifi" id="wifi2" onclick="selectWifi(2)"></i>
-                      <i class="fas fa-wifi" id="wifi3" onclick="selectWifi(3)"></i>
-                      <i class="fas fa-wifi" id="wifi4" onclick="selectWifi(4)"></i>
-                      <i class="fas fa-wifi" id="wifi5" onclick="selectWifi(5)"></i>
-                    </div>
-
-                    <div class="my-4">
-                      <h4>Charging</h4>
-                      <input type="hidden" class="form-control my-4" id="chargingInput" name="charging"
-                        value="{{ params.charging }}" />
-                      <i class="fas fa-plug" id="charging1" onclick="selectCharging(1)"></i>
-                      <i class="fas fa-plug" id="charging2" onclick="selectCharging(2)"></i>
-                      <i class="fas fa-plug" id="charging3" onclick="selectCharging(3)"></i>
-                      <i class="fas fa-plug" id="charging4" onclick="selectCharging(4)"></i>
-                      <i class="fas fa-plug" id="charging5" onclick="selectCharging(5)"></i>
-                    </div>
-                    <div class="mb-3">
-                      <div class=" btn btn-secondary" onclick="clearFilter()"> Clear Filters
+                        <label class="form-check-label" for="flexSwitchCheckChecked">
+                          <h4> Open Now </h4>
+                        </label>
                       </div>
+                      <div class="my-4">
+                        <h4>Yelp! Rating</h4>
+                        <input type="hidden" class="form-control my-4" id="ratingInput" name="rating"
+                          value="{{ params.rating }}" />
+                        <i class="fas fa-star pointer" id="rating1" onclick="selectRating(1)"></i>
+                        <i class="fas fa-star pointer" id="rating2" onclick="selectRating(2)"></i>
+                        <i class="fas fa-star pointer" id="rating3" onclick="selectRating(3)"></i>
+                        <i class="fas fa-star pointer" id="rating4" onclick="selectRating(4)"></i>
+                        <i class="fas fa-star pointer" id="rating5" onclick="selectRating(5)"></i>
+                      </div>
+                      <div class="my-4">
+                        <input type="hidden" class="form-control my-4" id="priceInput" name="price"
+                          value="{{ params.price }}" />
+                        <i class="fas fa-dollar-sign dollar pointer mr-2" id="price1" onclick="selectDollar(1)"></i>
+                        <i class="fas fa-dollar-sign dollar pointer mr-2" id="price2" onclick="selectDollar(2)"></i>
+                        <i class="fas fa-dollar-sign dollar pointer mr-2" id="price3" onclick="selectDollar(3)"></i>
+                      </div>
+
+                      <div class="my-4">
+                        <h4>Comfort</h4>
+                        <input type="hidden" class="form-control my-4" id="comfortInput" name="comfort"
+                          value="{{ params.comfort }}" />
+                        <i class="fas fa-star pointer" id="comfort1" onclick="selectComfort(1)"></i>
+                        <i class="fas fa-star pointer" id="comfort2" onclick="selectComfort(2)"></i>
+                        <i class="fas fa-star pointer" id="comfort3" onclick="selectComfort(3)"></i>
+                        <i class="fas fa-star pointer" id="comfort4" onclick="selectComfort(4)"></i>
+                        <i class="fas fa-star pointer" id="comfort5" onclick="selectComfort(5)"></i>
+                      </div>
+
+                      <div class="my-4">
+                        <h4>Food</h4>
+                        <input type="hidden" class="form-control my-4" id="foodInput" name="food"
+                          value="{{ params.food }}" />
+                        <i class="fas fa-star pointer" id="food1" onclick="selectFood(1)"></i>
+                        <i class="fas fa-star pointer" id="food2" onclick="selectFood(2)"></i>
+                        <i class="fas fa-star pointer" id="food3" onclick="selectFood(3)"></i>
+                        <i class="fas fa-star pointer" id="food4" onclick="selectFood(4)"></i>
+                        <i class="fas fa-star pointer" id="food5" onclick="selectFood(5)"></i>
+                      </div>
+
+                      <div class="my-4">
+                        <h4>WiFi</h4>
+                        <input type="hidden" class="form-control my-4" id="wifiInput" name="wifi"
+                          value="{{ params.wifi }}" />
+                        <i class="fas fa-wifi" id="wifi1" onclick="selectWifi(1)"></i>
+                        <i class="fas fa-wifi" id="wifi2" onclick="selectWifi(2)"></i>
+                        <i class="fas fa-wifi" id="wifi3" onclick="selectWifi(3)"></i>
+                        <i class="fas fa-wifi" id="wifi4" onclick="selectWifi(4)"></i>
+                        <i class="fas fa-wifi" id="wifi5" onclick="selectWifi(5)"></i>
+                      </div>
+
+                      <div class="my-4">
+                        <h4>Charging</h4>
+                        <input type="hidden" class="form-control my-4" id="chargingInput" name="charging"
+                          value="{{ params.charging }}" />
+                        <i class="fas fa-plug" id="charging1" onclick="selectCharging(1)"></i>
+                        <i class="fas fa-plug" id="charging2" onclick="selectCharging(2)"></i>
+                        <i class="fas fa-plug" id="charging3" onclick="selectCharging(3)"></i>
+                        <i class="fas fa-plug" id="charging4" onclick="selectCharging(4)"></i>
+                        <i class="fas fa-plug" id="charging5" onclick="selectCharging(5)"></i>
+                      </div>
+                      <div class="mb-3">
+                        <div class=" btn btn-secondary" onclick="clearFilter()"> Clear Filters
+                        </div>
+                      </div>
+                      {% comment %} <div class="form-check 311-switch my-4">
+                        <input name="311_check" class="form-check-input" type="checkbox"
+                          style="width:15px;height:20px; " id="flexSwitchCheck" />
+                        <label for="311_check">
+                          <h4>311 Noise Complaints</h4>
+                        </label>
+                      </div> {% endcomment %}
+
                     </div>
-
-
-                    {% comment %} <div class="form-check 311-switch my-4">
-                      <input name="311_check" class="form-check-input" type="checkbox" style="width:15px;height:20px; "
-                        id="flexSwitchCheck" />
-                      <label for="311_check">
-                        <h4>311 Noise Complaints</h4>
-                      </label>
-                    </div> {% endcomment %}
-
-
-                    <input type="submit" id="searchLocation" class="btn btn-primary" value="Find me Study Spaces!" />
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
     </form>
+    <div>
+      {% if businesses %}
+      <h4>Your Study Locations:</h4>
+      {% elif recommendations %}
+      <h6>We're sorry, no study locations met your criteria</h6>
+      {% endif %}
+      <div class="row">
+        {% for data in businesses %}
+        <div class="col-4 my-2">
+          <div class="card" style="width: 18rem">
+            <img class="card-img-top" src="{{ data.image_url }}" alt="Card image cap" />
+            <div class="card-body">
+              <h5 class="card-title">{{ data.name }}</h5>
+              <p class="card-text my-0">Phone: {{ data.phone }}</p>
+              <p class="card-text my-0">Rating: {{ data.rating }}</p>
+              <p class="card-text my-0">Price Range: {{ data.price }}</p>
+              <p class="card-text my-0">
+                Address: {{ data.location.address1}}
+              </p>
+              <p class="card-text my-0">
+                Zip Code: {{data.location.zip_code}}
+              </p>
+              <a href="{{data.url}}" target="_blank" class="card-text pointer">Visit Website</a>
+              <!-- <a href="#" class="btn btn-primary">Go somewhere</a> -->
+            </div>
+            <a class="" href="{% url 'locationDetail'%}?locationID={{data.id|default:''}}">
+              View detail
+            </a>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    <!-- recommended results -->
+    {% if recommendations %}
+    <div class="my-4 container">
+      <h4>Suggested Study Locations:</h4>
+      <div class="row">
+        {% for data in recommendations %}
+        <div class="col-4 my-2">
+          <div class="card" style="width: 18rem">
+            <img class="card-img-top" src="{{ data.image_url }}" alt="Card image cap" />
+            <div class="card-body">
+              <h5 class="card-title">{{ data.name }}</h5>
+              <p class="card-text my-0">Phone: {{ data.phone }}</p>
+              <p class="card-text my-0">Rating: {{ data.rating }}</p>
+              <p class="card-text my-0">Price Range: {{ data.price }}</p>
+              <p class="card-text my-0">
+                Address: {{ data.location.address1}}
+              </p>
+              <p class="card-text my-0">
+                Zip Code: {{data.location.zip_code}}
+              </p>
+              <a href="{{data.url}}" target="_blank" class="card-text pointer">Visit Website</a>
+              <!-- <a href="#" class="btn btn-primary">Go somewhere</a> -->
+            </div>
+            <a class="" href="{% url 'locationDetail'%}?locationID={{data.id|default:''}}">
+              View detail
+            </a>
+          </div>
+        </div>
+
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+  </div>
   </div>
 
   <script src="https://maps.googleapis.com/maps/api/js?key={{google}}&callback=initMap&v=weekly" async></script>
