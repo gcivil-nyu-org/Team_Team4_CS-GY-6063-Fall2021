@@ -6,7 +6,7 @@ body {
 }
 #map {
   height: 100%;
-  width: 50vw;
+  width: 100vw;
   flex: 1;
 }
 
@@ -35,7 +35,7 @@ img {
   cursor: pointer;
 }
 
-.modal-dialog-slideout {
+/* .modal-dialog-slideout {
   min-height: 100%;
   margin: 0 0 0 auto;
   background: #fff;
@@ -72,4 +72,4 @@ img {
 
 .modal-dialog-slideout .modal-header h5 {
   float: left;
-}
+} */
