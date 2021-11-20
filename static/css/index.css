@@ -3,6 +3,7 @@ body {
   height: 100%;
   margin: 0 !important;
   padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
 }
 #map {
   min-height: 80vh;
@@ -10,6 +11,11 @@ body {
 
 img {
   max-width: 100%;
+}
+
+.card-image-top {
+  height: 200px;
+  object-fit: cover;
 }
 
 .main {
@@ -36,16 +42,17 @@ img {
   align-items: center;
 }
 .submit-btn {
-  background-color: rgb(188, 81, 0);
+  background-color: rgb(255, 163, 93);
   border: none;
   padding: 10px 15px;
   font-size: 22px;
+  font-weight: 600;
   margin: 15px 0px;
   border-radius: 8px;
   color: white;
 }
 .submit-btn:hover {
-  background-color: rgb(171, 74, 0);
+  background-color: rgb(255, 140, 51);
 }
 .searchBar-wrapper {
   background-image: url("/static/images/banner.jpg");
@@ -62,6 +69,38 @@ img {
   box-shadow: 0px 3px 15px rgba(0, 0, 0, 0.1);
   margin: 10px 0px;
   padding: 10px;
+}
+.search-wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  font-size: 50px;
+}
+.filter-btn {
+  background-color: rgb(255, 163, 93);
+  border: none;
+  padding: 11px 15px;
+  font-size: 30px;
+  margin: 0px 15px;
+  border-radius: 8px;
+  color: white;
+}
+.filter-btn:hover {
+  background-color: rgb(255, 140, 51);
+}
+.flex-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+.flex-column {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 .pointer {
   cursor: pointer;
