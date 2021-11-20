@@ -82,7 +82,7 @@ img {
   background-color: rgb(255, 163, 93);
   border: none;
   padding: 11px 15px;
-  font-size: 30px;
+  font-size: 25px;
   margin: 0px 15px;
   border-radius: 8px;
   color: white;
@@ -90,20 +90,43 @@ img {
 .filter-btn:hover {
   background-color: rgb(255, 140, 51);
 }
-.flex-row {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
+.use-current {
+  font-size: 25px;
+  background-color: rgb(235, 235, 235);
+  padding: 10px 15px;
+  cursor: pointer;
+  border-radius: 8px;
+  font-size: 20px;
+  font-weight: 500;
 }
-.flex-column {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+.use-current input[type="checkbox"] {
+  display: none;
+}
+.use-current:hover {
+  background-color: rgb(220, 220, 220);
+}
+.fa-spinner {
+  margin-right: 10px;
 }
 .pointer {
   cursor: pointer;
+}
+h4 {
+  font-size: 25px;
+  margin: 35px 0px 10px 0px;
+}
+.alert {
+  font-size: 25px;
+  background-color: rgb(255, 163, 93);
+  border-radius: 8px;
+  margin: 20px 0px;
+  color: white;
+}
+.card {
+  background-color: white;
+  border-radius: 8px !important;
+  border: none !important;
+  box-shadow: 0px 3px 15px rgba(0, 0, 0, 0.1);
 }
 
 /* .modal-dialog-slideout {

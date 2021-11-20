@@ -2,7 +2,7 @@ function showPosition() {
   if (navigator.geolocation) {
     document.getElementById(
       "locationLoading"
-    ).innerHTML = `<i class="fas fa-spinner"></i>Getting your location...`;
+    ).innerHTML = `<i class="fas fa-spinner mr-3"></i>Getting your location...`;
     document.getElementById("searchLocation").disabled = true;
     navigator.geolocation.getCurrentPosition(function (position) {
       document.getElementById("longitude").value = position.coords.longitude;
