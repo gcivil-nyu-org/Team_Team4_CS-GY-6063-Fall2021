@@ -1,3 +1,5 @@
+@import url(//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css);
+
 html,
 body {
   height: 100%;
@@ -99,9 +101,14 @@ img {
   font-size: 20px;
   font-weight: 500;
 }
-.use-current input[type="checkbox"] {
+/* .use-current input[type="checkbox"] {
   display: none;
+} */
+.use-current input[type="checkbox"] + label:before {
+  font-family: "FontAwesome";
+  content: "f096";
 }
+
 .use-current:hover {
   background-color: rgb(220, 220, 220);
 }
