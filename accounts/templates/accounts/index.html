@@ -235,15 +235,14 @@
           <div class="form-check mt-2 use-current">
             <input name="useCurrentLocation" class="form-check-input" type="checkbox" value="" id="useCurrentLocation"
               onclick="toggleCurrentLocation()">
+            <label class="form-check-label pointer" for="useCurrentLocation">
+            </label>
+            <label> Use current Location</label>
             <input type="hidden" name="longitude" id="longitude" />
             <input type="hidden" name="latitude" id="latitude" />
 
-            <label class="form-check-label pointer" for="useCurrentLocation">
-              <i class="bi bi-geo-alt"></i>
-              Use Current Location
-            </label>
           </div>
-          <div class="mt-3" id="locationLoading"></div>
+          <div class="mt-2" id="locationLoading"></div>
 
 
         </div>

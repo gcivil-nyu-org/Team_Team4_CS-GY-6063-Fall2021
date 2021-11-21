@@ -94,24 +94,39 @@ img {
 }
 .use-current {
   font-size: 25px;
-  background-color: rgb(235, 235, 235);
+  /* background-color: rgb(235, 235, 235); */
   padding: 10px 15px;
   cursor: pointer;
   border-radius: 8px;
   font-size: 20px;
   font-weight: 500;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
 }
-/* .use-current input[type="checkbox"] {
+.use-current input[type="checkbox"] {
   display: none;
-} */
-.use-current input[type="checkbox"] + label:before {
-  font-family: "FontAwesome";
-  content: "f096";
 }
 
-.use-current:hover {
-  background-color: rgb(220, 220, 220);
+.use-current input[type="checkbox"] + label {
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  background-image: url("/static/images/location-arrow.svg");
+  background-size: cover;
+  content: "use";
 }
+
+.use-current input[type="checkbox"]:checked + label {
+  background-image: url("/static/images/location-arrow-active.svg");
+}
+
+/* .use-current:hover {
+  background-color: rgb(220, 220, 220);
+} */
 .fa-spinner {
   margin-right: 10px;
 }
