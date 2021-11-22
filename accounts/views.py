@@ -95,14 +95,12 @@ def index(request):
                 'google': os.environ.get('GOOGLE_API'),
                 'location_list': cor_list,
                 'invalid_search': invalid_search,
-                'recommendations': [],
+                'recommendations': []
             }
             return render(request, "accounts/index.html", context=context)
 
         # loop over returned businesses and
         for index, item in enumerate(resultJSON['businesses']):
-            long_in = item['coordinates']['longitude']
-            lat_in = item['coordinates']['latitude']
             name = item['name']
             zipcode = item['location']['zip_code']
 
@@ -110,15 +108,6 @@ def index(request):
 
             cor_list.append(
                 {'lat': item['coordinates']['latitude'], 'lng': item['coordinates']['longitude']})
-
-            if queryStr.get('grade'):
-                open_data_object = open_data_query(name, zipcode, long_in, lat_in)
-                open_data_sanitation = open_data_object.sanitation
-
-                if (type(open_data_sanitation) is dict):
-                    item['grade'] = open_data_sanitation['grade']
-                else:
-                    item['grade'] = ''
 
             # Comment 311_check, by Hang
             # if queryStr.get('311_check'):
@@ -190,6 +179,7 @@ def index(request):
 
         # functions used to filter results
         def filterByGrade(item):
+            print("TEST - queryStr.get('grade'): ", queryStr.get('grade'))
             return item['grade'] == queryStr.get('grade')
 
         if queryStr.get('grade'):
