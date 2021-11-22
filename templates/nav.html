@@ -9,8 +9,16 @@
         width: 100%;
     }
 
-    .btn-group {
+    .btns {
         gap: 10px;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .btns p {
+        margin: 0px;
     }
 
     .logo a {
@@ -22,21 +30,56 @@
         color: #000000;
         text-decoration: none;
     }
+
+    .fa-user {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 10px;
+    }
+
+    button a {
+        color: #000000;
+        text-decoration: none;
+    }
 </style>
 <nav>
     <div class="logo"><a href="{% url 'index' %}" text>
             <h1>StudyCity</h1>
         </a></div>
 
-    <div class="btn-group">
+    <div class="btns">
         {% if user.is_authenticated %}
-        {{ request.user }} <i class="fas fa-user"></i>
-        <a href="{% url 'profile' %}">Profile</a>
-        <a href="{% url 'logout' %}">Logout</a>
+
+        <p>
+            {{ request.user }}
+        </p>
+        <i class="fas fa-user"></i>
+        <a href="{% url 'profile' %}" class="">
+            <button class="btn btn-secondary">
+                Profile
+            </button>
+        </a>
+        <a href="{% url 'logout' %}">
+            <button class="btn btn-outline-secondary">
+                Logout
+            </button>
+        </a>
 
         {% else %}
-        <a href="{% url 'register' %}">Register</a>
-        <a href="{% url 'login' %}">Login</a>
+
+        <a href="{% url 'register' %}">
+            <button class="btn btn-secondary">
+                Register
+            </button>
+        </a>
+
+        <a href="{% url 'login' %}">
+            <button class="btn btn-outline-secondary">
+                Login
+            </button>
+        </a>
+
         {% endif %}
         {% comment %} <a href={% url 'index' %}>Search</a> {% endcomment %}
     </div>

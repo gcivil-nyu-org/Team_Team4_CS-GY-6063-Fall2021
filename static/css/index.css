@@ -1,41 +1,157 @@
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap");
+
 html,
 body {
   height: 100%;
-  margin: 0;
+  margin: 0 !important;
   padding: 0;
+  font-family: "Open Sans", sans-serif;
 }
 #map {
-  height: 100%;
-  width: 50vw;
-  flex: 1;
+  min-height: 80vh;
 }
 
 img {
   max-width: 100%;
 }
 
+.card-image-top {
+  height: 200px;
+  object-fit: cover;
+}
+
 .main {
-  height: 100%;
-  margin: 0;
-  padding: 0;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
 }
 
 .container {
-  width: 50vw;
-  flex: 1;
+  width: 80vw;
+  max-width: 1000px;
 }
 
 .dollar {
   font-size: 25px;
 }
 
+.searchBar {
+  padding: 100px 0px;
+  width: 600px;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.submit-btn {
+  background-color: rgb(255, 163, 93);
+  border: none;
+  padding: 10px 15px;
+  font-size: 22px;
+  font-weight: 600;
+  margin: 15px 0px;
+  border-radius: 8px;
+  color: white;
+}
+.submit-btn:hover {
+  background-color: rgb(255, 140, 51);
+}
+.searchBar-wrapper {
+  background-image: url("/static/images/banner.jpg");
+  background-size: cover;
+}
+.searchBar h1 {
+  text-align: center;
+  margin-bottom: 25px;
+}
+.searchBar #locationInput {
+  width: 100%;
+  border: none;
+  font-size: 30px;
+  box-shadow: 0px 3px 15px rgba(0, 0, 0, 0.1);
+  margin: 10px 0px;
+  padding: 10px;
+}
+.search-wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  font-size: 50px;
+}
+.filter-btn {
+  background-color: rgb(255, 163, 93);
+  border: none;
+  padding: 11px 15px;
+  font-size: 25px;
+  margin: 0px 15px;
+  border-radius: 8px;
+  color: white;
+}
+.filter-btn:hover {
+  background-color: rgb(255, 140, 51);
+}
+.use-current {
+  font-size: 25px;
+  /* background-color: rgb(235, 235, 235); */
+  padding: 10px 15px;
+  cursor: pointer;
+  border-radius: 8px;
+  font-size: 20px;
+  font-weight: 500;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+.use-current input[type="checkbox"] {
+  display: none;
+}
+
+.use-current input[type="checkbox"] + label {
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  background-image: url("/static/images/location-arrow.svg");
+  background-size: cover;
+  content: "use";
+}
+
+.use-current input[type="checkbox"]:checked + label {
+  background-image: url("/static/images/location-arrow-active.svg");
+}
+
+/* .use-current:hover {
+  background-color: rgb(220, 220, 220);
+} */
+.fa-spinner {
+  margin-right: 10px;
+}
 .pointer {
   cursor: pointer;
 }
+h4 {
+  font-size: 25px;
+  margin: 35px 0px 10px 0px;
+}
+.alert {
+  font-size: 25px;
+  background-color: rgb(255, 163, 93);
+  border-radius: 8px;
+  margin: 20px 0px;
+  color: white;
+}
+.card {
+  background-color: white;
+  border-radius: 8px !important;
+  border: none !important;
+  box-shadow: 0px 3px 15px rgba(0, 0, 0, 0.1);
+}
 
-.modal-dialog-slideout {
+/* .modal-dialog-slideout {
   min-height: 100%;
   margin: 0 0 0 auto;
   background: #fff;
@@ -72,4 +188,4 @@ img {
 
 .modal-dialog-slideout .modal-header h5 {
   float: left;
-}
+} */
