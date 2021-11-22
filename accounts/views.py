@@ -12,6 +12,7 @@ from django.db.models import Avg
 from .yelp_api import yelp_search
 from .open_data_api import open_data_query
 from .zip_codes import filterInNYC, zipcodeInNYC, noNYCResults
+from .filters import Checks
 import os
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import UpdateView
@@ -121,6 +122,7 @@ def index(request):
             #     else:
             #         item['check_311'] = False
 
+            '''
             if queryStr.get('comfort'):
                 try:
                     # pull database object for location (i.e., item)
@@ -168,6 +170,15 @@ def index(request):
                         item['charging'] = 0
                 except IndexError:
                     item['charging'] = 0
+            '''
+
+            check_query = Checks(item, 
+                                 queryStr.get('comfort'),
+                                 queryStr.get('food'),
+                                 queryStr.get('wifi'),
+                                 queryStr.get('charging'))
+
+            check_query.perform_checks()
 
         response = resultJSON['businesses']
         # filter for locations outside of NYC 

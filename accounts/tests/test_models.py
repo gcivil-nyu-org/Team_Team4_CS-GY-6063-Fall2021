@@ -52,24 +52,3 @@ class TestModels(TestCase):
         print(fav)
         # user_prof=Favorite.objects.get(user=test_user)
         self.assertEquals(fav.yelp_id,"abcd")
-
-
-    # def test_slug(self):
-    #     test_user = User.objects.create(
-    #         username='test_user',
-    #         email='xyz@gmail.com',
-    #         password='ss000000'
-    #     )
-    #     profile = Profile.objects.create(
-    #         user=test_user,
-    #         business_account = True,
-    #         claimed_business_name = 'food_shop',
-    #         verified_yelp_id = 'defg',
-    #         verified = True,
-    #     )
-        
-    #     prof = Profile.objects.get(user=test_user)
-    #     prof.business_account = False
-    #     slug = prof.profile.verified_yelp_id
-    #     print("slug: ", slug)
-    #     self.assertEqual(type(slug), str)
