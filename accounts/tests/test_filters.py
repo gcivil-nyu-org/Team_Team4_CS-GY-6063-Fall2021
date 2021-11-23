@@ -1,5 +1,5 @@
 from django.test import TestCase
-from accounts.filters import Checks
+from accounts.filters import Checks, Filters
 from accounts.models import User, Review
 
 class StudyCityFiltersTests(TestCase):
@@ -14,7 +14,7 @@ class StudyCityFiltersTests(TestCase):
             password='ss000000'
         )
 
-        test_review = Review.objects.create(
+        review = Review.objects.create(
                 user=test_user,
                 yelp_id='abcd',
                 business_name='test_business',
@@ -25,6 +25,7 @@ class StudyCityFiltersTests(TestCase):
                 charging_rating=4,
                 general_rating=4
         )
+        review.save()
 
         checks_obj = Checks(item, 5, 5, 5, 5)
         checks_obj.perform_checks()
@@ -33,4 +34,27 @@ class StudyCityFiltersTests(TestCase):
         self.assertEqual(item['food'], 4)
         self.assertEqual(item['wifi'], 4)
         self.assertEqual(item['charging'], 4)
-        
+    
+    def test_Filters(self):
+        response = [{'id': 'sTQJwv9dQlAEF5RhLGgEaA', 'alias': 
+                       'eat-study-and-sip-nanuet', 'name': 'Eat Study & Sip', 
+                       'image_url': 'https://s3-media2.fl.yelpcdn.com/bphoto/96Q6MhU4tYni8HRc9ewbgQ/o.jpg', 'is_closed': False, 'url': 'https://www.yelp.com/biz/eat-study-and-sip-nanuet?adjust_creative=ZMh36CYXwX3gGRJaWLBxOg&utm_campaign=yelp_api_v3&utm_medium=api_v3_business_search&utm_source=ZMh36CYXwX3gGRJaWLBxOg', 
+                       'review_count': 25, 
+                       'categories': [{'alias': 'cafes', 'title': 'Cafes'}], 
+                       'rating': 4.5, 
+                       'coordinates': {'latitude': 41.089991, 'longitude': -74.013422}, 
+                       'transactions': ['delivery', 'pickup'], 
+                       'location': {'address1': '199 Main St', 'address2': None, 'address3': '', 'city': 'Nanuet', 'zip_code': '10954', 'country': 'US', 'state': 'NY', 'display_address': ['199 Main St', 'Nanuet, NY 10954']}, 'phone': '+18454423017', 'display_phone': '(845) 442-3017', 'distance': 39929.28767391573, 'in_nyc': False, 
+                       'comfort': 5, 
+                       'food': 5, 
+                       'wifi': 5, 
+                       'charging': 5}]
+
+        filters = Filters(response, 4, 4, 4, 4)
+        response = filters.filter_all()
+
+        self.assertEquals(response[0]['comfort'], 5)
+        self.assertEqual(response[0]['food'], 5)
+        self.assertEqual(response[0]['wifi'], 5)
+        self.assertEqual(response[0]['charging'], 5)
+

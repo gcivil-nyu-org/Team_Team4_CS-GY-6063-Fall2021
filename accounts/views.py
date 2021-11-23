@@ -12,7 +12,7 @@ from django.db.models import Avg
 from .yelp_api import yelp_search
 from .open_data_api import open_data_query
 from .zip_codes import filterInNYC, zipcodeInNYC, noNYCResults
-from .filters import Checks
+from .filters import Checks, Filters
 import os
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import UpdateView
@@ -102,7 +102,7 @@ def index(request):
 
         # loop over returned businesses and
         for index, item in enumerate(resultJSON['businesses']):
-            name = item['name']
+            #name = item['name'] used in 311
             zipcode = item['location']['zip_code']
 
             zipcodeInNYC(item, zipcode)
@@ -110,73 +110,13 @@ def index(request):
             cor_list.append(
                 {'lat': item['coordinates']['latitude'], 'lng': item['coordinates']['longitude']})
 
-            # Comment 311_check, by Hang
-            # if queryStr.get('311_check'):
-            #     open_data_object = open_data_query(name, zipcode, long_in, lat_in)
-            #     open_data_threeoneone = json.loads(
-            #         json.dumps(open_data_object.three_one_one))
-            #
-            #     # check whether 311 query returns, if yes render value
-            #     if (open_data_threeoneone[0]['created_date'] == 'NA'):
-            #         item['check_311'] = True
-            #     else:
-            #         item['check_311'] = False
-
-            '''
-            if queryStr.get('comfort'):
-                try:
-                    # pull database object for location (i.e., item)
-                    db_rating = Review.objects.filter(business_name=name).aggregate(Avg('comfort_rating'))[
-                        'comfort_rating__avg']
-                    if db_rating is not None:
-                        item['comfort'] = int(db_rating)
-                    else:
-                        item['comfort'] = 0
-                except IndexError:
-                    item['comfort'] = 0
-
-            if queryStr.get('food'):
-                try:
-                    # pull database object for location (i.e., item)
-                    db_rating = Review.objects.filter(business_name=name).aggregate(Avg('food_rating'))[
-                        'food_rating__avg']
-                    if db_rating is not None:
-                        item['food'] = int(db_rating)
-                    else:
-                        item['food'] = 0
-                except IndexError:
-                    item['food'] = 0
-
-            if queryStr.get('wifi'):
-                try:
-                    # pull database object for location (i.e., item)
-                    db_rating = Review.objects.filter(business_name=name).aggregate(Avg('wifi_rating'))[
-                        'wifi_rating__avg']
-                    if db_rating is not None:
-                        item['wifi'] = int(db_rating)
-                    else:
-                        item['wifi'] = 0
-                except IndexError:
-                    item['wifi'] = 0
-
-            if queryStr.get('charging'):
-                try:
-                    # pull database object for location (i.e., item)
-                    db_rating = Review.objects.filter(business_name=name).aggregate(Avg('charging_rating'))[
-                        'charging_rating__avg']
-                    if db_rating is not None:
-                        item['charging'] = int(db_rating)
-                    else:
-                        item['charging'] = 0
-                except IndexError:
-                    item['charging'] = 0
-            '''
-
             check_query = Checks(item, 
                                  queryStr.get('comfort'),
                                  queryStr.get('food'),
                                  queryStr.get('wifi'),
-                                 queryStr.get('charging'))
+                                 queryStr.get('charging')
+                                 #queryStr.get('311_check')
+                                 )
 
             check_query.perform_checks()
 
@@ -188,44 +128,16 @@ def index(request):
         # save copy to provide recommended results
         unfiltered_response = response
 
-        # functions used to filter results
-        def filterByGrade(item):
-            print("TEST - queryStr.get('grade'): ", queryStr.get('grade'))
-            return item['grade'] == queryStr.get('grade')
+        # filter results based on user filter input
+        filters = Filters(response,
+                          queryStr.get('comfort'),
+                          queryStr.get('food'),
+                          queryStr.get('wifi'),
+                          queryStr.get('charging')
+                          #queryStr.get('311_check')
+                          )
 
-        if queryStr.get('grade'):
-            response = list(filter(filterByGrade, response))
-
-        # Comment 311, by Hang
-        # def filterBy311(item):
-        #     if (item['check_311']):
-        #         return True
-        # if queryStr.get('311_check'):
-        #     response = list(filter(filterBy311, response))
-
-        def filterByComfort(item):
-            return int(item['comfort']) >= int(queryStr.get('comfort'))
-
-        if queryStr.get('comfort'):
-            response = list(filter(filterByComfort, response))
-
-        def filterByFood(item):
-            return int(item['food']) >= int(queryStr.get('food'))
-
-        if queryStr.get('food'):
-            response = list(filter(filterByFood, response))
-
-        def filterByWifi(item):
-            return int(item['wifi']) >= int(queryStr.get('wifi'))
-
-        if queryStr.get('wifi'):
-            response = list(filter(filterByWifi, response))
-
-        def filterByCharging(item):
-            return int(item['charging']) >= int(queryStr.get('charging'))
-
-        if queryStr.get('charging'):
-            response = list(filter(filterByCharging, response))
+        response = filters.filter_all()
 
         # if the filter returns less than 3 locations, provided suggestions
         recommendations = [i for i in unfiltered_response if i not in response] if len(response) < 3 else []
