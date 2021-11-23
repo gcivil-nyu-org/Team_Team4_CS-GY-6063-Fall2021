@@ -3,7 +3,7 @@ import requests
 import json
 
 
-class yelp_search:
+class Yelp_Search:
 
     def __init__(self):
         self.yelp_api_key = os.environ.get("YELP_API_KEY")
@@ -32,5 +32,3 @@ class yelp_search:
             return output
         
         print("search error (see yelp_api.py):", status_code)
-        
-        

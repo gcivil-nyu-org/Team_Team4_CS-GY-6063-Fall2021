@@ -1,7 +1,7 @@
 from .models import Review
 from django.db.models import Avg
 
-class Checks():
+class Checks:
     # abstracted way to check update item object based on query inputs
     def __init__(self, item, comfort, food, wifi, charging):
         self.item = item
@@ -82,14 +82,15 @@ class Checks():
     #         else:
     #             item['check_311'] = False
 
-class Filters():
+class Filters:
     
-    def __init__(self, response, comfort, food, wifi, charging):
+    def __init__(self, response, comfort, food, wifi, charging, yelp_rating):
         self.response = response
         self.comfort = comfort
         self.food = food
         self.wifi = wifi
         self.charging = charging
+        self.yelp_rating = yelp_rating
         self.attribute = ''
         self.argument = 0
 
@@ -109,6 +110,10 @@ class Filters():
         if self.charging:
             self.attribute = 'charging'
             self.argument = self.charging
+            self.response = list(filter(self.goe_filter, self.response))
+        if self.yelp_rating:
+            self.attribute = 'rating'
+            self.argument = self.yelp_rating
             self.response = list(filter(self.goe_filter, self.response))
         return self.response
 

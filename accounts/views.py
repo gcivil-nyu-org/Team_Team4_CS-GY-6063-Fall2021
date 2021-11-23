@@ -9,7 +9,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from .models import Profile, Review, Favorite
 from django.db.models import Avg
-from .yelp_api import yelp_search
+from .yelp_api import Yelp_Search
 from .open_data_api import open_data_query
 from .zip_codes import filterInNYC, zipcodeInNYC, noNYCResults
 from .filters import Checks, Filters
@@ -59,28 +59,14 @@ def index(request):
             elif not queryStr.get('place'):
                 return render(request, "accounts/index.html", context=context)
 
-        if queryStr.get("open_now"):
-            params["open_now"] = True
-
-        if queryStr.get("rating"):
-            params["rating"] = queryStr.get("rating")
+        # pass user defined Yelp! params to Yelp API
+        if queryStr.get('open_now'):
+            params['open_now'] = True
 
         if queryStr.get('price'):
             params['price'] = queryStr.get('price')
 
-        if queryStr.get('comfort'):
-            params['comfort'] = queryStr.get('comfort')
-
-        if queryStr.get('food'):
-            params['food'] = queryStr.get('food')
-
-        if queryStr.get('wifi'):
-            params['wifi'] = queryStr.get('wifi')
-
-        if queryStr.get('charging'):
-            params['charging'] = queryStr.get('charging')
-
-        search_object = yelp_search()
+        search_object = Yelp_Search()
         result = search_object.filter_location(params)
 
         # exception handling for invalid search terms
@@ -100,16 +86,16 @@ def index(request):
             }
             return render(request, "accounts/index.html", context=context)
 
-        # loop over returned businesses and
+        # loop over returned businesses and update items from database 
         for index, item in enumerate(resultJSON['businesses']):
             #name = item['name'] used in 311
             zipcode = item['location']['zip_code']
-
             zipcodeInNYC(item, zipcode)
 
             cor_list.append(
                 {'lat': item['coordinates']['latitude'], 'lng': item['coordinates']['longitude']})
 
+            # update search object with user defined filter
             check_query = Checks(item, 
                                  queryStr.get('comfort'),
                                  queryStr.get('food'),
@@ -128,16 +114,17 @@ def index(request):
         # save copy to provide recommended results
         unfiltered_response = response
 
-        # filter results based on user filter input
-        filters = Filters(response,
+        # filter results based on user input
+        filter_results = Filters(response,
                           queryStr.get('comfort'),
                           queryStr.get('food'),
                           queryStr.get('wifi'),
-                          queryStr.get('charging')
+                          queryStr.get('charging'),
+                          queryStr.get('rating')
                           #queryStr.get('311_check')
                           )
 
-        response = filters.filter_all()
+        response = filter_results.filter_all()
 
         # if the filter returns less than 3 locations, provided suggestions
         recommendations = [i for i in unfiltered_response if i not in response] if len(response) < 3 else []
@@ -224,7 +211,7 @@ def locationDetail(request):
             else:
                 print("Review form is invalid")
 
-    search_object = yelp_search()
+    search_object = Yelp_Search()
     context = {}
     if business_id:
         review_list = Review.objects.filter(yelp_id=business_id).order_by(
