@@ -440,7 +440,7 @@ def ActivateAccount(request, uidb64, token, *args, **kwargs):
         messages.success(request, 'Account activated successfully')
         return redirect('login')
 
-    except Exception as ex:
+    except Exception:
         pass
 
     return redirect('login')
