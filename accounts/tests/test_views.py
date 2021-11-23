@@ -1,9 +1,8 @@
 from django.test import TestCase, Client
 from django.urls import reverse
 from django.contrib.auth.models import User
-from accounts.models import Review, Favorite, Profile
+from accounts.models import Review, Favorite
 from accounts.zip_codes import zipcodeInNYC, filterInNYC, noNYCResults
-from populate import populate_test_accounts
 
 
 class StudyCityViewsTests(TestCase):
@@ -151,14 +150,3 @@ class StudyCityViewsTests(TestCase):
         empty_list = []
         response = noNYCResults(empty_list)
         self.assertEquals(response, True)
-
-    def test_populate_test_accounts(self):
-        populate_test_accounts()
-        user_name = 'prof_test'
-        user = User.objects.get(username=user_name)
-        print("user: ", user)
-        is_business = Profile.objects.get(user=user).business_account
-        # is_business_account = Profile.objects.filter(user=user).values('business_account') \
-        #                       [0]['business_account']
-        print("is_business_account: ", is_business)
-        self.assertEquals(is_business, True)
