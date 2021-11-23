@@ -10,7 +10,7 @@ from django.contrib.auth.models import User
 from .models import Profile, Review, Favorite
 from django.db.models import Avg
 from .yelp_api import Yelp_Search
-from .open_data_api import open_data_query
+from .open_data_api import Open_Data_Query
 from .zip_codes import filterInNYC, zipcodeInNYC, noNYCResults
 from .filters import Checks, Filters
 import os
@@ -86,7 +86,7 @@ def index(request):
             }
             return render(request, "accounts/index.html", context=context)
 
-        # loop over returned businesses and update items from database 
+        # loop over returned businesses, update items with database info
         for index, item in enumerate(resultJSON['businesses']):
             #name = item['name'] used in 311
             zipcode = item['location']['zip_code']
@@ -107,10 +107,13 @@ def index(request):
             check_query.perform_checks()
 
         response = resultJSON['businesses']
+
         # filter for locations outside of NYC 
         response = list(filter(filterInNYC, response))
+
         # if response is empty, also consider search invalid
         invalid_search = noNYCResults(response)
+
         # save copy to provide recommended results
         unfiltered_response = response
 
@@ -126,7 +129,7 @@ def index(request):
 
         response = filter_results.filter_all()
 
-        # if the filter returns less than 3 locations, provided suggestions
+        # if the filter returns < 3 locations, provided suggestions
         recommendations = [i for i in unfiltered_response if i not in response] if len(response) < 3 else []
 
         context = {
@@ -240,7 +243,7 @@ def locationDetail(request):
         lat_in = resultJSON["coordinates"]["latitude"]
 
         # init open data query object, run sanitation/311 queries
-        open_data_object = open_data_query(name, zipcode, long_in, lat_in)
+        open_data_object = Open_Data_Query(name, zipcode, long_in, lat_in)
         open_data_sanitation = open_data_object.sanitation
         open_data_threeoneone = open_data_object.three_one_one
 

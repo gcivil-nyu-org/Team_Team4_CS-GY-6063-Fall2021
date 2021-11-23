@@ -40,32 +40,18 @@ class StudyCityFiltersTests(TestCase):
                        'eat-study-and-sip-nanuet', 'name': 'Eat Study & Sip',
                        'review_count': 25, 
                        'categories': [{'alias': 'cafes', 'title': 'Cafes'}], 
-                       'rating': 4.5, 
-                       'coordinates': {'latitude': 41.089991, 'longitude': -74.013422}, 
-                       'transactions': ['delivery', 'pickup'], 
-                       'location': {'address1': '199 Main St', 
-                                    'address2': None, 
-                                    'address3': '', 
-                                    'city': 'Nanuet', 
-                                    'zip_code': '10954', 
-                                    'country': 'US', 
-                                    'state': 'NY', 
-                                    'display_address': ['199 Main St', 
-                                                        'Nanuet, NY 10954']}, 
-                       'phone': '+18454423017', 
-                       'display_phone': '(845) 442-3017', 
-                       'distance': 39929.28767391573, 
-                       'in_nyc': False, 
+                       'rating': 5,
                        'comfort': 5, 
                        'food': 5, 
                        'wifi': 5, 
                        'charging': 5}]
 
-        filters = Filters(response, 4, 4, 4, 4)
+        filters = Filters(response, 4, 4, 4, 4, 4)
         response = filters.filter_all()
 
         self.assertEquals(response[0]['comfort'], 5)
         self.assertEqual(response[0]['food'], 5)
         self.assertEqual(response[0]['wifi'], 5)
         self.assertEqual(response[0]['charging'], 5)
+        self.assertEqual(response[0]['rating'], 5)
 
