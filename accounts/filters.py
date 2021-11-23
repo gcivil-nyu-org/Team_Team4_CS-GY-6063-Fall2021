@@ -69,20 +69,18 @@ class Checks():
             except IndexError:
                 self.item['charging'] = 0
 
-    '''
-    # will add back once coordinate front-end with Leo
-    def check_311(self):
-        if queryStr.get('311_check'):
-            open_data_object = open_data_query(name, zipcode, long_in, lat_in)
-            open_data_threeoneone = json.loads(
-                json.dumps(open_data_object.three_one_one))
+    # # will add back once coordinate front-end with Leo
+    # def check_311(self):
+    #     if queryStr.get('311_check'):
+    #         open_data_object = open_data_query(name, zipcode, long_in, lat_in)
+    #         open_data_threeoneone = json.loads(
+    #             json.dumps(open_data_object.three_one_one))
         
-            # check whether 311 query returns, if yes render value
-            if (open_data_threeoneone[0]['created_date'] == 'NA'):
-                item['check_311'] = True
-            else:
-                item['check_311'] = False
-    '''
+    #         # check whether 311 query returns, if yes render value
+    #         if (open_data_threeoneone[0]['created_date'] == 'NA'):
+    #             item['check_311'] = True
+    #         else:
+    #             item['check_311'] = False
 
 class Filters():
     
@@ -117,18 +115,15 @@ class Filters():
     def goe_filter(self, item):
         return int(item[self.attribute]) >= int(self.argument)
 
-    '''
-    # will add back once coordinate front-end with Leo
-    Comment 311, by Hang
-    def filterBy311(item):
-        if (item['check_311']):
-            return True
+    # # will add back once coordinate front-end with Leo
+    # Comment 311, by Hang
+    # def filterBy311(item):
+    #     if (item['check_311']):
+    #         return True
 
-    Comment 311, by Hang
-    def filterBy311(item):
-        if (item['check_311']):
-            return True
-    if queryStr.get('311_check'):
-        response = list(filter(filterBy311, response))
-    '''
-
+    # Comment 311, by Hang
+    # def filterBy311(item):
+    #     if (item['check_311']):
+    #         return True
+    # if queryStr.get('311_check'):
+    #     response = list(filter(filterBy311, response))
