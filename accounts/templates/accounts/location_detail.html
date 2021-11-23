@@ -23,7 +23,6 @@
     </script>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css"
         integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP" crossorigin="anonymous" />
-
 </head>
 
 <body>
@@ -68,6 +67,7 @@
                         </div>
                         <div class="column text-center">
                             <h3>Contact Details: {{ business.phone }}</h3>
+                            <h3>Address: {{ business.location.address1 }}</h3>
                             <h3>Yelp! rating: {{ business.rating }}</h3>
                             <h3>NYC sanitation grade: {{ sanitation.grade }}</h3>
                             <h3>Grade date: {{ sanitation.grade_date }}</h3>
@@ -78,6 +78,15 @@
                             {% endfor %}
                         </div>
                         <div>
+                        </div>
+                        <div class="container">
+                            <div class="col d-flex justify-content-center">
+                                <!-- map card -->
+                                <iframe width="600" height="450" style="border:0" loading="lazy" allowfullscreen
+                                    src="https://www.google.com/maps/embed/v1/place?key={{google}}&q={{ business.location.address1 }}">
+                                </iframe>
+                                <!-- end of map -->
+                            </div>
                         </div>
                         <div class="text-center w-75 mx-auto mt-5 mb-3">
                             <h2 class="feature-title" style="font-weight: bold;">Ratings and Reviews </h2>
