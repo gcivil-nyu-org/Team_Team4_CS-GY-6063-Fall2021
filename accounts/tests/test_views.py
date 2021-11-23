@@ -13,6 +13,18 @@ class StudyCityViewsTests(TestCase):
         self.user.save()
         self.c = Client()
 
+    def login_setUp(self):
+        self.credentials = {
+            'username': 'testuser',
+            'password': 'secret'}
+        User.objects.create_user(**self.credentials)
+
+    def test_login(self):
+        # send login data
+        response = self.client.post('/login/', self.credentials, follow=True)
+        # should be logged in now
+        self.assertTrue(response.context['user'].is_active)
+
     def test_index_Get(self):
         response = self.c.get(reverse('index'))
         self.assertEquals(response.status_code, 200)

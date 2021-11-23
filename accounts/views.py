@@ -84,11 +84,11 @@ def index(request):
                 'invalid_search': invalid_search,
                 'recommendations': []
             }
+
             return render(request, "accounts/index.html", context=context)
 
         # loop over returned businesses, update items with database info
         for index, item in enumerate(resultJSON['businesses']):
-            #name = item['name'] used in 311
             zipcode = item['location']['zip_code']
             zipcodeInNYC(item, zipcode)
 
@@ -100,8 +100,8 @@ def index(request):
                                  queryStr.get('comfort'),
                                  queryStr.get('food'),
                                  queryStr.get('wifi'),
-                                 queryStr.get('charging')
-                                 #queryStr.get('311_check')
+                                 queryStr.get('charging'),
+                                 queryStr.get('311_check')
                                  )
 
             check_query.perform_checks()
@@ -123,8 +123,8 @@ def index(request):
                           queryStr.get('food'),
                           queryStr.get('wifi'),
                           queryStr.get('charging'),
-                          queryStr.get('rating')
-                          #queryStr.get('311_check')
+                          queryStr.get('rating'),
+                          queryStr.get('311_check')
                           )
 
         response = filter_results.filter_all()
