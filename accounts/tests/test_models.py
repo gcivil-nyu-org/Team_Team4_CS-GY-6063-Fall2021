@@ -1,6 +1,7 @@
 from django.test import TestCase
 from accounts.models import Profile, Review, Favorite
 from django.contrib.auth.models import User
+from populate import populate_test_accounts
 
 
 class TestModels(TestCase):
@@ -50,3 +51,11 @@ class TestModels(TestCase):
         )
 
         self.assertEquals(fav.yelp_id,"abcd")
+
+    
+    def test_populate_test_accounts(self):
+        populate_test_accounts()
+        user_name = 'prof_test'
+        user = User.objects.get(username=user_name)
+        is_business = Profile.objects.get(user=user).business_account
+        self.assertEquals(is_business, True)
