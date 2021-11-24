@@ -4,7 +4,7 @@ from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
 
-class open_data_query:
+class Open_Data_Query:
 
     def __init__(self, name, zipcode, long_in, lat_in):
         self.open_data_key = os.environ.get("OD_APP_TOKEN")

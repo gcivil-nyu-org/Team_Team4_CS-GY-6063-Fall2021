@@ -9,9 +9,10 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from .models import Profile, Review, Favorite
 from django.db.models import Avg
-from .yelp_api import yelp_search
-from .open_data_api import open_data_query
+from .yelp_api import Yelp_Search
+from .open_data_api import Open_Data_Query
 from .zip_codes import filterInNYC, zipcodeInNYC, noNYCResults
+from .filters import Checks, Filters
 import os
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import UpdateView
@@ -66,28 +67,14 @@ def index(request):
             elif not queryStr.get('place'):
                 return render(request, "accounts/index.html", context=context)
 
-        if queryStr.get("open_now"):
-            params["open_now"] = True
-
-        if queryStr.get("rating"):
-            params["rating"] = queryStr.get("rating")
+        # pass user defined Yelp! params to Yelp API
+        if queryStr.get('open_now'):
+            params['open_now'] = True
 
         if queryStr.get('price'):
             params['price'] = queryStr.get('price')
 
-        if queryStr.get('comfort'):
-            params['comfort'] = queryStr.get('comfort')
-
-        if queryStr.get('food'):
-            params['food'] = queryStr.get('food')
-
-        if queryStr.get('wifi'):
-            params['wifi'] = queryStr.get('wifi')
-
-        if queryStr.get('charging'):
-            params['charging'] = queryStr.get('charging')
-
-        search_object = yelp_search()
+        search_object = Yelp_Search()
         result = search_object.filter_location(params)
 
         # exception handling for invalid search terms
@@ -103,138 +90,54 @@ def index(request):
                 'google': os.environ.get('GOOGLE_API'),
                 'location_list': cor_list,
                 'invalid_search': invalid_search,
-                'recommendations': [],
+                'recommendations': []
             }
+
             return render(request, "accounts/index.html", context=context)
 
-        # loop over returned businesses and
+        # loop over returned businesses, update items with database info
         for index, item in enumerate(resultJSON['businesses']):
-            long_in = item['coordinates']['longitude']
-            lat_in = item['coordinates']['latitude']
-            name = item['name']
             zipcode = item['location']['zip_code']
-
             zipcodeInNYC(item, zipcode)
 
             cor_list.append(
                 {'lat': item['coordinates']['latitude'], 'lng': item['coordinates']['longitude']})
 
-            if queryStr.get('grade'):
-                open_data_object = open_data_query(name, zipcode, long_in, lat_in)
-                open_data_sanitation = open_data_object.sanitation
+            # update search object with user defined filter
+            check_query = Checks(item,
+                                 queryStr.get('comfort'),
+                                 queryStr.get('food'),
+                                 queryStr.get('wifi'),
+                                 queryStr.get('charging'),
+                                 queryStr.get('311_check')
+                                 )
 
-                if (type(open_data_sanitation) is dict):
-                    item['grade'] = open_data_sanitation['grade']
-                else:
-                    item['grade'] = ''
-
-            # Comment 311_check, by Hang
-            # if queryStr.get('311_check'):
-            #     open_data_object = open_data_query(name, zipcode, long_in, lat_in)
-            #     open_data_threeoneone = json.loads(
-            #         json.dumps(open_data_object.three_one_one))
-            #
-            #     # check whether 311 query returns, if yes render value
-            #     if (open_data_threeoneone[0]['created_date'] == 'NA'):
-            #         item['check_311'] = True
-            #     else:
-            #         item['check_311'] = False
-
-            if queryStr.get('comfort'):
-                try:
-                    # pull database object for location (i.e., item)
-                    db_rating = Review.objects.filter(business_name=name).aggregate(Avg('comfort_rating'))[
-                        'comfort_rating__avg']
-                    if db_rating is not None:
-                        item['comfort'] = int(db_rating)
-                    else:
-                        item['comfort'] = 0
-                except IndexError:
-                    item['comfort'] = 0
-
-            if queryStr.get('food'):
-                try:
-                    # pull database object for location (i.e., item)
-                    db_rating = Review.objects.filter(business_name=name).aggregate(Avg('food_rating'))[
-                        'food_rating__avg']
-                    if db_rating is not None:
-                        item['food'] = int(db_rating)
-                    else:
-                        item['food'] = 0
-                except IndexError:
-                    item['food'] = 0
-
-            if queryStr.get('wifi'):
-                try:
-                    # pull database object for location (i.e., item)
-                    db_rating = Review.objects.filter(business_name=name).aggregate(Avg('wifi_rating'))[
-                        'wifi_rating__avg']
-                    if db_rating is not None:
-                        item['wifi'] = int(db_rating)
-                    else:
-                        item['wifi'] = 0
-                except IndexError:
-                    item['wifi'] = 0
-
-            if queryStr.get('charging'):
-                try:
-                    # pull database object for location (i.e., item)
-                    db_rating = Review.objects.filter(business_name=name).aggregate(Avg('charging_rating'))[
-                        'charging_rating__avg']
-                    if db_rating is not None:
-                        item['charging'] = int(db_rating)
-                    else:
-                        item['charging'] = 0
-                except IndexError:
-                    item['charging'] = 0
+            check_query.perform_checks()
 
         response = resultJSON['businesses']
+
         # filter for locations outside of NYC
         response = list(filter(filterInNYC, response))
+
         # if response is empty, also consider search invalid
         invalid_search = noNYCResults(response)
+
         # save copy to provide recommended results
         unfiltered_response = response
 
-        # functions used to filter results
-        def filterByGrade(item):
-            return item['grade'] == queryStr.get('grade')
+        # filter results based on user input
+        filter_results = Filters(response,
+                                 queryStr.get('comfort'),
+                                 queryStr.get('food'),
+                                 queryStr.get('wifi'),
+                                 queryStr.get('charging'),
+                                 queryStr.get('rating'),
+                                 queryStr.get('311_check')
+                                 )
 
-        if queryStr.get('grade'):
-            response = list(filter(filterByGrade, response))
+        response = filter_results.filter_all()
 
-        # Comment 311, by Hang
-        # def filterBy311(item):
-        #     if (item['check_311']):
-        #         return True
-        # if queryStr.get('311_check'):
-        #     response = list(filter(filterBy311, response))
-
-        def filterByComfort(item):
-            return int(item['comfort']) >= int(queryStr.get('comfort'))
-
-        if queryStr.get('comfort'):
-            response = list(filter(filterByComfort, response))
-
-        def filterByFood(item):
-            return int(item['food']) >= int(queryStr.get('food'))
-
-        if queryStr.get('food'):
-            response = list(filter(filterByFood, response))
-
-        def filterByWifi(item):
-            return int(item['wifi']) >= int(queryStr.get('wifi'))
-
-        if queryStr.get('wifi'):
-            response = list(filter(filterByWifi, response))
-
-        def filterByCharging(item):
-            return int(item['charging']) >= int(queryStr.get('charging'))
-
-        if queryStr.get('charging'):
-            response = list(filter(filterByCharging, response))
-
-        # if the filter returns less than 3 locations, provided suggestions
+        # if the filter returns < 3 locations, provided suggestions
         recommendations = [i for i in unfiltered_response if i not in response] if len(
             response) < 3 else []
 
@@ -320,7 +223,7 @@ def locationDetail(request):
             else:
                 print("Review form is invalid")
 
-    search_object = yelp_search()
+    search_object = Yelp_Search()
     context = {}
     if business_id:
         review_list = Review.objects.filter(yelp_id=business_id).order_by(
@@ -349,7 +252,7 @@ def locationDetail(request):
         lat_in = resultJSON["coordinates"]["latitude"]
 
         # init open data query object, run sanitation/311 queries
-        open_data_object = open_data_query(name, zipcode, long_in, lat_in)
+        open_data_object = Open_Data_Query(name, zipcode, long_in, lat_in)
         open_data_sanitation = open_data_object.sanitation
         open_data_threeoneone = open_data_object.three_one_one
 

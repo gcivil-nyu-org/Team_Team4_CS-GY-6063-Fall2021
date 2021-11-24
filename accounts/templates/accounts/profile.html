@@ -1,5 +1,6 @@
 {% load crispy_forms_tags %}
 {% load static %}
+{% load tz %}
 <!-- <!DOCTYPE html> -->
 <html>
 
@@ -70,7 +71,7 @@
             {% for review in reviews %}
             <p>You reviewed <a
                     href="{% url 'locationDetail' %}?locationID={{ review.yelp_id }}">{{ review.business_name }}</a> on
-                {{ review.date_posted }} : {{ review.review_text }}</p>
+                {{ review.date_posted|timezone:"US/Eastern"|date:'Y-m-d'}} : {{ review.review_text }}</p>
             {% endfor %}
         </div>
         <div>
@@ -79,7 +80,7 @@
             {% endif %}
             {% for favorite in favorites %}
             {#            <p>{{ favorite.yelp_id }}</p>#}
-            <p>{{ favorite.business_name }}</p>>
+{#            <p>{{ favorite.business_name }}</p>#}
             <a href="{% url 'locationDetail' %}?locationID={{ favorite.yelp_id }}">{{ favorite.business_name }}</a>
             {% endfor %}
         </div>
