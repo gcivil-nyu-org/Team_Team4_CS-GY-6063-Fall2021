@@ -66,7 +66,16 @@
                         <div class="column mx-auto ">
                             <img src="{{ business.image_url }}" />
                         </div>
-                        <div class="column text-center">
+						<div class="column container">
+                            <div class="col d-flex justify-content-center">
+                                <!-- map card -->
+                                <iframe width="520" height="450" style="border:0" loading="lazy" allowfullscreen
+                                    src="https://www.google.com/maps/embed/v1/place?key={{google}}&q={{ business.location.address1 }}">
+                                </iframe>
+                                <!-- end of map -->
+                            </div>
+                        </div>
+                        <div class="text-center">
                             <h3>Contact Details: {{ business.phone }}</h3>
                             <h3>Address: {{ business.location.address1 }}</h3>
                             <h3>Yelp! rating: {{ business.rating }}</h3>
