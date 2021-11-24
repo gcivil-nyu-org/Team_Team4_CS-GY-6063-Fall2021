@@ -372,11 +372,6 @@ def logoutUser(request):
     return redirect("login")
 
 
-@login_required(login_url="login")
-def user(request):
-    return render(request, "accounts/user.html")
-
-
 @login_required
 def profile(request):
     if request.method == "POST":

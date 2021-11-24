@@ -51,6 +51,22 @@ class RegisterTest(BaseTest):
         self.assertEqual(response.status_code, 200)
 
 
+class LoginTest(BaseTest):
+    def test_can_view_page_correctly(self):
+        response = self.client.get(self.login_url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'accounts/login.html')
+
+    def test_login_success(self):
+        user = User.objects.create_user('testuser', 'crytest@gmail.com')
+        user.set_password('tetetebvghhhhj')
+        user.is_active = True
+        user.save()
+        response = self.client.post(
+            self.login_url, {'username': 'testuser', 'password': 'acbddfsd'}, format='text/html')
+        self.assertEqual(response.status_code, 200)
+
+
 class UserVerifyTest(BaseTest):
     def test_user_ctivates_success(self):
         user = User.objects.create_user('testuser', 'crytest@gmail.com')
