@@ -15,19 +15,19 @@ class StudyCityFiltersTests(TestCase):
         )
 
         review = Review.objects.create(
-                user=test_user,
-                yelp_id='abcd',
-                business_name='test_business',
-                review_text='good', 
-                comfort_rating=4,
-                food_rating=4,
-                wifi_rating=4,
-                charging_rating=4,
-                general_rating=4
+            user=test_user,
+            yelp_id='abcd',
+            business_name='test_business',
+            review_text='good', 
+            comfort_rating=4,
+            food_rating=4,
+            wifi_rating=4,
+            charging_rating=4,
+            general_rating=4
         )
         review.save()
 
-        checks_obj = Checks(item, 5, 5, 5, 5)
+        checks_obj = Checks(item, 5, 5, 5, 5, False)
         checks_obj.perform_checks()
 
         self.assertEqual(item['comfort'], 4)
@@ -44,9 +44,10 @@ class StudyCityFiltersTests(TestCase):
                        'comfort': 5, 
                        'food': 5, 
                        'wifi': 5, 
-                       'charging': 5}]
+                       'charging': 5,
+                       'check_311': False}]
 
-        filters = Filters(response, 4, 4, 4, 4, 4)
+        filters = Filters(response, 4, 4, 4, 4, 4, False)
         response = filters.filter_all()
 
         self.assertEquals(response[0]['comfort'], 5)
@@ -54,4 +55,4 @@ class StudyCityFiltersTests(TestCase):
         self.assertEqual(response[0]['wifi'], 5)
         self.assertEqual(response[0]['charging'], 5)
         self.assertEqual(response[0]['rating'], 5)
-
+        self.assertEqual(response[0]['check_311'], False)

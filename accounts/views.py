@@ -17,6 +17,14 @@ import os
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import UpdateView
 
+from django.contrib.sites.shortcuts import get_current_site
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode
+from django.template.loader import render_to_string
+from .utils import account_activation_token
+from django.utils.encoding import force_text
+from django.utils.http import urlsafe_base64_decode
+
 
 def review_update(request):
     return render(request, "accounts/review_update_suc.html")
@@ -39,12 +47,12 @@ class ReviewUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
 def index(request):
     cor_list = []
-    # params = {'limit': 20} 
+    # params = {'limit': 20}
     '''this seems redundant; should apply all of following before conditional'''
     # hard code search terms to narrow scope: cafe, restaurant, and study
     search_terms = 'cafe restaurant study'
     params = {'limit': 20, 'term': search_terms}
-    context = {"google": os.environ.get("GOOGLE_API"), 
+    context = {"google": os.environ.get("GOOGLE_API"),
                "location_list": cor_list}
     queryStr = request.GET
     if queryStr:
@@ -71,7 +79,7 @@ def index(request):
 
         # exception handling for invalid search terms
         invalid_search = False
-        try: 
+        try:
             resultJSON = json.loads(result)
         except TypeError:
             invalid_search = True
@@ -84,11 +92,11 @@ def index(request):
                 'invalid_search': invalid_search,
                 'recommendations': []
             }
+
             return render(request, "accounts/index.html", context=context)
 
         # loop over returned businesses, update items with database info
         for index, item in enumerate(resultJSON['businesses']):
-            #name = item['name'] used in 311
             zipcode = item['location']['zip_code']
             zipcodeInNYC(item, zipcode)
 
@@ -96,19 +104,19 @@ def index(request):
                 {'lat': item['coordinates']['latitude'], 'lng': item['coordinates']['longitude']})
 
             # update search object with user defined filter
-            check_query = Checks(item, 
+            check_query = Checks(item,
                                  queryStr.get('comfort'),
                                  queryStr.get('food'),
                                  queryStr.get('wifi'),
-                                 queryStr.get('charging')
-                                 #queryStr.get('311_check')
+                                 queryStr.get('charging'),
+                                 queryStr.get('311_check')
                                  )
 
             check_query.perform_checks()
 
         response = resultJSON['businesses']
 
-        # filter for locations outside of NYC 
+        # filter for locations outside of NYC
         response = list(filter(filterInNYC, response))
 
         # if response is empty, also consider search invalid
@@ -119,18 +127,19 @@ def index(request):
 
         # filter results based on user input
         filter_results = Filters(response,
-                          queryStr.get('comfort'),
-                          queryStr.get('food'),
-                          queryStr.get('wifi'),
-                          queryStr.get('charging'),
-                          queryStr.get('rating')
-                          #queryStr.get('311_check')
-                          )
+                                 queryStr.get('comfort'),
+                                 queryStr.get('food'),
+                                 queryStr.get('wifi'),
+                                 queryStr.get('charging'),
+                                 queryStr.get('rating'),
+                                 queryStr.get('311_check')
+                                 )
 
         response = filter_results.filter_all()
 
         # if the filter returns < 3 locations, provided suggestions
-        recommendations = [i for i in unfiltered_response if i not in response] if len(response) < 3 else []
+        recommendations = [i for i in unfiltered_response if i not in response] if len(
+            response) < 3 else []
 
         context = {
             'businesses': response,
@@ -196,7 +205,7 @@ def locationDetail(request):
                 "comfort_rating": comfort_rating,
                 "charging_rating": charging_rating,
             }
-            
+
             form = ReviewCreateForm(form_dict)
             previous_review = Review.objects.filter(user=post_user, yelp_id=business_id)
             # previous_review.delete()
@@ -257,7 +266,8 @@ def locationDetail(request):
 
         # check if location is verified
         try:
-            is_verified = Profile.objects.filter(verified_yelp_id=business_id).values('verified')[0]['verified']
+            is_verified = Profile.objects.filter(
+                verified_yelp_id=business_id).values('verified')[0]['verified']
         except IndexError:
             is_verified = False
 
@@ -282,7 +292,9 @@ def registerPage(request):
     if request.method == "POST":
         form = RegisterForm(request.POST)
         if form.is_valid():
-            form.save()
+            createdUser = form.save(commit=False)
+            createdUser.is_active = False
+            createdUser.save()
             # initialize profile
             user = form.cleaned_data.get("username")
             user_obj = User.objects.get(username=user)
@@ -291,14 +303,51 @@ def registerPage(request):
             # ack business account creation
             if business_account:
                 Profile.objects.filter(user=user_obj).update(business_account=True)
-                messages.success(
-                    request, "Business account successfully created for " + user
-                )
+                # messages.success(
+                #     request, "Business account successfully created for " + user
+                # )
             else:
-                messages.success(request, "Account successfully created for " + user)
+                # messages.success(request, "Account successfully created for " + user)
+                pass
+
+            # send email
+            current_site = get_current_site(request)
+            subject = 'Activate Your StudyCity Account'
+            message = render_to_string('accounts/account_activation_email.html', {
+                'user': createdUser,
+                'domain': current_site.domain,
+                'uid': urlsafe_base64_encode(force_bytes(createdUser.pk)),
+                'token': account_activation_token.make_token(createdUser),
+            })
+            createdUser.email_user(subject, message)
+            messages.success(
+                request, ('Please Confirm your email to complete registration.'))
             return redirect("login")
 
     return render(request, "accounts/register.html", {"form": form})
+
+
+def ActivateAccount(request, uidb64, token, *args, **kwargs):
+    try:
+        id = force_text(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=id)
+
+        if not account_activation_token.check_token(user, token):
+            return redirect('login'+'?message='+'User already activated')
+
+        if user.is_active:
+            return redirect('login')
+        user.is_active = True
+        user.profile.email_confirmed = True
+        user.save()
+
+        messages.success(request, 'Account activated successfully')
+        return redirect('login')
+
+    except Exception:
+        pass
+
+    return redirect('login')
 
 
 def loginPage(request):
@@ -321,11 +370,6 @@ def loginPage(request):
 def logoutUser(request):
     logout(request)
     return redirect("login")
-
-
-@login_required(login_url="login")
-def user(request):
-    return render(request, "accounts/user.html")
 
 
 @login_required

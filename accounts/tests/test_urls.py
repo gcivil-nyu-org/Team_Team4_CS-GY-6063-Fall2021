@@ -2,8 +2,8 @@ from django.test import SimpleTestCase
 from django.urls import reverse, resolve
 from django.template.loader import render_to_string
 from accounts.views import index, loginPage, registerPage, \
-                           logoutUser, user, profile, locationDetail
-                        
+    logoutUser, profile, locationDetail
+
 
 class StudyCityURLTests(SimpleTestCase):
 
@@ -22,10 +22,6 @@ class StudyCityURLTests(SimpleTestCase):
     def test_url_logout(self):
         url = reverse('logout')
         self.assertEquals(resolve(url).func, logoutUser)
-
-    def test_url_user(self):
-        url = reverse('user')
-        self.assertEquals(resolve(url).func, user)
 
     def test_url_profile(self):
         url = reverse('profile')

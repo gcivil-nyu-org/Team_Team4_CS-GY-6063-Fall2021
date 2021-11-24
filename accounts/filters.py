@@ -1,21 +1,25 @@
 from .models import Review
 from django.db.models import Avg
+import json
+from .open_data_api import Open_Data_Query
 
 class Checks:
     # abstracted way to check update item object based on query inputs
-    def __init__(self, item, comfort, food, wifi, charging):
+    def __init__(self, item, comfort, food, wifi, charging, three_one_one):
         self.item = item
         self.name = item['name']
         self.comfort = comfort
         self.food = food
         self.wifi = wifi
         self.charging = charging
+        self.three_one_one = three_one_one
         
     def perform_checks(self):
         self.check_comfort()
         self.check_food()
         self.check_wifi()
         self.check_charging()
+        self.check_311()
 
     def check_comfort(self):
         if self.comfort:
@@ -69,28 +73,32 @@ class Checks:
             except IndexError:
                 self.item['charging'] = 0
 
-    # # will add back once coordinate front-end with Leo
-    # def check_311(self):
-    #     if queryStr.get('311_check'):
-    #         open_data_object = open_data_query(name, zipcode, long_in, lat_in)
-    #         open_data_threeoneone = json.loads(
-    #             json.dumps(open_data_object.three_one_one))
+    def check_311(self):
+        if self.three_one_one:
+            zip_code = self.item['location']['zip_code']
+            long_in = self.item['coordinates']['longitude']
+            lat_in = self.item['coordinates']['latitude']
+
+            open_data_object = Open_Data_Query(self.name, zip_code, long_in, lat_in)
+            open_data_threeoneone = json.loads(
+                json.dumps(open_data_object.three_one_one))
         
-    #         # check whether 311 query returns, if yes render value
-    #         if (open_data_threeoneone[0]['created_date'] == 'NA'):
-    #             item['check_311'] = True
-    #         else:
-    #             item['check_311'] = False
+            # check whether 311 query returns, if yes update value
+            if (open_data_threeoneone[0]['created_date'] == 'NA'):
+                self.item['check_311'] = True
+            else:
+                self.item['check_311'] = False
 
 class Filters:
     
-    def __init__(self, response, comfort, food, wifi, charging, yelp_rating):
+    def __init__(self, response, comfort, food, wifi, charging, yelp_rating, three_one_one):
         self.response = response
         self.comfort = comfort
         self.food = food
         self.wifi = wifi
         self.charging = charging
         self.yelp_rating = yelp_rating
+        self.three_one_one = three_one_one
         self.attribute = ''
         self.argument = 0
 
@@ -115,20 +123,15 @@ class Filters:
             self.attribute = 'rating'
             self.argument = self.yelp_rating
             self.response = list(filter(self.goe_filter, self.response))
+        if self.three_one_one:
+            self.response = list(filter(self.filter_311, self.response))
         return self.response
 
     def goe_filter(self, item):
         return int(item[self.attribute]) >= int(self.argument)
 
-    # # will add back once coordinate front-end with Leo
-    # Comment 311, by Hang
-    # def filterBy311(item):
-    #     if (item['check_311']):
-    #         return True
-
-    # Comment 311, by Hang
-    # def filterBy311(item):
-    #     if (item['check_311']):
-    #         return True
-    # if queryStr.get('311_check'):
-    #     response = list(filter(filterBy311, response))
+    def filter_311(self, item):
+        if item['check_311']:
+            return True
+        else:
+            return False
