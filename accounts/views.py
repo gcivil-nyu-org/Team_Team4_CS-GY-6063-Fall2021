@@ -270,7 +270,8 @@ def locationDetail(request):
             "has_favorite": has_favorite,
             "avg_dict": avg_dict,
             "is_business": is_business,
-            "is_verified": is_verified
+            "is_verified": is_verified,
+            'google': os.environ.get('GOOGLE_API'),
         }
 
     return render(request, "accounts/location_detail.html", context=context)
