@@ -237,7 +237,7 @@ def locationDetail(request):
                 yelp_id=business_id).aggregate(Avg(field_name)))
         for x in avg_dict:
             if avg_dict[x] is None:
-                avg_dict[x] = '-'
+                avg_dict[x] = -1
             else:
                 avg_dict[x] = round(avg_dict[x], 1)
 
@@ -270,7 +270,6 @@ def locationDetail(request):
                 verified_yelp_id=business_id).values('verified')[0]['verified']
         except IndexError:
             is_verified = False
-
         context = {
             "business": resultJSON,
             "locationID": business_id,

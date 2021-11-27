@@ -8,6 +8,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{{ business.name }}</title>
+
     {% load static %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/location.css' %}">
     </link>
@@ -17,17 +18,19 @@
         integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous">
     </script>
 
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css"
-        integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"
+        integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm" crossorigin="anonymous">
+
+
 </head>
 
 <body>
     {% include 'nav.html'%}
 
     <div class="main">
-        <div class="banner-wrapper">
-            <img class="" src="{{ business.image_url }}" />
-            <div class="location-info-head">
+        <div class="banner-wrapper ">
+            <img class="fade-in-top animation-delay-1" src="{{ business.image_url }}" />
+            <div class="location-info-head fade-in animation-delay-3">
                 <h1>{{ business.name }}</h1>
                 {% if is_verified %}
                 <div class="fs-5 fw-bold text-center mt-20">
@@ -59,7 +62,7 @@
                 </ul>
                 {% endif %}
             </div>
-            <div class="image-button-wrapper">
+            <div class="image-button-wrapper fade-in animation-dealy-3">
                 <button type="button" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#imageModal">
                     See photo
                 </button>
@@ -81,7 +84,7 @@
                 </div>
             </div>
         </div>
-        <div class="container">
+        <div class="container fade-in animation-delay-3">
             <div class="row mt-5">
                 <div class="col-7 px-5">
                     <div class="user-reviews">
@@ -124,7 +127,7 @@
                         <h2><i class="fas fa-edit me-2"></i>Post your review</h2>
                         <form method="post">
                             {% csrf_token %}
-                            <textarea placeholder="Your review..." name="review" required="required"></textarea>
+                            <textarea placeholder="Your review..." name="review" required></textarea>
                             <br />
                             <div class="range">
                                 <p>0</p>
@@ -137,37 +140,32 @@
                             <div class="rating-section">
 
                                 <div>
-                                    <label for="comfort_rating" class="form-label">Comfort Rating(Average:
-                                        {{ avg_dict.comfort_rating__avg }})</label>
+                                    <label for="comfort_rating" class="form-label">Comfort Rating</label>
                                     <input type="range" name="comfort_rating" class="form-range" min="0" max="5"
                                         id="comfort_rating">
                                 </div>
 
                                 <div>
-                                    <label for="food_rating" class="form-label">Food Rating(Average:
-                                        {{ avg_dict.food_rating__avg }})</label>
+                                    <label for="food_rating" class="form-label">Food Rating</label>
                                     <input type="range" name="food_rating" class="form-range" min="0" max="5"
                                         id="food_rating">
                                 </div>
 
                                 <div>
-                                    <label for="wifi_rating" class="form-label">Wifi Rating(Average:
-                                        {{ avg_dict.wifi_rating__avg }})</label>
+                                    <label for="wifi_rating" class="form-label">Wifi Rating</label>
                                     <input type="range" name="wifi_rating" class="form-range" min="0" max="5"
                                         id="wifi_rating">
                                 </div>
 
                                 <div>
-                                    <label for="charging_rating" class="form-label">Charging Rating(Average:
-                                        {{ avg_dict.charging_rating__avg }})</label>
+                                    <label for="charging_rating" class="form-label">Charging Rating</label>
                                     <input type="range" name="charging_rating" class="form-range" min="0" max="5"
                                         id="charging_rating">
                                 </div>
 
                                 <div>
                                     <label for="general_rating" class="form-label">Overall
-                                        Recommendation(Average:
-                                        {{ avg_dict.general_rating__avg }})</label>
+                                        Recommendation</label>
                                     <input type="range" name="general_rating" class="form-range secondary" min="0"
                                         max="5" id="general_rating">
                                 </div>
@@ -180,8 +178,8 @@
                     </div>
 
                 </div>
-                <div class="col-5">
-                    <div class="info-section">
+                <div class="col-5 ">
+                    <div class="info-section ">
                         <h3><i class="fas fa-phone-volume me-2"></i>Contact</h3>
                         <p>{{ business.phone }}</p>
                         <h3><i class="fas fa-map-marker-alt me-2"></i>Address </h3>
@@ -189,11 +187,25 @@
                         <h3><i class="fas fa-star-half-alt me-2"></i>Yelp! rating </h3>
                         <p>{{ business.rating }}</p>
                         <div class="info-sub-section">
-                            <h3>NYC sanitation grade: </h3>
+                            <p class="fs-5 ">Community Rating </p>
+                            <h3><i class="fas fa-couch me-2"></i>Comfort </h3>
+                            <p id="comfort" class="text-color-orange"></p>
+                            <h3><i class="fas fa-coffee me-2"></i>Food </h3>
+                            <p id="food" class="text-color-orange"></p>
+                            <h3><i class="fas fa-wifi me-2"></i>Wifi </h3>
+                            <p id="wifi" class="text-color-orange"></p>
+                            <h3><i class="fas fa-plug me-2"></i>Charging </h3>
+                            <p id="charging" class="text-color-orange"></p>
+                            <h3><i class="fas fa-thumbs-up me-2"></i>Overall </h3>
+                            <p id="overall" class="text-color-orange"></p>
+                        </div>
+                        <div class="info-sub-section">
+
+                            <h3><i class="fas fa-pump-soap me-2"></i>NYC sanitation grade: </h3>
                             <p>{{ sanitation.grade }}</p>
-                            <h3>Grade date: </h3>
+                            <h3><i class="fas fa-calendar-alt me-2"></i>Grade date: </h3>
                             <p>{{ sanitation.grade_date }}</p>
-                            <h3>Local 311 complaints: </h3>
+                            <h3><i class="fas fa-bullhorn me-2"></i>Local 311 complaints: </h3>
                             {% for complaint in three_one_one %}
                             <p>{{ complaint.complaint_type }} {{ complaint.created_date }} {{ complaint.description }}
                                 {{ complaint.status }}</p>
@@ -214,6 +226,46 @@
             </div>
         </div>
     </div>
+    <script>
+        /* beautify preserve:start */
+        document.getElementById("comfort").innerHTML = getStars({{avg_dict.comfort_rating__avg}});
+        document.getElementById("food").innerHTML = getStars({{avg_dict.food_rating__avg}});
+        document.getElementById("wifi").innerHTML = getStars({{avg_dict.wifi_rating__avg}});
+        document.getElementById("charging").innerHTML = getStars({{avg_dict.charging_rating__avg}});
+        document.getElementById("overall").innerHTML = getStars({{avg_dict.general_rating__avg}});
+        /* beautify preserve:end */
+
+        function getStars(rating) {
+            if (rating === -1) {
+                return "-";
+            }
+
+            // Round to nearest half
+            rating = Math.round(rating * 2) / 2;
+            let output = [];
+
+            // Append all the filled whole stars
+            for (var i = rating; i >= 1; i--) {
+                output.push('<i class="fas fa-star" aria-hidden="true"></i>&nbsp;')
+            };
+
+            // If there is a half a star, append it
+            if (i == .5) {
+                output.push(
+                    '<i class="fas fa-star-half-alt" aria-hidden="true" ></i>&nbsp;'
+                )
+            };
+
+            // Fill the empty stars
+            for (let i = (5 - rating); i >= 1; i--) {
+                output.push(
+                    '<i class="far fa-star" aria-hidden="true" ></i>&nbsp;'
+                );
+            }
+            return output.join('');
+
+        }
+    </script>
 </body>
 
 </html>

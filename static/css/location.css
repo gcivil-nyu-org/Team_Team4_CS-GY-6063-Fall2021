@@ -26,6 +26,9 @@ h2 {
   background-color: aliceblue;
   padding: 10px;
 }
+.text-color-orange {
+  color: var(--color-orange-500);
+}
 
 ul {
   padding: 0px !important;
@@ -101,7 +104,7 @@ ul p {
   border-radius: 8px;
 }
 .info-section h3 {
-  font-size: 1.5rem;
+  font-size: 20px;
   font-weight: 400;
   color: rgb(145, 145, 145);
   margin-top: 12px;
@@ -251,6 +254,46 @@ input[type="range"]:focus::-webkit-slider-runnable-track {
   margin-top: 50px;
 }
 
+.fade-in-top {
+  animation: fade-in-top 0.6s cubic-bezier(0.39, 0.575, 0.565, 1) both;
+}
+.fade-in {
+  animation: fade-in 1.2s cubic-bezier(0.39, 0.575, 0.565, 1) both;
+}
+.animation-delay-1 {
+  animation-delay: 0.1s;
+}
+.animation-delay-2 {
+  animation-delay: 0.2s;
+}
+.animation-delay-3 {
+  animation-delay: 0.3s;
+}
+.animation-delay-4 {
+  animation-delay: 0.4s;
+}
+.animation-delay-5 {
+  animation-delay: 0.5s;
+}
+
+@keyframes fade-in-top {
+  0% {
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
 /* .row {
   display: flex;
 }
