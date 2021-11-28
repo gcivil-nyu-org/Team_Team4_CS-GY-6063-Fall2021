@@ -373,7 +373,7 @@ def logoutUser(request):
 
 @login_required
 def profile(request):
-    if request.method == "POST":
+    if request.method == "POST" and not request.POST.get('remove_image'):
         u_form = UserUpdateForm(request.POST, instance=request.user)
         p_form = ProfileUpdateForm(
             request.POST, request.FILES, instance=request.user.profile
@@ -383,7 +383,9 @@ def profile(request):
             p_form.save()
             messages.success(request, "Your account has been updated!")
             return redirect("profile")
-
+    elif request.method == "POST" and request.POST.get('remove_image'):
+        Profile.objects.filter(user=request.user).update(image="profile_pics/default.jpg")
+        return redirect("profile")
     else:
         u_form = UserUpdateForm(instance=request.user)
         p_form = ProfileUpdateForm(instance=request.user.profile)
