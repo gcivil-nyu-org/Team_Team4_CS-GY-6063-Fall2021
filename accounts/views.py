@@ -226,7 +226,7 @@ def locationDetail(request):
     search_object = Yelp_Search()
     context = {}
     if business_id:
-        review_list = Review.objects.filter(yelp_id=business_id).order_by(
+        review_list = Review.objects.filter(yelp_id=business_id, review_text__gt='').order_by(
             "-date_posted"
         )
         avg_field_list = ['wifi_rating', 'general_rating',
