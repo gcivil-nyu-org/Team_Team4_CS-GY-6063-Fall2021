@@ -17,7 +17,7 @@ class RegisterForm(UserCreationForm):
 
 
 class ReviewCreateForm(forms.ModelForm):
-    review_text = forms.CharField(widget=forms.Textarea)
+    review_text = forms.CharField(widget=forms.Textarea, required=False)
 
     class Meta:
         model = Review
