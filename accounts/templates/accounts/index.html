@@ -227,7 +227,7 @@
           <h1>Find perfect study space in NYC</h1>
           <div class="search-wrapper">
             <input id="locationInput" class="form-control" type="text" name="place"
-              placeholder="{% if invalid_search %}Please enter a valid New York City zip code or street address 🗽 {% else %}Enter the location / zip code{% endif %}"
+              placeholder="Enter the location / zip code"
               value="{% if params.location and not invalid_search %}{{params.location}}{% endif %}" />
             <div class="form-check  use-current">
               <input name="useCurrentLocation" class="form-check-input" type="checkbox" value="" id="useCurrentLocation"
@@ -243,9 +243,11 @@
               <i class="bi bi-funnel-fill"></i>
             </button>
           </div>
+          <div class="mt-3 fs-5" id="">{% if invalid_search %}Please enter a valid NYC zip code / address 🗽
+            {% endif %}</div>
           <input type="submit" id="searchLocation" class="submit-btn" value="Find me Study Spaces!" />
-
           <div class="mt-2" id="locationLoading"></div>
+
 
 
         </div>
