@@ -363,7 +363,12 @@ def loginPage(request):
 
         if user is not None:
             login(request, user)
-            return redirect("index")
+            print("url: ", request.GET.get("next"))
+            next_url = request.GET.get("next")
+            if next_url:
+                return redirect(next_url)
+            else:
+                return redirect("index")
         else:
             messages.info(request, "Username OR password is incorrect")
 
