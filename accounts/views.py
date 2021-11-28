@@ -100,9 +100,6 @@ def index(request):
             zipcode = item['location']['zip_code']
             zipcodeInNYC(item, zipcode)
 
-            cor_list.append(
-                {'lat': item['coordinates']['latitude'], 'lng': item['coordinates']['longitude']})
-
             # update search object with user defined filter
             check_query = Checks(item,
                                  queryStr.get('comfort'),
@@ -140,6 +137,11 @@ def index(request):
         # if the filter returns < 3 locations, provided suggestions
         recommendations = [i for i in unfiltered_response if i not in response] if len(
             response) < 3 else []
+
+        # create coordinate list post filtering
+        for index, item in enumerate(response):
+            cor_list.append(
+                            {'lat': item['coordinates']['latitude'], 'lng': item['coordinates']['longitude']})
 
         context = {
             'businesses': response,
