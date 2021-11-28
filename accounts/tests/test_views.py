@@ -89,7 +89,10 @@ class StudyCityViewsTests(TestCase):
         self.assertEquals(favorite.business_name, yelp_name)
 
         response = self.c.post(location_detail_url,
-                               {'fav_locationid': yelp_id, 'fav_locationname': yelp_name})
+                               {'fav_locationid': yelp_id,
+                                'fav_locationname': yelp_name,
+                                'unfavorite': "1",
+                                })
         favorite_list = Favorite.objects.filter(user=self.user, yelp_id=yelp_id)
         self.assertEquals(favorite_list.count(), 0)
 

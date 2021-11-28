@@ -49,8 +49,10 @@
                     <input type="hidden" name="fav_locationid" value="{{ locationID }}" />
                     <input type="hidden" name="fav_locationname" value="{{ business.name }}" />
                     {% if has_favorite %}
+                        <input type="hidden" name="unfavorite" value="1" />
                     <input type="submit" class="btn btn-primary m-auto" value="Unfavorite" />
                     {% else %}
+{#                        <input type="hidden" name="favorite" value="1" />#}
                     <input type="submit" class="btn btn-primary m-auto" value="Add to favorite" />
                     {% endif %}
                 </form>

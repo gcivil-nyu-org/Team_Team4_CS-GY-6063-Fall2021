@@ -162,9 +162,11 @@ def locationDetail(request):
         business_id = request.POST.get("fav_locationid")
         if business_id:  # it is a adding favorite post
             business_name = request.POST.get("fav_locationname")
-            favor_delete = Favorite.objects.filter(user=request.user,
-                                                   yelp_id=business_id)
-            if favor_delete:
+
+            if request.POST.get("unfavorite"):
+                favor_delete = Favorite.objects.filter(user=request.user,
+                                                       yelp_id=business_id)
+            # if favor_delete:
                 favor_delete.delete()
                 messages.info(request, 'Unfavorite successfully!')
             elif Favorite.objects.filter(user=request.user).count() >= 5:
@@ -172,16 +174,19 @@ def locationDetail(request):
                               'Maximum of 5 favorited locations.' +
                               ' Please unfavorite one location before adding another.')
             else:
-                form_dict = {
-                    "user": request.user,
-                    "yelp_id": business_id,
-                    "business_name": business_name
-                }
-                form = FavoriteCreateForm(form_dict)
-                if form.is_valid():
-                    form.save()
-                    messages.info(request, 'Favorite successfully!')
-                    print("Favorite object has been created successfully")
+                favor_ = Favorite.objects.filter(user=request.user,
+                                                       yelp_id=business_id)
+                if not favor_:
+                    form_dict = {
+                        "user": request.user,
+                        "yelp_id": business_id,
+                        "business_name": business_name
+                    }
+                    form = FavoriteCreateForm(form_dict)
+                    if form.is_valid():
+                        form.save()
+                        messages.info(request, 'Favorite successfully!')
+                        print("Favorite object has been created successfully")
 
         else:  # it is a review post
             business_id = request.POST.get("locationid")
@@ -358,7 +363,12 @@ def loginPage(request):
 
         if user is not None:
             login(request, user)
-            return redirect("index")
+            print("url: ", request.GET.get("next"))
+            next_url = request.GET.get("next")
+            if next_url:
+                return redirect(next_url)
+            else:
+                return redirect("index")
         else:
             messages.info(request, "Username OR password is incorrect")
 
@@ -373,7 +383,7 @@ def logoutUser(request):
 
 @login_required
 def profile(request):
-    if request.method == "POST":
+    if request.method == "POST" and not request.POST.get('remove_image'):
         u_form = UserUpdateForm(request.POST, instance=request.user)
         p_form = ProfileUpdateForm(
             request.POST, request.FILES, instance=request.user.profile
@@ -383,7 +393,9 @@ def profile(request):
             p_form.save()
             messages.success(request, "Your account has been updated!")
             return redirect("profile")
-
+    elif request.method == "POST" and request.POST.get('remove_image'):
+        Profile.objects.filter(user=request.user).update(image="profile_pics/default.jpg")
+        return redirect("profile")
     else:
         u_form = UserUpdateForm(instance=request.user)
         p_form = ProfileUpdateForm(instance=request.user.profile)
