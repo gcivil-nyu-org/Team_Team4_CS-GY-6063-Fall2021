@@ -46,7 +46,7 @@ img {
   padding: 10px 15px;
   font-size: 22px;
   font-weight: 600;
-  margin: 15px 0px;
+  margin: 35px 0px;
   border-radius: 8px;
   color: white;
 }
@@ -64,10 +64,14 @@ img {
 .searchBar #locationInput {
   width: 100%;
   border: none;
-  font-size: 30px;
-  box-shadow: 0px 3px 15px rgba(0, 0, 0, 0.1);
+  font-size: 25px;
+
   margin: 10px 0px;
-  padding: 10px;
+  padding: 10px 20px;
+}
+.searchBar #locationInput:focus {
+  outline: none !important;
+  box-shadow: none !important;
 }
 .search-wrapper {
   width: 100%;
@@ -76,6 +80,9 @@ img {
   justify-content: center;
   align-items: center;
   font-size: 50px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0px 3px 15px rgba(0, 0, 0, 0.1);
 }
 .filter-btn {
   background-color: rgb(255, 163, 93);
@@ -92,7 +99,7 @@ img {
 .use-current {
   font-size: 25px;
   /* background-color: rgb(235, 235, 235); */
-  padding: 10px 15px;
+  /* padding: 10px 15px; */
   cursor: pointer;
   border-radius: 8px;
   font-size: 20px;
@@ -101,7 +108,7 @@ img {
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  gap: 10px;
+  padding: 0px !important;
 }
 .use-current input[type="checkbox"] {
   display: none;

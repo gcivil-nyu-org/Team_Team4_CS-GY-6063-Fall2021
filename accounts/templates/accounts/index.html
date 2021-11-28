@@ -229,21 +229,22 @@
             <input id="locationInput" class="form-control" type="text" name="place"
               placeholder="{% if invalid_search %}Please enter a valid New York City zip code or street address 🗽 {% else %}Enter the location / zip code{% endif %}"
               value="{% if params.location and not invalid_search %}{{params.location}}{% endif %}" />
+            <div class="form-check  use-current">
+              <input name="useCurrentLocation" class="form-check-input" type="checkbox" value="" id="useCurrentLocation"
+                onclick="toggleCurrentLocation()">
+              <label class="form-check-label pointer" for="useCurrentLocation">
+              </label>
+
+              <input type="hidden" name="longitude" id="longitude" />
+              <input type="hidden" name="latitude" id="latitude" />
+
+            </div>
             <button type="button" class="filter-btn" data-bs-toggle="modal" data-bs-target="#filterModal">
               <i class="bi bi-funnel-fill"></i>
             </button>
           </div>
           <input type="submit" id="searchLocation" class="submit-btn" value="Find me Study Spaces!" />
-          <div class="form-check mt-2 use-current">
-            <input name="useCurrentLocation" class="form-check-input" type="checkbox" value="" id="useCurrentLocation"
-              onclick="toggleCurrentLocation()">
-            <label class="form-check-label pointer" for="useCurrentLocation">
-            </label>
-            <label> Use current location</label>
-            <input type="hidden" name="longitude" id="longitude" />
-            <input type="hidden" name="latitude" id="latitude" />
 
-          </div>
           <div class="mt-2" id="locationLoading"></div>
 
 
