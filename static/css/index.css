@@ -53,6 +53,21 @@ img {
 .dollar {
   font-size: 25px;
 }
+.form-check-input {
+  background-color: #b8b8b8;
+  color: white;
+  outline: none;
+  border: none;
+}
+.form-check-input:checked {
+  background-color: var(--color-orange-500);
+  color: white;
+}
+.form-check-input:focus,
+.form-check-input:active {
+  box-shadow: none;
+  background-image: black !important;
+}
 
 .searchBar {
   padding: 80px 0px;
