@@ -354,26 +354,27 @@ def ActivateAccount(request, uidb64, token, *args, **kwargs):
     return redirect('login')
 
 
-def loginPage(request):
-    if request.method == "POST":
-        username = request.POST.get("username")
-        password = request.POST.get("password")
-
-        user = authenticate(request, username=username, password=password)
-
-        if user is not None:
-            login(request, user)
-            print("url: ", request.GET.get("next"))
-            next_url = request.GET.get("next")
-            if next_url:
-                return redirect(next_url)
-            else:
-                return redirect("index")
-        else:
-            messages.info(request, "Username OR password is incorrect")
-
-    context = {}
-    return render(request, "accounts/login.html", context)
+# def loginPage(request):
+#     if request.method == "POST":
+#         username = request.POST.get("username")
+#         password = request.POST.get("password")
+#
+#         user = authenticate(request, username=username, password=password)
+#
+#         if user is not None:
+#             login(request, user)
+#             print(request.get_full_path())
+#             print("url: ", request.GET.get("next"))
+#             next_url = request.GET.get("next")
+#             if next_url:
+#                 return redirect(next_url)
+#             else:
+#                 return redirect("index")
+#         else:
+#             messages.info(request, "Username OR password is incorrect")
+#
+#     context = {}
+#     return render(request, "accounts/login.html", context)
 
 
 def logoutUser(request):
