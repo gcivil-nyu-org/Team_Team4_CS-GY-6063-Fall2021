@@ -4,8 +4,31 @@ body {
   margin: 0 !important;
   padding: 0;
 }
+:root {
+  --color-orange-500: rgb(255, 163, 93);
+  --color-orange-400: rgb(255, 140, 51);
+  --color-gray: rgb(145, 145, 145);
+}
 #map {
   min-height: 80vh;
+}
+.card-body .btn {
+  background-color: var(--color-orange-500);
+  border: none;
+}
+.card-body .btn:hover,
+.card-body .btn:focus,
+.card-body .btn:active {
+  background-color: var(--color-orange-400) !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+.external-url {
+  color: var(--color-orange-500);
+  text-decoration: underline;
+}
+.external-url:hover {
+  color: var(--color-orange-400);
 }
 
 img {
@@ -46,7 +69,7 @@ img {
   padding: 10px 15px;
   font-size: 22px;
   font-weight: 600;
-  margin: 35px 0px;
+  margin: 35px 0px 20px 0px;
   border-radius: 8px;
   color: white;
 }

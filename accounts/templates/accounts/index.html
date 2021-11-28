@@ -375,7 +375,7 @@
               <p class="card-text my-0">
                 Zip Code: {{data.location.zip_code}}
               </p>
-              <a href="{{data.url}}" target="_blank" class="card-text pointer">Visit Website</a>
+              <a class="external-url" href="{{data.url}}" target="_blank" class="card-text pointer">Visit Website</a>
               <div class="mt-2">
                 <a class="btn btn-primary" href="{% url 'locationDetail'%}?locationID={{data.id|default:''}}">
                   View detail
