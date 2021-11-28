@@ -208,9 +208,11 @@
 
     }
   </script>
+
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css"
     integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP" crossorigin="anonymous" />
   <link rel="stylesheet" type="text/css" href="{% static 'css/index.css' %}">
+
 </head>
 
 <body>
@@ -219,35 +221,38 @@
 
 
     <form method="get" class="form-group">
-      <div class="searchBar-wrapper">
-        <div class="searchBar">
+      <div class="searchBar-wrapper fade-in-top animation-delay-2">
+        <div class="searchBar ">
 
           <h1>Find perfect study space in NYC</h1>
           <div class="search-wrapper">
             <input id="locationInput" class="form-control" type="text" name="place"
-              placeholder="{% if invalid_search %}Please enter a valid New York City zip code or street address 🗽 {% else %}Enter the location / zip code{% endif %}"
+              placeholder="Enter the location / zip code"
               value="{% if params.location and not invalid_search %}{{params.location}}{% endif %}" />
+            <div class="form-check  use-current">
+              <input name="useCurrentLocation" class="form-check-input" type="checkbox" value="" id="useCurrentLocation"
+                onclick="toggleCurrentLocation()">
+              <label class="form-check-label pointer" for="useCurrentLocation">
+              </label>
+
+              <input type="hidden" name="longitude" id="longitude" />
+              <input type="hidden" name="latitude" id="latitude" />
+
+            </div>
             <button type="button" class="filter-btn" data-bs-toggle="modal" data-bs-target="#filterModal">
               <i class="bi bi-funnel-fill"></i>
             </button>
           </div>
+          <div class="mt-3 fs-5" id="">{% if invalid_search %}Please enter a valid NYC zip code / address 🗽
+            {% endif %}</div>
           <input type="submit" id="searchLocation" class="submit-btn" value="Find me Study Spaces!" />
-          <div class="form-check mt-2 use-current">
-            <input name="useCurrentLocation" class="form-check-input" type="checkbox" value="" id="useCurrentLocation"
-              onclick="toggleCurrentLocation()">
-            <label class="form-check-label pointer" for="useCurrentLocation">
-            </label>
-            <label> Use current location</label>
-            <input type="hidden" name="longitude" id="longitude" />
-            <input type="hidden" name="latitude" id="latitude" />
-
-          </div>
           <div class="mt-2" id="locationLoading"></div>
+
 
 
         </div>
       </div>
-      <div id="map"></div>
+      <div id="map" class="fade-in animation-delay-5"></div>
       <div class="container">
         <div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModal"
           aria-hidden="true">
@@ -336,13 +341,13 @@
                       <div class=" btn btn-secondary" onclick="clearFilter()"> Clear Filters
                       </div>
                     </div>
-                      <div class="form-check 311-switch my-4">
+                    {% comment %} <div class="form-check 311-switch my-4">
                       <input name="311_check" class="form-check-input" type="checkbox" style="width:15px;height:20px; "
                         id="flexSwitchCheck" />
                       <label for="311_check">
                         <h4>No NYC 311 Complaints</h4>
                       </label>
-                    </div>
+                    </div> {% endcomment %}
                   </div>
                 </div>
               </div>
@@ -372,7 +377,7 @@
               <p class="card-text my-0">
                 Zip Code: {{data.location.zip_code}}
               </p>
-              <a href="{{data.url}}" target="_blank" class="card-text pointer">Visit Website</a>
+              <a class="external-url" href="{{data.url}}" target="_blank" class="card-text pointer">Visit Website</a>
               <div class="mt-2">
                 <a class="btn btn-primary" href="{% url 'locationDetail'%}?locationID={{data.id|default:''}}">
                   View detail
