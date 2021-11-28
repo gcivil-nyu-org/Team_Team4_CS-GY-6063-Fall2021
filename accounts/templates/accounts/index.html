@@ -53,6 +53,10 @@
     const locations = {{location_list|safe}};
     /* beautify preserve:end */
 
+    // console.log(locations);
+    // console.log(locations[0]['id']);
+
+
     function initMap() {
       const map = new google.maps.Map(document.getElementById("map"), {
         zoom: 11,
@@ -77,7 +81,7 @@
               };
 
               infoWindow.setPosition(pos);
-              infoWindow.setContent("Location found.");
+              infoWindow.setContent(label);
               infoWindow.open(map);
               map.setCenter(pos);
             },
@@ -90,15 +94,16 @@
           handleLocationError(false, infoWindow, map.getCenter());
         }
       })
+
       // Add some markers to the map.
       const markers = locations.map((location, i) => {
         return new google.maps.Marker({
-          position: location,
-          label: labels[i % labels.length],
+          position: {'lat': location['lat'], 'lng': location['lng']}, //location,
+          label: location['label'],
         });
       });
 
-      // Add a marker clusterer to manage the markers.
+      //Add a marker clusterer to manage the markers.
       new markerClusterer.MarkerClusterer({
         map,
         markers,
@@ -367,7 +372,7 @@
           <div class="card m-auto" style="width: 18rem">
             <img class="card-image-top" src="{{ data.image_url }}" alt="Card image cap" />
             <div class="card-body">
-              <h5 class="card-title">{{ data.name }}</h5>
+              <h5 class="card-title">{{data.label}}. {{ data.name }}</h5>
               <p class="card-text my-0">Phone: {{ data.phone }}</p>
               <p class="card-text my-0">Rating: {{ data.rating }}</p>
               <p class="card-text my-0">Price Range: {{ data.price }}</p>
