@@ -53,10 +53,6 @@
     const locations = {{location_list|safe}};
     /* beautify preserve:end */
 
-    // console.log(locations);
-    // console.log(locations[0]['id']);
-
-
     function initMap() {
       const map = new google.maps.Map(document.getElementById("map"), {
         zoom: 11,
@@ -65,8 +61,7 @@
           lng: -74.0060
         },
       });
-      // Create an array of alphabetical characters used to label the markers.
-      const labels = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
       infoWindow = new google.maps.InfoWindow();
 
       const useCurrentLocation = document.getElementById("useCurrentLocation");
@@ -95,12 +90,18 @@
         }
       })
 
-      // Add some markers to the map.
-      const markers = locations.map((location, i) => {
-        return new google.maps.Marker({
-          position: {'lat': location['lat'], 'lng': location['lng']}, //location,
+      var markers = locations.map(function(location, i) {
+        var marker = new google.maps.Marker({
+          position: {'lat': location['lat'], 'lng': location['lng']},
           label: location['label'],
+          title: location['name'],
+          url: location['id']
         });
+        google.maps.event.addListener(marker, 'click', function(evt) {
+          redirectTo = 'location?locationID=' + marker.url
+          window.location.replace(redirectTo)
+        });
+        return marker;
       });
 
       //Add a marker clusterer to manage the markers.
