@@ -1,7 +1,5 @@
 # views.py
 import json
-from django import forms
-from django.db import models
 from django.shortcuts import render, redirect
 from .forms import RegisterForm, UserUpdateForm, ProfileUpdateForm, ReviewCreateForm
 from .forms import BusinessUpdate, BusinessProfileForm
@@ -31,18 +29,14 @@ from django.utils.http import urlsafe_base64_decode
 
 
 def bz_update(request):
-    
-    # 
-    # bform=BusinessUpdate(instance=request.user)
-
+  
     if request.method=="POST":
         bform=BusinessUpdate(request.POST, instance=request.user.bprofile)
         print(request.POST)
         if bform.is_valid():
             print("form saved")
             bform.save()
-            # return HttpResponseRedirect('/location')
-    
+           
     else:
         bform=BusinessUpdate(instance=request.user.bprofile)
         print(bform)

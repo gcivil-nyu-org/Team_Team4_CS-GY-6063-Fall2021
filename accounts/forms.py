@@ -64,4 +64,5 @@ class BusinessUpdate(forms.ModelForm):
     class Meta:
         model=BProfile
         fields=["address","phone","business_hours"]
+        # fields=["image","address","phone","business_hours"]
 
