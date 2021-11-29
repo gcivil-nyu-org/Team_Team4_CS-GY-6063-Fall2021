@@ -3,7 +3,7 @@ import json
 from django import forms
 from django.shortcuts import render, redirect
 from .forms import RegisterForm, UserUpdateForm, ProfileUpdateForm, ReviewCreateForm
-from .forms import BusinessProfileForm, BusinessUpdate
+from .forms import BusinessUpdate
 from .forms import FavoriteCreateForm
 from django.contrib.auth import logout
 # from django.contrib.auth import authenticate, login, logout
