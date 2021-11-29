@@ -1,0 +1,150 @@
+html,
+body {
+  height: 100%;
+  margin: 0 !important;
+  padding: 0;
+}
+:root {
+  --color-orange-500: rgb(255, 163, 93);
+  --color-orange-400: rgb(255, 140, 51);
+  --color-gray: rgb(145, 145, 145);
+}
+/* #div_id_username {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+} */
+input[type="text"]:focus,
+input[type="email"]:focus {
+  outline: none;
+  box-shadow: none;
+}
+input[type="file"] {
+  background-color: white;
+}
+.profile-section .btn {
+  background-color: var(--color-orange-500);
+  border: none;
+}
+.profile-section .btn:hover,
+.profile-section .btn:focus,
+.profile-section .btn:active {
+  background-color: var(--color-orange-400) !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+p {
+  margin: 0px;
+}
+.title {
+  border-bottom: 1px solid #e5e5e5;
+  font-size: 30px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  color: var(--color-orange-500);
+}
+.divider {
+  border: 1px solid rgb(145, 145, 145);
+  width: 100px;
+  margin: auto;
+}
+.profile-section {
+  background-color: #f5f5f5;
+  padding: 20px 0px;
+  border-radius: 8px;
+}
+fieldset {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  max-width: 500px;
+  padding: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #e5e5e5;
+  margin: 30px auto 0px auto;
+}
+
+fieldset label {
+  font-size: 1.2em;
+  margin-bottom: 10px;
+}
+
+fieldset input {
+  width: 100%;
+  padding: 10px;
+  border: none !important;
+  border-radius: 8px;
+  /* box-shadow: 0px 3px 15px rgba(0, 0, 0, 0.1); */
+  height: 50px;
+}
+/* .textInput {
+  background-color: #f5f5f5;
+} */
+
+fieldset input:focus {
+  border: none !important;
+  /* box-shadow: 0px 3px 15px rgba(0, 0, 0, 0.1) !important; */
+}
+.asteriskField {
+  display: none;
+}
+.activity-section {
+  display: flex;
+  flex-direction: column;
+
+  padding: 20px 50px;
+  margin-bottom: 30px;
+  /* border-bottom: 1px solid #b8b8b8; */
+
+  /* border-radius: 8px; */
+}
+.review-text {
+  font-size: 20px;
+  padding: 5px 20px;
+  /* background-color: #f5f5f5; */
+
+  margin-bottom: 10px;
+}
+.review-title {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+.activity-section a,
+.favorites-section a {
+  text-decoration: underline;
+  color: black;
+}
+.activity-section a:hover,
+.favorites-section a:hover {
+  text-decoration: underline;
+  color: gray;
+}
+
+.favorites-section {
+  width: 100%;
+  padding: 20px 50px;
+}
+.favorite-item {
+  padding: 0px 0px;
+  background-color: white;
+  font-size: 20px;
+  display: inline-block;
+  width: 100%;
+  box-shadow: 0px 3px 15px rgba(0, 0, 0, 0.1);
+  border: none;
+}
+.favorite-item a {
+  padding: 10px 0px;
+  text-decoration: none;
+}
+img {
+  max-width: 100%;
+}
+.card-img-top {
+  height: 200px;
+  object-fit: cover;
+}

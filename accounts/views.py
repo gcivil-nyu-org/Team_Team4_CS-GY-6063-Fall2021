@@ -1,5 +1,6 @@
 # views.py
 import json
+from re import search
 from django.shortcuts import render, redirect
 from .forms import RegisterForm, UserUpdateForm, ProfileUpdateForm, ReviewCreateForm
 from .forms import FavoriteCreateForm
@@ -141,7 +142,7 @@ def index(request):
         # create coordinate list post filtering
         for index, item in enumerate(response):
             cor_list.append(
-                            {'lat': item['coordinates']['latitude'], 'lng': item['coordinates']['longitude']})
+                {'lat': item['coordinates']['latitude'], 'lng': item['coordinates']['longitude']})
 
         context = {
             'businesses': response,
@@ -177,7 +178,7 @@ def locationDetail(request):
                               ' Please unfavorite one location before adding another.')
             else:
                 favor_ = Favorite.objects.filter(user=request.user,
-                                                       yelp_id=business_id)
+                                                 yelp_id=business_id)
                 if not favor_:
                     form_dict = {
                         "user": request.user,
@@ -396,7 +397,8 @@ def profile(request):
             messages.success(request, "Your account has been updated!")
             return redirect("profile")
     elif request.method == "POST" and request.POST.get('remove_image'):
-        Profile.objects.filter(user=request.user).update(image="profile_pics/default.jpg")
+        Profile.objects.filter(user=request.user).update(
+            image="profile_pics/default.jpg")
         return redirect("profile")
     else:
         u_form = UserUpdateForm(instance=request.user)
@@ -405,11 +407,20 @@ def profile(request):
     review_list = Review.objects.filter(user=request.user).order_by("-date_posted")
     favorite_list = Favorite.objects.filter(user=request.user).order_by("-date_posted")
 
+    search_object = Yelp_Search()
+    new_list = []
+    for favorite in favorite_list:
+        data = search_object.search_business_id(favorite.yelp_id)
+        resultJSON = json.loads(data)
+        new_list.append(
+            {"name": favorite.business_name,
+             "yelp_id": favorite.yelp_id, "img_url": resultJSON['image_url']})
+
     context = {
         "u_form": u_form,
         "p_form": p_form,
         "reviews": review_list,
-        "favorites": favorite_list,
+        "favorites": new_list,
     }
 
     return render(request, "accounts/profile.html", context)
