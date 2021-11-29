@@ -1,7 +1,9 @@
 # views.py
 import json
+from django import forms
 from django.shortcuts import render, redirect
 from .forms import RegisterForm, UserUpdateForm, ProfileUpdateForm, ReviewCreateForm
+from .forms import BusinessProfileForm, BusinessUpdate
 from .forms import FavoriteCreateForm
 from django.contrib.auth import logout
 # from django.contrib.auth import authenticate, login, logout
@@ -26,6 +28,18 @@ from .utils import account_activation_token
 from django.utils.encoding import force_text
 from django.utils.http import urlsafe_base64_decode
 
+def bz_update(request):
+    
+    if request.method=="POST":
+        form=forms.BusinessUpdate
+        if form.is_valid():
+            form.save()
+
+    context={
+        "form":BusinessUpdate
+        # "form":Profile
+    }
+    return render(request,"accounts/bz_update.html",context)
 
 def review_update(request):
     return render(request, "accounts/review_update_suc.html")
@@ -271,7 +285,7 @@ def locationDetail(request):
 
         # check if the user is a business account
         is_business = Profile.objects.get(user=request.user).business_account
-
+        is_owner = Profile.objects.filter(user=request.user, verified_yelp_id = business_id).count() == 1
         # check if location is verified
         try:
             is_verified = Profile.objects.filter(
@@ -288,6 +302,7 @@ def locationDetail(request):
             "avg_dict": avg_dict,
             "is_business": is_business,
             "is_verified": is_verified,
+            "is_owner": is_owner,
             'google': os.environ.get('GOOGLE_API'),
         }
 

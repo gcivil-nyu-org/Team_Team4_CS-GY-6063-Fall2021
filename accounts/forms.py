@@ -52,3 +52,14 @@ class ProfileUpdateForm(forms.ModelForm):
     class Meta:
         model = Profile
         fields = ["image"]
+
+class BusinessProfileForm(forms.ModelForm):
+    class Meta:
+        model=Profile
+        fields='__all__'
+
+class BusinessUpdate(forms.ModelForm):
+    class Meta:
+        model=Profile
+        fields=["image","address","phone","business_hours"]
+
