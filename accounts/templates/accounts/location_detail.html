@@ -192,9 +192,21 @@
                 <div class="col-5 ">
                     <div class="info-section ">
                         <h3><i class="fas fa-phone-volume me-2"></i>Contact</h3>
+                        {% if business_info and business_info.phone %}
+                        <p>{{ business_info.phone }}</p>
+                        {% else %}
                         <p>{{ business.phone }}</p>
+                        {%endif%}
                         <h3><i class="fas fa-map-marker-alt me-2"></i>Address </h3>
+                        {% if business_info and business_info.address %}
+                        <p>{{ business_info.address }}</p>
+                        {% else %}
                         <p>{{ business.location.address1 }}</p>
+                        {% endif %}
+                        <h3><i class="fas fa-business-time me-2"></i>Business Hours</h3>
+                        {% if business_info and business_info.business_hours %}
+                        <p>{{ business_info.business_hours }}</p>
+                        {% endif %}
                         <h3><i class="fas fa-star-half-alt me-2"></i>Yelp! rating </h3>
                         <p>{{ business.rating }}</p>
                         <div class="info-sub-section">

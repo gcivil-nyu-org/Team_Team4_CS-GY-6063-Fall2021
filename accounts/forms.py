@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import Profile
+from .models import Profile,BProfile
 from .models import Review, Favorite
 
 
@@ -55,11 +55,13 @@ class ProfileUpdateForm(forms.ModelForm):
 
 class BusinessProfileForm(forms.ModelForm):
     class Meta:
-        model=Profile
-        fields='__all__'
+        model=BProfile
+        fields=["user"]
+        print("BPF")
+        # fields="__all__"
 
 class BusinessUpdate(forms.ModelForm):
     class Meta:
-        model=Profile
-        fields=["image","address","phone","business_hours"]
+        model=BProfile
+        fields=["address","phone","business_hours"]
 
