@@ -131,6 +131,8 @@
                         {% endif %}
                         {% endfor %}
                     </div>
+      
+            {% if not is_business or is_owner %} 
 
                     <div class="post-review">
                         <h2><i class="fas fa-edit me-2"></i>Post your review</h2>
@@ -178,13 +180,14 @@
                                     <input type="range" name="general_rating" class="form-range secondary" min="0"
                                         max="5" id="general_rating">
                                 </div>
-
+           
                                 <input type="hidden" name="locationid" value="{{ locationID }}" />
                                 <input type="hidden" name="locationname" value="{{ business.name }}" />
                                 <input class="btn btn-primary" type="submit" />
                             </div>
                         </form>
                     </div>
+                {% endif %}
 
                 </div>
                 <div class="col-5 ">

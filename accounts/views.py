@@ -37,7 +37,6 @@ def bz_update(request):
 
     context={
         "form":BusinessUpdate
-        # "form":Profile
     }
     return render(request,"accounts/bz_update.html",context)
 
