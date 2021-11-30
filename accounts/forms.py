@@ -57,12 +57,12 @@ class BusinessProfileForm(forms.ModelForm):
     class Meta:
         model=BProfile
         fields=["user"]
-        print("BPF")
+        # print("BPF")
         # fields="__all__"
 
 class BusinessUpdate(forms.ModelForm):
     class Meta:
         model=BProfile
-        fields=["address","phone","business_hours"]
-        # fields=["image","address","phone","business_hours"]
+        # fields=["address","phone","business_hours"]
+        fields=["image","address","phone","business_hours"]
 

@@ -35,6 +35,7 @@ def bz_update(request):
         print(request.POST)
         if bform.is_valid():
             print("form saved")
+            print(bform)
             bform.save()
            
     else:
