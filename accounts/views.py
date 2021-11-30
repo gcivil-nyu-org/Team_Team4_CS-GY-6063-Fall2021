@@ -4,7 +4,8 @@ from re import search
 from django.shortcuts import render, redirect
 from .forms import RegisterForm, UserUpdateForm, ProfileUpdateForm, ReviewCreateForm
 from .forms import FavoriteCreateForm
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import logout
+# from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -139,10 +140,15 @@ def index(request):
         recommendations = [i for i in unfiltered_response if i not in response] if len(
             response) < 3 else []
 
-        # create coordinate list post filtering
+        # create coordinate list post filtering, add labels for map
+        labels = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
         for index, item in enumerate(response):
-            cor_list.append(
-                {'lat': item['coordinates']['latitude'], 'lng': item['coordinates']['longitude']})
+            item['label'] = labels[index]
+            cor_list.append({'id': item['id'],
+                             'name': item['name'],
+                             'lat': item['coordinates']['latitude'],
+                             'lng': item['coordinates']['longitude'],
+                             'label': item['label']})
 
         context = {
             'businesses': response,
@@ -357,26 +363,27 @@ def ActivateAccount(request, uidb64, token, *args, **kwargs):
     return redirect('login')
 
 
-def loginPage(request):
-    if request.method == "POST":
-        username = request.POST.get("username")
-        password = request.POST.get("password")
-
-        user = authenticate(request, username=username, password=password)
-
-        if user is not None:
-            login(request, user)
-            print("url: ", request.GET.get("next"))
-            next_url = request.GET.get("next")
-            if next_url:
-                return redirect(next_url)
-            else:
-                return redirect("index")
-        else:
-            messages.info(request, "Username OR password is incorrect")
-
-    context = {}
-    return render(request, "accounts/login.html", context)
+# def loginPage(request):
+#     if request.method == "POST":
+#         username = request.POST.get("username")
+#         password = request.POST.get("password")
+#
+#         user = authenticate(request, username=username, password=password)
+#
+#         if user is not None:
+#             login(request, user)
+#             print(request.get_full_path())
+#             print("url: ", request.GET.get("next"))
+#             next_url = request.GET.get("next")
+#             if next_url:
+#                 return redirect(next_url)
+#             else:
+#                 return redirect("index")
+#         else:
+#             messages.info(request, "Username OR password is incorrect")
+#
+#     context = {}
+#     return render(request, "accounts/login.html", context)
 
 
 def logoutUser(request):
