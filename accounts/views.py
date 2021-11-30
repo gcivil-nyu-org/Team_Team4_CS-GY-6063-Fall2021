@@ -1,6 +1,5 @@
 # views.py
 import json
-from re import search
 from django.shortcuts import render, redirect
 from .forms import RegisterForm, UserUpdateForm, ProfileUpdateForm, ReviewCreateForm
 from .forms import FavoriteCreateForm

@@ -1,11 +1,11 @@
 <style>
-    a {
+    .about-btn a {
         text-decoration: none;
         color: black;
 
     }
 
-    a:hover {
+    .about-btn a:hover {
         color: #808080 !important;
     }
 
@@ -90,10 +90,11 @@
         </a>
 
         {% endif %}
-
-        <a href="{% url 'about' %}">
-            About
-        </a>
+        <div class="about-btn">
+            <a href="{% url 'about' %}">
+                About
+            </a>
+        </div>
         {% comment %} <a href={% url 'index' %}>Search</a> {% endcomment %}
     </div>
 </nav>
