@@ -66,7 +66,7 @@ def index(request):
                 params['longitude'] = queryStr.get('longitude')
                 params['latitude'] = queryStr.get('latitude')
             elif not queryStr.get('place'):
-                return redirect('index')
+                return render(request, "accounts/index.html", context=context)
 
         # pass user defined Yelp! params to Yelp API
         if queryStr.get('open_now'):
