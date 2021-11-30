@@ -351,7 +351,7 @@ def registerPage(request):
             if business_account:
                 Profile.objects.filter(user=user_obj).update(business_account=True)
                 bdict={
-                   "user":request.user 
+                   "user":user_obj 
                 }
                 bzform= BusinessProfileForm(bdict)
                 if bzform.is_valid():
