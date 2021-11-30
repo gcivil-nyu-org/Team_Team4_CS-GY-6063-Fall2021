@@ -139,10 +139,15 @@ def index(request):
         recommendations = [i for i in unfiltered_response if i not in response] if len(
             response) < 3 else []
 
-        # create coordinate list post filtering
+        # create coordinate list post filtering, add labels for map
+        labels = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
         for index, item in enumerate(response):
-            cor_list.append(
-                            {'lat': item['coordinates']['latitude'], 'lng': item['coordinates']['longitude']})
+            item['label'] = labels[index]
+            cor_list.append({'id': item['id'],
+                             'name': item['name'],
+                             'lat': item['coordinates']['latitude'], 
+                             'lng': item['coordinates']['longitude'],
+                             'label': item['label']})
 
         context = {
             'businesses': response,

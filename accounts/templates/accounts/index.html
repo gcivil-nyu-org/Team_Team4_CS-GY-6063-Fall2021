@@ -61,8 +61,7 @@
           lng: -74.0060
         },
       });
-      // Create an array of alphabetical characters used to label the markers.
-      const labels = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
       infoWindow = new google.maps.InfoWindow();
 
       const useCurrentLocation = document.getElementById("useCurrentLocation");
@@ -77,7 +76,7 @@
               };
 
               infoWindow.setPosition(pos);
-              infoWindow.setContent("Location found.");
+              infoWindow.setContent(label);
               infoWindow.open(map);
               map.setCenter(pos);
             },
@@ -90,15 +89,22 @@
           handleLocationError(false, infoWindow, map.getCenter());
         }
       })
-      // Add some markers to the map.
-      const markers = locations.map((location, i) => {
-        return new google.maps.Marker({
-          position: location,
-          label: labels[i % labels.length],
+
+      var markers = locations.map(function(location, i) {
+        var marker = new google.maps.Marker({
+          position: {'lat': location['lat'], 'lng': location['lng']},
+          label: location['label'],
+          title: location['name'],
+          url: location['id']
         });
+        google.maps.event.addListener(marker, 'click', function(evt) {
+          redirectTo = 'location?locationID=' + marker.url
+          window.location.replace(redirectTo)
+        });
+        return marker;
       });
 
-      // Add a marker clusterer to manage the markers.
+      //Add a marker clusterer to manage the markers.
       new markerClusterer.MarkerClusterer({
         map,
         markers,
@@ -367,7 +373,7 @@
           <div class="card m-auto" style="width: 18rem">
             <img class="card-image-top" src="{{ data.image_url }}" alt="Card image cap" />
             <div class="card-body">
-              <h5 class="card-title">{{ data.name }}</h5>
+              <h5 class="card-title">{{data.label}}. {{ data.name }}</h5>
               <p class="card-text my-0">Phone: {{ data.phone }}</p>
               <p class="card-text my-0">Rating: {{ data.rating }}</p>
               <p class="card-text my-0">Price Range: {{ data.price }}</p>
