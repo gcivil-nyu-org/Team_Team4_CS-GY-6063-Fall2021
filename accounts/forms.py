@@ -46,8 +46,8 @@ class UserUpdateForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['email'].label = '<i class="fas fa-envelope"></i>'
-        self.fields['username'].label = '<i class="fas fa-user-circle"></i>'
+        self.fields['email'].label = '<i class="fas fa-envelope me-1"></i> Username'
+        self.fields['username'].label = '<i class="fas fa-user-circle me-1"></i> Email'
 
     class Meta:
         model = User
@@ -68,4 +68,4 @@ class ProfileUpdateForm(forms.ModelForm):
     class Meta:
         model = Profile
         fields = ["image"]
-        labels = {"image": "<i class='fas fa-images'></i>"}
+        labels = {"image": "<i class='fas fa-images me-1'></i> Avatar"}

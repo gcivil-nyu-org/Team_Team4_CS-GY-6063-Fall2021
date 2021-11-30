@@ -66,10 +66,22 @@ fieldset {
   border-top: 1px solid #e5e5e5;
   margin: 30px auto 0px auto;
 }
+fieldset h2 {
+  font-size: 25px;
+  font-weight: 600;
+}
 
 fieldset label {
   font-size: 1.2em;
   margin-bottom: 10px;
+}
+fieldset a {
+  display: inline-block;
+  color: black;
+  margin-bottom: 10px;
+}
+fieldset a:hover {
+  color: black;
 }
 
 fieldset input {

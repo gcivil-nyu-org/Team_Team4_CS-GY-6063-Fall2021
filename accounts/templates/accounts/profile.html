@@ -40,7 +40,7 @@
                     <form method="post">
                         {% csrf_token %}
                         <input type="hidden" name="remove_image" value="1" />
-                        <button class="mt-3 btn btn-secondary" type="submit">Remove my photo</button>
+                        <button class="mt-3 btn btn-secondary" type="submit">Set default avatar</button>
                     </form>
                     <div class="">
                         <h2 class="mt-3">{{ user.username }}</h2>
@@ -53,11 +53,12 @@
                 <form method="POST" enctype="multipart/form-data">
                     {% csrf_token %}
                     <fieldset>
+                        <h2>Update profile</h2>
                         {{ u_form|crispy }}
                         {{ p_form|crispy }}
                     </fieldset>
                     <div class="form-group">
-                        <button class="mt-3 btn btn-secondary" type="submit">Update profile</button>
+                        <button class="mt-3 btn btn-secondary" type="submit">Save</button>
                     </div>
                 </form>
             </div>
@@ -109,14 +110,11 @@
     <script>
         function getDirectInnerText(element) {
             var childNodes = element.childNodes;
-            result = '';
-
             for (var i = 0; i < childNodes.length; i++) {
                 if (childNodes[i].nodeType == 3) {
                     childNodes[i].data = ""
                 }
             }
-
             return;
         }
         const a = document.getElementById("div_id_image").children[1]

@@ -148,7 +148,7 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = "apikey"
 EMAIL_HOST_PASSWORD = os.environ.get("SENDGRID_API")
-DEFAULT_FROM_EMAIL = "leowang9863@gmail.com"
+DEFAULT_FROM_EMAIL = "studycity4@gmail.com"
 
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
