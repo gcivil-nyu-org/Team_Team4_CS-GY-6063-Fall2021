@@ -26,3 +26,11 @@ function toggleCurrentLocation() {
     document.getElementById("searchLocation").disabled = false;
   }
 }
+
+function validateForm() {
+  var location = document.getElementById("locationInput").value;
+  var currentLocation = document.getElementById("useCurrentLocation").checked;
+  if (!location && !currentLocation) {
+    alert("Please enter a location / zip code");
+  }
+}

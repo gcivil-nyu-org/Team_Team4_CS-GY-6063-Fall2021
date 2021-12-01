@@ -39,6 +39,7 @@ urlpatterns = [
          ),
          name='password_reset_complete'),
     path('activate/<uidb64>/<token>/', views.ActivateAccount, name='activate'),
+    path('about/', views.about, name='about'),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL,
