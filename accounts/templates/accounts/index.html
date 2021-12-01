@@ -21,8 +21,8 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous">
   </script>
+  <script src="https://unpkg.com/scrollreveal"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.1/font/bootstrap-icons.css">
-
 
   <script type="text/javascript">
     $(document).ready(function () {
@@ -61,8 +61,7 @@
           lng: -74.0060
         },
       });
-      // Create an array of alphabetical characters used to label the markers.
-      const labels = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
       infoWindow = new google.maps.InfoWindow();
 
       const useCurrentLocation = document.getElementById("useCurrentLocation");
@@ -77,7 +76,7 @@
               };
 
               infoWindow.setPosition(pos);
-              infoWindow.setContent("Location found.");
+              infoWindow.setContent(label);
               infoWindow.open(map);
               map.setCenter(pos);
             },
@@ -90,15 +89,22 @@
           handleLocationError(false, infoWindow, map.getCenter());
         }
       })
-      // Add some markers to the map.
-      const markers = locations.map((location, i) => {
-        return new google.maps.Marker({
-          position: location,
-          label: labels[i % labels.length],
+
+      var markers = locations.map(function(location, i) {
+        var marker = new google.maps.Marker({
+          position: {'lat': location['lat'], 'lng': location['lng']},
+          label: location['label'],
+          title: location['name'],
+          url: location['id']
         });
+        google.maps.event.addListener(marker, 'click', function(evt) {
+          redirectTo = 'location?locationID=' + marker.url
+          window.location.replace(redirectTo)
+        });
+        return marker;
       });
 
-      // Add a marker clusterer to manage the markers.
+      //Add a marker clusterer to manage the markers.
       new markerClusterer.MarkerClusterer({
         map,
         markers,
@@ -230,8 +236,8 @@
               placeholder="Enter the location / zip code"
               value="{% if params.location and not invalid_search %}{{params.location}}{% endif %}" />
             <div class="form-check  use-current">
-              <input name="useCurrentLocation" class="form-check-input" type="checkbox" value="" id="useCurrentLocation"
-                onclick="toggleCurrentLocation()">
+              <input id="useCurrentLocation" name="useCurrentLocation" class="form-check-input" type="checkbox" value=""
+                id="useCurrentLocation" onclick="toggleCurrentLocation()">
               <label class="form-check-label pointer" for="useCurrentLocation">
               </label>
 
@@ -245,7 +251,8 @@
           </div>
           <div class="mt-3 fs-5" id="">{% if invalid_search %}Please enter a valid NYC zip code / address 🗽
             {% endif %}</div>
-          <input type="submit" id="searchLocation" class="submit-btn" value="Find me Study Spaces!" />
+          <input type="submit" onclick="validateForm()" id="searchLocation" class="submit-btn"
+            value="Find me Study Spaces!" />
           <div class="mt-2" id="locationLoading"></div>
 
 
@@ -364,10 +371,10 @@
       <div class="row">
         {% for data in businesses %}
         <div class="col my-3">
-          <div class="card m-auto" style="width: 18rem">
+          <div class="card m-auto headline" style="width: 18rem">
             <img class="card-image-top" src="{{ data.image_url }}" alt="Card image cap" />
             <div class="card-body">
-              <h5 class="card-title">{{ data.name }}</h5>
+              <h5 class="card-title">{{data.label}}. {{ data.name }}</h5>
               <p class="card-text my-0">Phone: {{ data.phone }}</p>
               <p class="card-text my-0">Rating: {{ data.rating }}</p>
               <p class="card-text my-0">Price Range: {{ data.price }}</p>
@@ -429,6 +436,9 @@
   </div>
 
   <script src="https://maps.googleapis.com/maps/api/js?key={{google}}&callback=initMap&v=weekly" async></script>
+  <script>
+    ScrollReveal().reveal('.headline');
+  </script>
 </body>
 
 </html>

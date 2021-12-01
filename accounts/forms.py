@@ -1,8 +1,9 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import Profile,BProfile
+from .models import Profile, BProfile
 from .models import Review, Favorite
+from crispy_forms.helper import FormHelper
 
 
 class RegisterForm(UserCreationForm):
@@ -43,26 +44,43 @@ class FavoriteCreateForm(forms.ModelForm):
 class UserUpdateForm(forms.ModelForm):
     email = forms.EmailField()
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['email'].label = '<i class="fas fa-envelope me-1"></i> Username'
+        self.fields['username'].label = '<i class="fas fa-user-circle me-1"></i> Email'
+
     class Meta:
         model = User
         fields = ["username", "email"]
+        help_texts = {
+            'username': None,
+            'email': None,
+        }
 
 
 class ProfileUpdateForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_id = 'id-exampleForm'
+        self.helper.form_class = 'blueForms'
+
     class Meta:
         model = Profile
         fields = ["image"]
+        labels = {"image": "<i class='fas fa-images me-1'></i> Avatar"}
+
 
 class BusinessProfileForm(forms.ModelForm):
     class Meta:
-        model=BProfile
-        fields=["user"]
+        model = BProfile
+        fields = ["user"]
         # print("BPF")
         # fields="__all__"
 
+
 class BusinessUpdate(forms.ModelForm):
     class Meta:
-        model=BProfile
+        model = BProfile
         # fields=["address","phone","business_hours"]
-        fields=["image","address","phone","business_hours"]
-
+        fields = ["image", "address", "phone", "business_hours"]

@@ -34,7 +34,7 @@ def bz_update(request):
         bform = BusinessUpdate(request.POST, request.FILES, instance=request.user.bprofile)
         if bform.is_valid():
             bform.save()
-            return render(request, "accounts/business_photo_update_suc.html")
+            return render(request, "accounts/business_info_update_suc.html")
     bform = BusinessUpdate(instance=request.user.bprofile)
     context = {
         "bform": bform
@@ -73,7 +73,7 @@ def index(request):
     queryStr = request.GET
     if queryStr:
         if not queryStr.get('place') and not queryStr.get('useCurrentLocation'):
-            return render(request, "accounts/index.html", context=context)
+            return redirect('index')
         if queryStr.get('place'):
             params['location'] = queryStr.get('place')
         if queryStr.get('useCurrentLocation'):
@@ -154,10 +154,15 @@ def index(request):
         recommendations = [i for i in unfiltered_response if i not in response] if len(
             response) < 3 else []
 
-        # create coordinate list post filtering
+        # create coordinate list post filtering, add labels for map
+        labels = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
         for index, item in enumerate(response):
-            cor_list.append(
-                            {'lat': item['coordinates']['latitude'], 'lng': item['coordinates']['longitude']})
+            item['label'] = labels[index]
+            cor_list.append({'id': item['id'],
+                             'name': item['name'],
+                             'lat': item['coordinates']['latitude'],
+                             'lng': item['coordinates']['longitude'],
+                             'label': item['label']})
 
         context = {
             'businesses': response,
@@ -193,7 +198,7 @@ def locationDetail(request):
                               ' Please unfavorite one location before adding another.')
             else:
                 favor_ = Favorite.objects.filter(user=request.user,
-                                                       yelp_id=business_id)
+                                                 yelp_id=business_id)
                 if not favor_:
                     form_dict = {
                         "user": request.user,
@@ -436,7 +441,8 @@ def profile(request):
             messages.success(request, "Your account has been updated!")
             return redirect("profile")
     elif request.method == "POST" and request.POST.get('remove_image'):
-        Profile.objects.filter(user=request.user).update(image="profile_pics/default.jpg")
+        Profile.objects.filter(user=request.user).update(
+            image="profile_pics/default.jpg")
         return redirect("profile")
     else:
         u_form = UserUpdateForm(instance=request.user)
@@ -445,11 +451,24 @@ def profile(request):
     review_list = Review.objects.filter(user=request.user).order_by("-date_posted")
     favorite_list = Favorite.objects.filter(user=request.user).order_by("-date_posted")
 
+    search_object = Yelp_Search()
+    new_list = []
+    for favorite in favorite_list:
+        data = search_object.search_business_id(favorite.yelp_id)
+        resultJSON = json.loads(data)
+        new_list.append(
+            {"name": favorite.business_name,
+             "yelp_id": favorite.yelp_id, "img_url": resultJSON['image_url']})
+
     context = {
         "u_form": u_form,
         "p_form": p_form,
         "reviews": review_list,
-        "favorites": favorite_list,
+        "favorites": new_list,
     }
 
     return render(request, "accounts/profile.html", context)
+
+
+def about(request):
+    return render(request, "accounts/about.html")
