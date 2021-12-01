@@ -97,7 +97,17 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <img src="{{ business.image_url }}" />
+                        {% if business_info and business_info.image.url %}
+
+                        <img class="fade-in-top animation-delay-1" src="{{ business_info.image.url }}" />
+                       
+                        
+                        
+                        {% else %}
+                    
+                        <img class="fade-in-top animation-delay-1" src="{{ business.image_url }}" />
+            
+                        {% endif %}
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
