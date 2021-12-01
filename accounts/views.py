@@ -29,24 +29,18 @@ from django.utils.http import urlsafe_base64_decode
 
 
 def bz_update(request):
-  
     if request.method=="POST":
-        bform=BusinessUpdate(request.POST, instance=request.user.bprofile)
-        print(request.POST)
+        # bform = BusinessUpdate(request.POST, instance=request.user.bprofile)
+        bform = BusinessUpdate(request.POST, request.FILES, instance=request.user.bprofile)
         if bform.is_valid():
-            print("form saved")
-            print(bform)
             bform.save()
-           
-    else:
-        bform=BusinessUpdate(instance=request.user.bprofile)
-        print(bform)
-        print(123)
-    
-    context={
-        "bform":bform
+            return render(request, "accounts/business_photo_update_suc.html")
+    bform = BusinessUpdate(instance=request.user.bprofile)
+    context = {
+        "bform": bform
     }
-    return render(request,"accounts/bz_update.html",context)
+    return render(request, "accounts/bz_update.html", context)
+
 
 def review_update(request):
     return render(request, "accounts/review_update_suc.html")
@@ -306,13 +300,10 @@ def locationDetail(request):
             
             profile = Profile.objects.filter(verified_yelp_id = business_id)
             if profile.count()==1:
-                print("yes")
                 user_ = profile[0].user
                 bp = BProfile.objects.filter(user = user_)
                 if bp.count()==1:
-                    
                     info = bp[0]
-                    print(info.phone)
 
 
 
