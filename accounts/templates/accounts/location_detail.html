@@ -29,19 +29,14 @@
 
     <div class="main">
         <div class="banner-wrapper ">
-            
+
             {% if business_info and business_info.image.url %}
 
             <img class="fade-in-top animation-delay-1" src="{{ business_info.image.url }}" />
-           
-            
-            
             {% else %}
-        
             <img class="fade-in-top animation-delay-1" src="{{ business.image_url }}" />
-
             {% endif %}
- 
+
             <div class="location-info-head fade-in animation-delay-3">
                 <h1>{{ business.name }}</h1>
                 {% if is_verified %}
@@ -51,7 +46,7 @@
                 </div>
                 {% endif %}
 
-                
+
                 {% if is_business and not is_verified %}
                 <div class="mt-2 mb-3">
                     <i class="fas fa-info-circle"></i>
@@ -63,10 +58,10 @@
                     <input type="hidden" name="fav_locationid" value="{{ locationID }}" />
                     <input type="hidden" name="fav_locationname" value="{{ business.name }}" />
                     {% if has_favorite %}
-                        <input type="hidden" name="unfavorite" value="1" />
+                    <input type="hidden" name="unfavorite" value="1" />
                     <input type="submit" class="btn btn-primary m-auto" value="Unfavorite" />
                     {% else %}
-{#                        <input type="hidden" name="favorite" value="1" />#}
+                    {#                        <input type="hidden" name="favorite" value="1" />#}
                     <input type="submit" class="btn btn-primary m-auto" value="Add to favorite" />
                     {% endif %}
                 </form>
@@ -99,14 +94,12 @@
                     <div class="modal-body">
                         {% if business_info and business_info.image.url %}
 
-                        <img class="fade-in-top animation-delay-1" src="{{ business_info.image.url }}" />
-                       
-                        
-                        
+                        <img src="{{ business_info.image.url }}" />
+
                         {% else %}
-                    
-                        <img class="fade-in-top animation-delay-1" src="{{ business.image_url }}" />
-            
+
+                        <img src="{{ business.image_url }}" />
+
                         {% endif %}
                     </div>
                     <div class="modal-footer">
@@ -153,8 +146,8 @@
                         {% endif %}
                         {% endfor %}
                     </div>
-      
-            {% if not is_business or is_owner %} 
+
+                    {% if not is_business or is_owner %}
 
                     <div class="post-review">
                         <h2><i class="fas fa-edit me-2"></i>Post your review</h2>
@@ -202,14 +195,19 @@
                                     <input type="range" name="general_rating" class="form-range secondary" min="0"
                                         max="5" id="general_rating">
                                 </div>
-           
+
                                 <input type="hidden" name="locationid" value="{{ locationID }}" />
                                 <input type="hidden" name="locationname" value="{{ business.name }}" />
                                 <input class="btn btn-primary" type="submit" />
                             </div>
                         </form>
                     </div>
-                {% endif %}
+                    {% else %}
+                    <div class="post-review">
+                        <p class="alert"><i class="fas fa-exclamation-circle me-2"></i>Sorry, business user can't post
+                            reviews</p>
+                    </div>
+                    {% endif %}
                 </div>
                 <div class="col-5 ">
                     <div class="info-section ">
