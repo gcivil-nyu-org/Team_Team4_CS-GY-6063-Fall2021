@@ -53,9 +53,6 @@
     const locations = {{location_list|safe}};
     /* beautify preserve:end */
 
-    // create bounds object
-
-
     function initMap() {
       var map = new google.maps.Map(document.getElementById("map"), {
         zoom: 11,
@@ -65,33 +62,22 @@
         },
       });
 
-      //infoWindow = new google.maps.InfoWindow();
-
-      var pos;
       const useCurrentLocation = document.getElementById("useCurrentLocation");
       useCurrentLocation.addEventListener("click", () => {
         // Try HTML5 geolocation.
         if (navigator.geolocation) {
           navigator.geolocation.getCurrentPosition(
             (position) => {
-              pos = {
+              const pos = {
                 lat: position.coords.latitude,
                 lng: position.coords.longitude,
               };
-              //infoWindow.setPosition(pos);
-              //infoWindow.setContent("");
-              //infoWindow.open(map);
 
               map.setCenter(pos);
-              map.setZoom(11);
-              // fix the center marker
-              const iconBase =
-                "https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png";
               var userMarker = new google.maps.Marker({
                 position: map.getCenter(),
-                //label: 'ME',
                 map: map,
-                icon: iconBase
+                icon: 'http://maps.google.com/mapfiles/ms/icons/orange.png'
               });
             },
             () => {
@@ -127,7 +113,6 @@
         return marker;
       });
 
-
       if (locations.length > 0) {
         map.fitBounds(bounds);
       }
@@ -136,7 +121,6 @@
       new markerClusterer.MarkerClusterer({
         map,
         markers,
-
       });
     };
 
@@ -149,7 +133,6 @@
       );
       infoWindow.open(map);
     }
-
 
     function capitalize(string) {
       return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
