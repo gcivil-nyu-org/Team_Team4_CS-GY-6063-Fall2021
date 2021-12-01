@@ -6,6 +6,7 @@ from .views import ReviewUpdateView
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
+    path('bz_update/',views.bz_update),
     path('', views.index, name='index'),
     path('register/', views.registerPage, name="register"),
 
@@ -39,6 +40,7 @@ urlpatterns = [
          ),
          name='password_reset_complete'),
     path('activate/<uidb64>/<token>/', views.ActivateAccount, name='activate'),
+    path('about/', views.about, name='about'),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL,

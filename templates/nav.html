@@ -1,4 +1,14 @@
 <style>
+    .about-btn a {
+        text-decoration: none;
+        color: black;
+
+    }
+
+    .about-btn a:hover {
+        color: #808080 !important;
+    }
+
     nav {
         display: flex;
         flex-direction: row;
@@ -50,7 +60,6 @@
 
     <div class="btns">
         {% if user.is_authenticated %}
-
         <p>
             {{ request.user }}
         </p>
@@ -81,6 +90,11 @@
         </a>
 
         {% endif %}
+        <div class="about-btn">
+            <a href="{% url 'about' %}">
+                About
+            </a>
+        </div>
         {% comment %} <a href={% url 'index' %}>Search</a> {% endcomment %}
     </div>
 </nav>

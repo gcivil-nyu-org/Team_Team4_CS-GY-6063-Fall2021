@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Profile, Review, Favorite
+from .models import BProfile, Profile, Review, Favorite
 
 
 class ProfileAdmin(admin.ModelAdmin):
@@ -15,3 +15,4 @@ class ProfileAdmin(admin.ModelAdmin):
 admin.site.register(Profile, ProfileAdmin)
 admin.site.register(Review)
 admin.site.register(Favorite)
+admin.site.register(BProfile)
