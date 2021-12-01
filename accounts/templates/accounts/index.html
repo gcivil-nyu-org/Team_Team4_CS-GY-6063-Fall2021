@@ -54,7 +54,7 @@
     /* beautify preserve:end */
 
     // create bounds object
-    
+
 
     function initMap() {
       var map = new google.maps.Map(document.getElementById("map"), {
@@ -65,7 +65,7 @@
         },
       });
 
-      infoWindow = new google.maps.InfoWindow();
+      //infoWindow = new google.maps.InfoWindow();
 
       var pos;
       const useCurrentLocation = document.getElementById("useCurrentLocation");
@@ -80,10 +80,19 @@
               };
               //infoWindow.setPosition(pos);
               //infoWindow.setContent("");
-              
+              //infoWindow.open(map);
+
               map.setCenter(pos);
               map.setZoom(11);
-              infoWindow.open(map);
+              // fix the center marker
+              const iconBase =
+                "https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png";
+              var userMarker = new google.maps.Marker({
+                position: map.getCenter(),
+                //label: 'ME',
+                map: map,
+                icon: iconBase
+              });
             },
             () => {
               handleLocationError(true, infoWindow, map.getCenter());
@@ -94,41 +103,40 @@
           handleLocationError(false, infoWindow, map.getCenter());
         }
       })
-           
+
       var bounds = new google.maps.LatLngBounds();
-      
-      var markers = locations.map(function(location, i) {
+      var markers = locations.map(function (location, i) {
         var marker = new google.maps.Marker({
-          position: {'lat': location['lat'], 'lng': location['lng']},
+          position: {
+            'lat': location['lat'],
+            'lng': location['lng']
+          },
           label: location['label'],
           title: location['name'],
           url: location['id']
         });
-        google.maps.event.addListener(marker, 'click', function(evt) {
+        google.maps.event.addListener(marker, 'click', function (evt) {
           redirectTo = 'location?locationID=' + marker.url
           window.location.replace(redirectTo)
         });
         // extend bounds for each marker
-        bounds.extend({'lat': location['lat'], 'lng': location['lng']})
+        bounds.extend({
+          'lat': location['lat'],
+          'lng': location['lng']
+        })
         return marker;
       });
 
-      // fix the center marker
-      const iconBase = "https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png";
-      var userMarker = new google.maps.Marker({
-          position: map.getCenter(),
-          //label: 'ME',
-          map: map,
-          icon: iconBase
-      });
 
-      map.fitBounds(bounds);
-    
+      if (locations.length > 0) {
+        map.fitBounds(bounds);
+      }
+
       //Add a marker clusterer to manage the markers.
       new markerClusterer.MarkerClusterer({
         map,
         markers,
-        userMarker,
+
       });
     };
 
