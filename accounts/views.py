@@ -2,19 +2,44 @@
 import json
 from django.shortcuts import render, redirect
 from .forms import RegisterForm, UserUpdateForm, ProfileUpdateForm, ReviewCreateForm
+from .forms import BusinessUpdate, BusinessProfileForm
 from .forms import FavoriteCreateForm
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import logout
+# from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from .models import Profile, Review, Favorite
+from .models import Profile, Review, Favorite, BProfile
 from django.db.models import Avg
-from .yelp_api import yelp_search
-from .open_data_api import open_data_query
+from .yelp_api import Yelp_Search
+from .open_data_api import Open_Data_Query
 from .zip_codes import filterInNYC, zipcodeInNYC, noNYCResults
+from .filters import Checks, Filters
 import os
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import UpdateView
+
+from django.contrib.sites.shortcuts import get_current_site
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode
+from django.template.loader import render_to_string
+from .utils import account_activation_token
+from django.utils.encoding import force_text
+from django.utils.http import urlsafe_base64_decode
+
+
+def bz_update(request):
+    if request.method=="POST":
+        # bform = BusinessUpdate(request.POST, instance=request.user.bprofile)
+        bform = BusinessUpdate(request.POST, request.FILES, instance=request.user.bprofile)
+        if bform.is_valid():
+            bform.save()
+            return render(request, "accounts/business_info_update_suc.html")
+    bform = BusinessUpdate(instance=request.user.bprofile)
+    context = {
+        "bform": bform
+    }
+    return render(request, "accounts/bz_update.html", context)
 
 
 def review_update(request):
@@ -38,17 +63,17 @@ class ReviewUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
 def index(request):
     cor_list = []
-    # params = {'limit': 20} 
+    # params = {'limit': 20}
     '''this seems redundant; should apply all of following before conditional'''
     # hard code search terms to narrow scope: cafe, restaurant, and study
     search_terms = 'cafe restaurant study'
     params = {'limit': 20, 'term': search_terms}
-    context = {"google": os.environ.get("GOOGLE_API"), 
+    context = {"google": os.environ.get("GOOGLE_API"),
                "location_list": cor_list}
     queryStr = request.GET
     if queryStr:
         if not queryStr.get('place') and not queryStr.get('useCurrentLocation'):
-            return render(request, "accounts/index.html", context=context)
+            return redirect('index')
         if queryStr.get('place'):
             params['location'] = queryStr.get('place')
         if queryStr.get('useCurrentLocation'):
@@ -58,33 +83,19 @@ def index(request):
             elif not queryStr.get('place'):
                 return render(request, "accounts/index.html", context=context)
 
-        if queryStr.get("open_now"):
-            params["open_now"] = True
-
-        if queryStr.get("rating"):
-            params["rating"] = queryStr.get("rating")
+        # pass user defined Yelp! params to Yelp API
+        if queryStr.get('open_now'):
+            params['open_now'] = True
 
         if queryStr.get('price'):
             params['price'] = queryStr.get('price')
 
-        if queryStr.get('comfort'):
-            params['comfort'] = queryStr.get('comfort')
-
-        if queryStr.get('food'):
-            params['food'] = queryStr.get('food')
-
-        if queryStr.get('wifi'):
-            params['wifi'] = queryStr.get('wifi')
-
-        if queryStr.get('charging'):
-            params['charging'] = queryStr.get('charging')
-
-        search_object = yelp_search()
+        search_object = Yelp_Search()
         result = search_object.filter_location(params)
 
         # exception handling for invalid search terms
         invalid_search = False
-        try: 
+        try:
             resultJSON = json.loads(result)
         except TypeError:
             invalid_search = True
@@ -95,139 +106,63 @@ def index(request):
                 'google': os.environ.get('GOOGLE_API'),
                 'location_list': cor_list,
                 'invalid_search': invalid_search,
-                'recommendations': [],
+                'recommendations': []
             }
+
             return render(request, "accounts/index.html", context=context)
 
-        # loop over returned businesses and
+        # loop over returned businesses, update items with database info
         for index, item in enumerate(resultJSON['businesses']):
-            long_in = item['coordinates']['longitude']
-            lat_in = item['coordinates']['latitude']
-            name = item['name']
             zipcode = item['location']['zip_code']
-
             zipcodeInNYC(item, zipcode)
 
-            cor_list.append(
-                {'lat': item['coordinates']['latitude'], 'lng': item['coordinates']['longitude']})
+            # update search object with user defined filter
+            check_query = Checks(item,
+                                 queryStr.get('comfort'),
+                                 queryStr.get('food'),
+                                 queryStr.get('wifi'),
+                                 queryStr.get('charging'),
+                                 queryStr.get('311_check')
+                                 )
 
-            if queryStr.get('grade'):
-                open_data_object = open_data_query(name, zipcode, long_in, lat_in)
-                open_data_sanitation = open_data_object.sanitation
-
-                if (type(open_data_sanitation) is dict):
-                    item['grade'] = open_data_sanitation['grade']
-                else:
-                    item['grade'] = ''
-
-            # Comment 311_check, by Hang
-            # if queryStr.get('311_check'):
-            #     open_data_object = open_data_query(name, zipcode, long_in, lat_in)
-            #     open_data_threeoneone = json.loads(
-            #         json.dumps(open_data_object.three_one_one))
-            #
-            #     # check whether 311 query returns, if yes render value
-            #     if (open_data_threeoneone[0]['created_date'] == 'NA'):
-            #         item['check_311'] = True
-            #     else:
-            #         item['check_311'] = False
-
-            if queryStr.get('comfort'):
-                try:
-                    # pull database object for location (i.e., item)
-                    db_rating = Review.objects.filter(business_name=name).aggregate(Avg('comfort_rating'))[
-                        'comfort_rating__avg']
-                    if db_rating is not None:
-                        item['comfort'] = int(db_rating)
-                    else:
-                        item['comfort'] = 0
-                except IndexError:
-                    item['comfort'] = 0
-
-            if queryStr.get('food'):
-                try:
-                    # pull database object for location (i.e., item)
-                    db_rating = Review.objects.filter(business_name=name).aggregate(Avg('food_rating'))[
-                        'food_rating__avg']
-                    if db_rating is not None:
-                        item['food'] = int(db_rating)
-                    else:
-                        item['food'] = 0
-                except IndexError:
-                    item['food'] = 0
-
-            if queryStr.get('wifi'):
-                try:
-                    # pull database object for location (i.e., item)
-                    db_rating = Review.objects.filter(business_name=name).aggregate(Avg('wifi_rating'))[
-                        'wifi_rating__avg']
-                    if db_rating is not None:
-                        item['wifi'] = int(db_rating)
-                    else:
-                        item['wifi'] = 0
-                except IndexError:
-                    item['wifi'] = 0
-
-            if queryStr.get('charging'):
-                try:
-                    # pull database object for location (i.e., item)
-                    db_rating = Review.objects.filter(business_name=name).aggregate(Avg('charging_rating'))[
-                        'charging_rating__avg']
-                    if db_rating is not None:
-                        item['charging'] = int(db_rating)
-                    else:
-                        item['charging'] = 0
-                except IndexError:
-                    item['charging'] = 0
+            check_query.perform_checks()
 
         response = resultJSON['businesses']
-        # filter for locations outside of NYC 
+
+        # filter for locations outside of NYC
         response = list(filter(filterInNYC, response))
+
         # if response is empty, also consider search invalid
         invalid_search = noNYCResults(response)
+
         # save copy to provide recommended results
         unfiltered_response = response
 
-        # functions used to filter results
-        def filterByGrade(item):
-            return item['grade'] == queryStr.get('grade')
+        # filter results based on user input
+        filter_results = Filters(response,
+                                 queryStr.get('comfort'),
+                                 queryStr.get('food'),
+                                 queryStr.get('wifi'),
+                                 queryStr.get('charging'),
+                                 queryStr.get('rating'),
+                                 queryStr.get('311_check')
+                                 )
 
-        if queryStr.get('grade'):
-            response = list(filter(filterByGrade, response))
+        response = filter_results.filter_all()
 
-        # Comment 311, by Hang
-        # def filterBy311(item):
-        #     if (item['check_311']):
-        #         return True
-        # if queryStr.get('311_check'):
-        #     response = list(filter(filterBy311, response))
+        # if the filter returns < 3 locations, provided suggestions
+        recommendations = [i for i in unfiltered_response if i not in response] if len(
+            response) < 3 else []
 
-        def filterByComfort(item):
-            return int(item['comfort']) >= int(queryStr.get('comfort'))
-
-        if queryStr.get('comfort'):
-            response = list(filter(filterByComfort, response))
-
-        def filterByFood(item):
-            return int(item['food']) >= int(queryStr.get('food'))
-
-        if queryStr.get('food'):
-            response = list(filter(filterByFood, response))
-
-        def filterByWifi(item):
-            return int(item['wifi']) >= int(queryStr.get('wifi'))
-
-        if queryStr.get('wifi'):
-            response = list(filter(filterByWifi, response))
-
-        def filterByCharging(item):
-            return int(item['charging']) >= int(queryStr.get('charging'))
-
-        if queryStr.get('charging'):
-            response = list(filter(filterByCharging, response))
-
-        # if the filter returns less than 3 locations, provided suggestions
-        recommendations = [i for i in unfiltered_response if i not in response] if len(response) < 3 else []
+        # create coordinate list post filtering, add labels for map
+        labels = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        for index, item in enumerate(response):
+            item['label'] = labels[index]
+            cor_list.append({'id': item['id'],
+                             'name': item['name'],
+                             'lat': item['coordinates']['latitude'],
+                             'lng': item['coordinates']['longitude'],
+                             'label': item['label']})
 
         context = {
             'businesses': response,
@@ -250,9 +185,11 @@ def locationDetail(request):
         business_id = request.POST.get("fav_locationid")
         if business_id:  # it is a adding favorite post
             business_name = request.POST.get("fav_locationname")
-            favor_delete = Favorite.objects.filter(user=request.user,
-                                                   yelp_id=business_id)
-            if favor_delete:
+
+            if request.POST.get("unfavorite"):
+                favor_delete = Favorite.objects.filter(user=request.user,
+                                                       yelp_id=business_id)
+            # if favor_delete:
                 favor_delete.delete()
                 messages.info(request, 'Unfavorite successfully!')
             elif Favorite.objects.filter(user=request.user).count() >= 5:
@@ -260,16 +197,19 @@ def locationDetail(request):
                               'Maximum of 5 favorited locations.' +
                               ' Please unfavorite one location before adding another.')
             else:
-                form_dict = {
-                    "user": request.user,
-                    "yelp_id": business_id,
-                    "business_name": business_name
-                }
-                form = FavoriteCreateForm(form_dict)
-                if form.is_valid():
-                    form.save()
-                    messages.info(request, 'Favorite successfully!')
-                    print("Favorite object has been created successfully")
+                favor_ = Favorite.objects.filter(user=request.user,
+                                                 yelp_id=business_id)
+                if not favor_:
+                    form_dict = {
+                        "user": request.user,
+                        "yelp_id": business_id,
+                        "business_name": business_name
+                    }
+                    form = FavoriteCreateForm(form_dict)
+                    if form.is_valid():
+                        form.save()
+                        messages.info(request, 'Favorite successfully!')
+                        print("Favorite object has been created successfully")
 
         else:  # it is a review post
             business_id = request.POST.get("locationid")
@@ -293,7 +233,7 @@ def locationDetail(request):
                 "comfort_rating": comfort_rating,
                 "charging_rating": charging_rating,
             }
-            
+
             form = ReviewCreateForm(form_dict)
             previous_review = Review.objects.filter(user=post_user, yelp_id=business_id)
             # previous_review.delete()
@@ -311,10 +251,10 @@ def locationDetail(request):
             else:
                 print("Review form is invalid")
 
-    search_object = yelp_search()
+    search_object = Yelp_Search()
     context = {}
     if business_id:
-        review_list = Review.objects.filter(yelp_id=business_id).order_by(
+        review_list = Review.objects.filter(yelp_id=business_id, review_text__gt='').order_by(
             "-date_posted"
         )
         avg_field_list = ['wifi_rating', 'general_rating',
@@ -325,7 +265,7 @@ def locationDetail(request):
                 yelp_id=business_id).aggregate(Avg(field_name)))
         for x in avg_dict:
             if avg_dict[x] is None:
-                avg_dict[x] = '-'
+                avg_dict[x] = -1
             else:
                 avg_dict[x] = round(avg_dict[x], 1)
 
@@ -340,7 +280,7 @@ def locationDetail(request):
         lat_in = resultJSON["coordinates"]["latitude"]
 
         # init open data query object, run sanitation/311 queries
-        open_data_object = open_data_query(name, zipcode, long_in, lat_in)
+        open_data_object = Open_Data_Query(name, zipcode, long_in, lat_in)
         open_data_sanitation = open_data_object.sanitation
         open_data_threeoneone = open_data_object.three_one_one
 
@@ -351,12 +291,26 @@ def locationDetail(request):
 
         # check if the user is a business account
         is_business = Profile.objects.get(user=request.user).business_account
-
+        is_owner = Profile.objects.filter(user=request.user, verified_yelp_id = business_id).count() == 1
         # check if location is verified
         try:
-            is_verified = Profile.objects.filter(verified_yelp_id=business_id).values('verified')[0]['verified']
+            is_verified = Profile.objects.filter(
+                verified_yelp_id=business_id).values('verified')[0]['verified']
         except IndexError:
             is_verified = False
+        
+        info = None
+        if is_verified:
+
+            
+            profile = Profile.objects.filter(verified_yelp_id = business_id)
+            if profile.count()==1:
+                user_ = profile[0].user
+                bp = BProfile.objects.filter(user = user_)
+                if bp.count()==1:
+                    info = bp[0]
+
+
 
         context = {
             "business": resultJSON,
@@ -367,7 +321,10 @@ def locationDetail(request):
             "has_favorite": has_favorite,
             "avg_dict": avg_dict,
             "is_business": is_business,
-            "is_verified": is_verified
+            "is_verified": is_verified,
+            "is_owner": is_owner,
+            'google': os.environ.get('GOOGLE_API'),
+            "business_info": info,
         }
 
     return render(request, "accounts/location_detail.html", context=context)
@@ -378,7 +335,9 @@ def registerPage(request):
     if request.method == "POST":
         form = RegisterForm(request.POST)
         if form.is_valid():
-            form.save()
+            createdUser = form.save(commit=False)
+            createdUser.is_active = False
+            createdUser.save()
             # initialize profile
             user = form.cleaned_data.get("username")
             user_obj = User.objects.get(username=user)
@@ -387,31 +346,81 @@ def registerPage(request):
             # ack business account creation
             if business_account:
                 Profile.objects.filter(user=user_obj).update(business_account=True)
-                messages.success(
-                    request, "Business account successfully created for " + user
-                )
+                bdict={
+                   "user":user_obj 
+                }
+                bzform= BusinessProfileForm(bdict)
+                if bzform.is_valid():
+                    bzform.save()
+                    print("Bzforn created")
+                # messages.success(
+                #     request, "Business account successfully created for " + user
+                # )
             else:
-                messages.success(request, "Account successfully created for " + user)
+                # messages.success(request, "Account successfully created for " + user)
+                pass
+
+            # send email
+            current_site = get_current_site(request)
+            subject = 'Activate Your StudyCity Account'
+            message = render_to_string('accounts/account_activation_email.html', {
+                'user': createdUser,
+                'domain': current_site.domain,
+                'uid': urlsafe_base64_encode(force_bytes(createdUser.pk)),
+                'token': account_activation_token.make_token(createdUser),
+            })
+            createdUser.email_user(subject, message)
+            messages.success(
+                request, ('Please Confirm your email to complete registration.'))
             return redirect("login")
 
     return render(request, "accounts/register.html", {"form": form})
 
 
-def loginPage(request):
-    if request.method == "POST":
-        username = request.POST.get("username")
-        password = request.POST.get("password")
+def ActivateAccount(request, uidb64, token, *args, **kwargs):
+    try:
+        id = force_text(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=id)
 
-        user = authenticate(request, username=username, password=password)
+        if not account_activation_token.check_token(user, token):
+            return redirect('login'+'?message='+'User already activated')
 
-        if user is not None:
-            login(request, user)
-            return redirect("index")
-        else:
-            messages.info(request, "Username OR password is incorrect")
+        if user.is_active:
+            return redirect('login')
+        user.is_active = True
+        user.profile.email_confirmed = True
+        user.save()
 
-    context = {}
-    return render(request, "accounts/login.html", context)
+        messages.success(request, 'Account activated successfully')
+        return redirect('login')
+
+    except Exception:
+        pass
+
+    return redirect('login')
+
+
+# def loginPage(request):
+#     if request.method == "POST":
+#         username = request.POST.get("username")
+#         password = request.POST.get("password")
+#
+#         user = authenticate(request, username=username, password=password)
+#
+#         if user is not None:
+#             login(request, user)
+#             print(request.get_full_path())
+#             print("url: ", request.GET.get("next"))
+#             next_url = request.GET.get("next")
+#             if next_url:
+#                 return redirect(next_url)
+#             else:
+#                 return redirect("index")
+#         else:
+#             messages.info(request, "Username OR password is incorrect")
+#
+#     context = {}
+#     return render(request, "accounts/login.html", context)
 
 
 def logoutUser(request):
@@ -419,14 +428,9 @@ def logoutUser(request):
     return redirect("login")
 
 
-@login_required(login_url="login")
-def user(request):
-    return render(request, "accounts/user.html")
-
-
 @login_required
 def profile(request):
-    if request.method == "POST":
+    if request.method == "POST" and not request.POST.get('remove_image'):
         u_form = UserUpdateForm(request.POST, instance=request.user)
         p_form = ProfileUpdateForm(
             request.POST, request.FILES, instance=request.user.profile
@@ -436,7 +440,10 @@ def profile(request):
             p_form.save()
             messages.success(request, "Your account has been updated!")
             return redirect("profile")
-
+    elif request.method == "POST" and request.POST.get('remove_image'):
+        Profile.objects.filter(user=request.user).update(
+            image="profile_pics/default.jpg")
+        return redirect("profile")
     else:
         u_form = UserUpdateForm(instance=request.user)
         p_form = ProfileUpdateForm(instance=request.user.profile)
@@ -444,11 +451,24 @@ def profile(request):
     review_list = Review.objects.filter(user=request.user).order_by("-date_posted")
     favorite_list = Favorite.objects.filter(user=request.user).order_by("-date_posted")
 
+    search_object = Yelp_Search()
+    new_list = []
+    for favorite in favorite_list:
+        data = search_object.search_business_id(favorite.yelp_id)
+        resultJSON = json.loads(data)
+        new_list.append(
+            {"name": favorite.business_name,
+             "yelp_id": favorite.yelp_id, "img_url": resultJSON['image_url']})
+
     context = {
         "u_form": u_form,
         "p_form": p_form,
         "reviews": review_list,
-        "favorites": favorite_list,
+        "favorites": new_list,
     }
 
     return render(request, "accounts/profile.html", context)
+
+
+def about(request):
+    return render(request, "accounts/about.html")

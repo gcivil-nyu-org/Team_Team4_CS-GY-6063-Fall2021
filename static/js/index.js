@@ -2,7 +2,7 @@ function showPosition() {
   if (navigator.geolocation) {
     document.getElementById(
       "locationLoading"
-    ).innerHTML = `<i class="fas fa-spinner"></i>Getting your location...`;
+    ).innerHTML = `<i class="fas fa-spinner mr-3"></i>Getting your location...`;
     document.getElementById("searchLocation").disabled = true;
     navigator.geolocation.getCurrentPosition(function (position) {
       document.getElementById("longitude").value = position.coords.longitude;
@@ -24,5 +24,13 @@ function toggleCurrentLocation() {
     currentLocation.value = "false";
     document.getElementById("locationLoading").innerHTML = "";
     document.getElementById("searchLocation").disabled = false;
+  }
+}
+
+function validateForm() {
+  var location = document.getElementById("locationInput").value;
+  var currentLocation = document.getElementById("useCurrentLocation").checked;
+  if (!location && !currentLocation) {
+    alert("Please enter a location / zip code");
   }
 }

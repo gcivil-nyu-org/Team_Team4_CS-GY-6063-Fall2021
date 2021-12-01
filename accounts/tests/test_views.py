@@ -21,8 +21,6 @@ class StudyCityViewsTests(TestCase):
     def test_profile_Get(self):
         logged_in = self.c.login(username='testuser', password='123456e')
         self.assertTrue(logged_in)
-        response = self.c.get(reverse('user'))
-        self.assertEquals(response.status_code, 200)
         response = self.c.get(reverse('profile'))
         self.assertEquals(response.status_code, 200)
 
@@ -59,7 +57,8 @@ class StudyCityViewsTests(TestCase):
             charging_rating=4,
         )
         review.save()
-        data = {'place': [''], 'useCurrentLocation': ['true'], 'longitude': ['-73.9848232'], 'latitude': ['40.6893135'], 'open_now': ['on'], 'rating': ['4'], 'price': [''], 'comfort': ['4'], 'food': ['4'], 'wifi': ['4'], 'charging': ['4']}
+        data = {'place': [''], 'useCurrentLocation': ['true'], 'longitude': ['-73.9848232'], 'latitude': ['40.6893135'],
+                'open_now': ['on'], 'rating': ['4'], 'price': [''], 'comfort': ['4'], 'food': ['4'], 'wifi': ['4'], 'charging': ['4']}
         response = self.c.get(searchURL, data)
         self.assertEquals(response.status_code, 200)
 
@@ -90,7 +89,10 @@ class StudyCityViewsTests(TestCase):
         self.assertEquals(favorite.business_name, yelp_name)
 
         response = self.c.post(location_detail_url,
-                               {'fav_locationid': yelp_id, 'fav_locationname': yelp_name})
+                               {'fav_locationid': yelp_id,
+                                'fav_locationname': yelp_name,
+                                'unfavorite': "1",
+                                })
         favorite_list = Favorite.objects.filter(user=self.user, yelp_id=yelp_id)
         self.assertEquals(favorite_list.count(), 0)
 
@@ -122,7 +124,7 @@ class StudyCityViewsTests(TestCase):
     def test_login(self):
         logged_in = self.c.login(username='testuser', password='123456e')
         self.assertTrue(logged_in)
-        response = self.c.get(reverse('user'))
+        response = self.c.get(reverse('profile'))
         # user_info = {"username": "testuser", "password": "123456e"}
         # self.c.post(reverse("login"), user_info)
         # response = self.c.get(reverse('logout'))

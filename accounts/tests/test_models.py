@@ -1,6 +1,7 @@
 from django.test import TestCase
 from accounts.models import Profile, Review, Favorite
 from django.contrib.auth.models import User
+from populate import populate_test_accounts
 
 
 class TestModels(TestCase):
@@ -11,7 +12,6 @@ class TestModels(TestCase):
             password='ss000000'
         )
         prof = Profile.objects.get(user=test_user)
-        print(prof)
         self.assertFalse(prof.business_account)
 
     def test_review(self):
@@ -30,7 +30,7 @@ class TestModels(TestCase):
             comfort_rating=4,
             charging_rating=5,
             )
-        print(review)
+
         self.assertEquals(review.yelp_id,"abcd")
         self.assertEquals(review.review_text,"good")
         self.assertEquals(review.wifi_rating,3)
@@ -49,27 +49,13 @@ class TestModels(TestCase):
             user=test_user,
             yelp_id='abcd',   
         )
-        print(fav)
-        # user_prof=Favorite.objects.get(user=test_user)
+
         self.assertEquals(fav.yelp_id,"abcd")
 
-
-    # def test_slug(self):
-    #     test_user = User.objects.create(
-    #         username='test_user',
-    #         email='xyz@gmail.com',
-    #         password='ss000000'
-    #     )
-    #     profile = Profile.objects.create(
-    #         user=test_user,
-    #         business_account = True,
-    #         claimed_business_name = 'food_shop',
-    #         verified_yelp_id = 'defg',
-    #         verified = True,
-    #     )
-        
-    #     prof = Profile.objects.get(user=test_user)
-    #     prof.business_account = False
-    #     slug = prof.profile.verified_yelp_id
-    #     print("slug: ", slug)
-    #     self.assertEqual(type(slug), str)
+    
+    def test_populate_test_accounts(self):
+        populate_test_accounts()
+        user_name = 'prof_test'
+        user = User.objects.get(username=user_name)
+        is_business = Profile.objects.get(user=user).business_account
+        self.assertEquals(is_business, True)

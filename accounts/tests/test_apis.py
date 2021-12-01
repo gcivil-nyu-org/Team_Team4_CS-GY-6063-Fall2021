@@ -1,27 +1,27 @@
 from django.test import SimpleTestCase
-from accounts.yelp_api import yelp_search
+from accounts.yelp_api import Yelp_Search
 import json
-from accounts.open_data_api import open_data_query
+from accounts.open_data_api import Open_Data_Query
 
 
 class StudyCityAPITests(SimpleTestCase):
 
     def test_yelp_api_filter(self):
-        test_yelp_query = yelp_search()
+        test_yelp_query = Yelp_Search()
         params = {'location': '\xa0tandon', 'limit': 1}
         response = test_yelp_query.filter_location(params)
         resultJSON = json.loads(response)
         self.assertEqual(resultJSON['businesses'][0]['id'], 'ysqgdbSrezXgVwER2kQWKA')
 
     def test_yelp_api_search_business(self):
-        test_yelp_query = yelp_search()
+        test_yelp_query = Yelp_Search()
         business_id = 'gnXCEhcKF_rd5KmPUQXiYA'
         response = test_yelp_query.search_business_id(business_id)
         resultJSON = json.loads(response)
         self.assertEqual(resultJSON['id'], 'gnXCEhcKF_rd5KmPUQXiYA')
 
     def test_yelp_api_url(self):
-        test_yelp_query = yelp_search()
+        test_yelp_query = Yelp_Search()
         url = 'https://api.yelp.com/v3/businesses/E8RJkjfdcwgtyoPMjQ_Olg'
         response = test_yelp_query.request(url)
         resultJSON = json.loads(response)
@@ -32,7 +32,7 @@ class StudyCityAPITests(SimpleTestCase):
         zipcode = '11201'
         long_in = "-73.9867324 "
         lat_in = "40.6881418"
-        test_od_query = open_data_query(name, zipcode, long_in, lat_in)
+        test_od_query = Open_Data_Query(name, zipcode, long_in, lat_in)
 
         response = test_od_query.sanitation_query(name, zipcode)
         self.assertEqual(response['dba'], name.upper())
@@ -42,7 +42,7 @@ class StudyCityAPITests(SimpleTestCase):
         zipcode = '11201'
         long_in = "-73.9867324 "
         lat_in = "40.6881418"
-        test_od_query = open_data_query(name, zipcode, long_in, lat_in)
+        test_od_query = Open_Data_Query(name, zipcode, long_in, lat_in)
         response = test_od_query.three_one_one_query(long_in, lat_in)
         if response:
             self.assertEqual(type(response[0]), dict)
