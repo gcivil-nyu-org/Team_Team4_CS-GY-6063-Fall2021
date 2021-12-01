@@ -2,13 +2,14 @@
 import json
 from django.shortcuts import render, redirect
 from .forms import RegisterForm, UserUpdateForm, ProfileUpdateForm, ReviewCreateForm
+from .forms import BusinessUpdate, BusinessProfileForm
 from .forms import FavoriteCreateForm
 from django.contrib.auth import logout
 # from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from .models import Profile, Review, Favorite
+from .models import Profile, Review, Favorite, BProfile
 from django.db.models import Avg
 from .yelp_api import Yelp_Search
 from .open_data_api import Open_Data_Query
@@ -25,6 +26,20 @@ from django.template.loader import render_to_string
 from .utils import account_activation_token
 from django.utils.encoding import force_text
 from django.utils.http import urlsafe_base64_decode
+
+
+def bz_update(request):
+    if request.method=="POST":
+        # bform = BusinessUpdate(request.POST, instance=request.user.bprofile)
+        bform = BusinessUpdate(request.POST, request.FILES, instance=request.user.bprofile)
+        if bform.is_valid():
+            bform.save()
+            return render(request, "accounts/business_info_update_suc.html")
+    bform = BusinessUpdate(instance=request.user.bprofile)
+    context = {
+        "bform": bform
+    }
+    return render(request, "accounts/bz_update.html", context)
 
 
 def review_update(request):
@@ -276,13 +291,27 @@ def locationDetail(request):
 
         # check if the user is a business account
         is_business = Profile.objects.get(user=request.user).business_account
-
+        is_owner = Profile.objects.filter(user=request.user, verified_yelp_id = business_id).count() == 1
         # check if location is verified
         try:
             is_verified = Profile.objects.filter(
                 verified_yelp_id=business_id).values('verified')[0]['verified']
         except IndexError:
             is_verified = False
+        
+        info = None
+        if is_verified:
+
+            
+            profile = Profile.objects.filter(verified_yelp_id = business_id)
+            if profile.count()==1:
+                user_ = profile[0].user
+                bp = BProfile.objects.filter(user = user_)
+                if bp.count()==1:
+                    info = bp[0]
+
+
+
         context = {
             "business": resultJSON,
             "locationID": business_id,
@@ -293,7 +322,9 @@ def locationDetail(request):
             "avg_dict": avg_dict,
             "is_business": is_business,
             "is_verified": is_verified,
+            "is_owner": is_owner,
             'google': os.environ.get('GOOGLE_API'),
+            "business_info": info,
         }
 
     return render(request, "accounts/location_detail.html", context=context)
@@ -315,6 +346,13 @@ def registerPage(request):
             # ack business account creation
             if business_account:
                 Profile.objects.filter(user=user_obj).update(business_account=True)
+                bdict={
+                   "user":user_obj 
+                }
+                bzform= BusinessProfileForm(bdict)
+                if bzform.is_valid():
+                    bzform.save()
+                    print("Bzforn created")
                 # messages.success(
                 #     request, "Business account successfully created for " + user
                 # )

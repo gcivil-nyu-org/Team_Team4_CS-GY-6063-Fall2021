@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import Profile
+from .models import Profile, BProfile
 from .models import Review, Favorite
 from crispy_forms.helper import FormHelper
 
@@ -69,3 +69,18 @@ class ProfileUpdateForm(forms.ModelForm):
         model = Profile
         fields = ["image"]
         labels = {"image": "<i class='fas fa-images me-1'></i> Avatar"}
+
+
+class BusinessProfileForm(forms.ModelForm):
+    class Meta:
+        model = BProfile
+        fields = ["user"]
+        # print("BPF")
+        # fields="__all__"
+
+
+class BusinessUpdate(forms.ModelForm):
+    class Meta:
+        model = BProfile
+        # fields=["address","phone","business_hours"]
+        fields = ["image", "address", "phone", "business_hours"]

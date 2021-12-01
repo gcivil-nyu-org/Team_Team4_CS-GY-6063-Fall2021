@@ -16,6 +16,7 @@ class Profile(models.Model):
         max_length=256, blank=True, default="", unique=True)
     verified = models.BooleanField(default=False)
     email_confirmed = models.BooleanField(default=False)
+    
 
     def save(self, *args, **kwargs):
         if not self.business_account:
@@ -27,6 +28,17 @@ class Profile(models.Model):
 
     def __str__(self):
         return f"{self.user.username} Profile"
+
+
+class BProfile(models.Model):
+    image = models.ImageField(null=True, blank=True, upload_to="business_images")
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    address = models.TextField(max_length=256, blank=True, default="")
+    phone = models.CharField(max_length=64, blank=True,default="")
+    business_hours = models.CharField(max_length=256,blank=True,default="")
+ 
+    def __str__(self):
+        return f"{self.user.username} BProfile"
 
 
 class Review(models.Model):
