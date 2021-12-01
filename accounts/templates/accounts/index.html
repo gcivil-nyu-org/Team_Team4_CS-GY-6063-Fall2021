@@ -54,15 +54,13 @@
     /* beautify preserve:end */
 
     function initMap() {
-      const map = new google.maps.Map(document.getElementById("map"), {
+      var map = new google.maps.Map(document.getElementById("map"), {
         zoom: 11,
         center: {
           lat: 40.7128,
-          lng: -74.0060
+          lng: -74.0060,
         },
       });
-
-      infoWindow = new google.maps.InfoWindow();
 
       const useCurrentLocation = document.getElementById("useCurrentLocation");
       useCurrentLocation.addEventListener("click", () => {
@@ -75,10 +73,12 @@
                 lng: position.coords.longitude,
               };
 
-              infoWindow.setPosition(pos);
-              infoWindow.setContent(label);
-              infoWindow.open(map);
               map.setCenter(pos);
+              var userMarker = new google.maps.Marker({
+                position: map.getCenter(),
+                map: map,
+                icon: 'http://maps.google.com/mapfiles/ms/icons/orange.png'
+              });
             },
             () => {
               handleLocationError(true, infoWindow, map.getCenter());
@@ -90,26 +90,39 @@
         }
       })
 
-      var markers = locations.map(function(location, i) {
+      var bounds = new google.maps.LatLngBounds();
+      var markers = locations.map(function (location, i) {
         var marker = new google.maps.Marker({
-          position: {'lat': location['lat'], 'lng': location['lng']},
+          position: {
+            'lat': location['lat'],
+            'lng': location['lng']
+          },
           label: location['label'],
           title: location['name'],
           url: location['id']
         });
-        google.maps.event.addListener(marker, 'click', function(evt) {
+        google.maps.event.addListener(marker, 'click', function (evt) {
           redirectTo = 'location?locationID=' + marker.url
           window.location.replace(redirectTo)
         });
+        // extend bounds for each marker
+        bounds.extend({
+          'lat': location['lat'],
+          'lng': location['lng']
+        })
         return marker;
       });
+
+      if (locations.length > 0) {
+        map.fitBounds(bounds);
+      }
 
       //Add a marker clusterer to manage the markers.
       new markerClusterer.MarkerClusterer({
         map,
         markers,
       });
-    }
+    };
 
     function handleLocationError(browserHasGeolocation, infoWindow, pos) {
       infoWindow.setPosition(pos);
@@ -120,7 +133,6 @@
       );
       infoWindow.open(map);
     }
-
 
     function capitalize(string) {
       return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
