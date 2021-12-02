@@ -270,6 +270,8 @@ def locationDetail(request):
                 print("Review form saved successfully")
             else:
                 print("Review form is invalid")
+        return redirect(reverse('locationDetail')+'?locationID='+business_id)
+        # return redirect(reverse())
 
     search_object = Yelp_Search()
     context = {}
