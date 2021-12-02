@@ -13,3 +13,4 @@ coveralls
 datetime
 boto3
 django-storages
+stripe
