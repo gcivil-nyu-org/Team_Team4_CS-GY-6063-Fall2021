@@ -130,6 +130,7 @@
                             <p class="review-text">
                                 {{ review.review_text }} <a class="btn btn-secondary btn-sm mt-1 mb-1"
                                     href="{% url 'review-update' review.id %}" target="_blank">Update</a>
+                                <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'review-delete' review.id %}" target="_blank">Delete</a>
                             </p>
 
                         </div>

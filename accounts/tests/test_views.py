@@ -84,7 +84,7 @@ class StudyCityViewsTests(TestCase):
         location_detail_url = reverse('locationDetail') + '?locationID=' + yelp_id
         response = self.c.post(location_detail_url,
                                {'fav_locationid': yelp_id, 'fav_locationname': yelp_name})
-        self.assertEquals(response.status_code, 200)
+        self.assertEquals(response.status_code, 302)
         favorite = Favorite.objects.get(user=self.user, yelp_id=yelp_id)
         self.assertEquals(favorite.business_name, yelp_name)
 
@@ -116,7 +116,7 @@ class StudyCityViewsTests(TestCase):
         }
         response = self.c.post(location_detail_url,
                                review_post)
-        self.assertEquals(response.status_code, 200)
+        self.assertEquals(response.status_code, 302)
         after_review_post_count = Review.objects.filter(
             user=self.user, yelp_id=yelp_id).count()
         self.assertEquals(before_review_post_count + 1, after_review_post_count)

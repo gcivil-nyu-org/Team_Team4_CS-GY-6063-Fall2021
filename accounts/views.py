@@ -1,5 +1,6 @@
 # views.py
 import json
+from django.urls import reverse
 from django.shortcuts import render, redirect
 from .forms import RegisterForm, UserUpdateForm, ProfileUpdateForm, ReviewCreateForm
 from .forms import BusinessUpdate, BusinessProfileForm
@@ -17,7 +18,7 @@ from .zip_codes import filterInNYC, zipcodeInNYC, noNYCResults
 from .filters import Checks, Filters
 import os
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.views.generic import UpdateView
+from django.views.generic import UpdateView, DeleteView
 
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.encoding import force_bytes
@@ -74,6 +75,25 @@ def bz_update(request):
 
 def review_update(request):
     return render(request, "accounts/review_update_suc.html")
+
+
+def review_delete(request):
+    return render(request, "accounts/review_delete_suc.html")
+
+
+class ReviewDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Review
+    # success_url = reverse('review-delete-suc')
+    # sucess
+
+    def test_func(self):
+        review = self.get_object()
+        if self.request.user == review.user:
+            return True
+        return False
+
+    def get_success_url(self):
+        return reverse('review-delete-suc')
 
 
 class ReviewUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
@@ -280,6 +300,8 @@ def locationDetail(request):
                 print("Review form saved successfully")
             else:
                 print("Review form is invalid")
+        return redirect(reverse('locationDetail')+'?locationID='+business_id)
+        # return redirect(reverse())
 
     search_object = Yelp_Search()
     context = {}

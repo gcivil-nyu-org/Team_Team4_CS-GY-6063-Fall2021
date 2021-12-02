@@ -2,7 +2,7 @@ from django.urls import path
 from . import views
 from django.conf import settings
 from django.conf.urls.static import static
-from .views import ReviewUpdateView
+from .views import ReviewUpdateView, ReviewDeleteView
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
@@ -17,7 +17,9 @@ urlpatterns = [
     path('profile/', views.profile, name="profile"),
     path('location', views.locationDetail, name="locationDetail"),
     path('review/<int:pk>/update/', ReviewUpdateView.as_view(), name='review-update'),
+    path('review/<int:pk>/delete/', ReviewDeleteView.as_view(), name='review-delete'),
     path('review/update/successful', views.review_update, name='review-update-suc'),
+    path('review/delete/successful', views.review_delete, name='review-delete-suc'),
     path('password-reset/',
          auth_views.PasswordResetView.as_view(
              template_name='accounts/password_reset.html'
