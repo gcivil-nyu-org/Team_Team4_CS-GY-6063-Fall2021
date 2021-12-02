@@ -27,6 +27,35 @@ from .utils import account_activation_token
 from django.utils.encoding import force_text
 from django.utils.http import urlsafe_base64_decode
 
+import stripe
+# This is a sample test API key. Sign in to see examples pre-filled with your key.
+stripe.api_key = 'sk_test_51K2GDkEYo8rGfFwcUsIzkaOnnVlCTO8jqs9OsoSZwbCy3K9OanyTTXXnILMOacUtoOyIa6uTrCGaApRCBn7GLM8400FTPTGGLb'
+YOUR_DOMAIN = "http://127.0.0.1:8000"
+
+
+def checkout_success(request):
+    return render(request, "accounts/checkout_success.html")
+
+
+def create_checkout_session(request):
+    try:
+        checkout_session = stripe.checkout.Session.create(
+            line_items=[
+                {
+                    # Provide the exact Price ID (e.g. pr_1234) of the product you want to sell
+                    'price': 'price_1K2GyiEYo8rGfFwcNdKD1OeV',
+                    'quantity': 1,
+                },
+            ],
+            mode='payment',
+            success_url=YOUR_DOMAIN + '/checkout-success',
+            cancel_url=YOUR_DOMAIN + '/cancel',
+        )
+    except Exception as e:
+        return str(e)
+
+    return redirect(checkout_session.url)
+
 
 def bz_update(request):
     if request.method == "POST":
