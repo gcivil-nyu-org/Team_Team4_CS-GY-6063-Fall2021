@@ -4,6 +4,7 @@ body {
   padding: 0px;
 }
 :root {
+  --color-orange-600: rgb(255, 188, 137);
   --color-orange-500: rgb(255, 163, 93);
   --color-orange-400: rgb(255, 140, 51);
   --color-gray: rgb(145, 145, 145);
@@ -56,4 +57,18 @@ body {
   font-size: 25px;
   font-weight: 400;
   color: var(--color-gray);
+}
+.alert {
+  background-color: var(--color-orange-600);
+  color: white;
+  padding: 20px;
+  width: 100%;
+  text-align: center;
+  border-radius: 8px;
+  font-size: 22px;
+  font-weight: 500;
+  margin-bottom: 0px;
+}
+.alert p {
+  margin: 0px;
 }

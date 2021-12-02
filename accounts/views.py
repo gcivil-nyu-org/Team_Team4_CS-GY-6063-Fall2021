@@ -65,12 +65,16 @@ def webhook_view(request):
 def advertise(request):
     items = {"1": "price_1K2M9kEYo8rGfFwcfBjg9mKJ",
              "2": "price_1K2MAREYo8rGfFwcPrZK9LF7", "3": "price_1K2MAgEYo8rGfFwcIwfPau57"}
+    user = Profile.objects.get(user=request.user)
+    is_business = user.business_account
+    is_verified = user.verified
+    context = {"is_business": is_business, "is_verified": is_verified}
     if request.method == "POST":
         plan = request.POST.get('plan')
         if plan:
             line_items = [{"price": items[plan], "quantity": 1}]
             return create_checkout_session(line_items)
-    return render(request, "accounts/advertise.html")
+    return render(request, "accounts/advertise.html", context)
 
 
 def checkout_success(request):
