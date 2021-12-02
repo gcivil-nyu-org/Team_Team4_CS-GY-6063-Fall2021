@@ -208,19 +208,32 @@
            
                                 <input type="hidden" name="locationid" value="{{ locationID }}" />
                                 <input type="hidden" name="locationname" value="{{ business.name }}" />
+                          
 
-                                <!-- <input class="btn btn-primary" type="submit"/> -->
+                                {% if reviews|length == 0 %}
+                                <input class="btn btn-primary" type="submit"/>
+                                {% endif %}
+                                
+
                             {% for review in reviews %}
                                 {% if user == review.user %}
                                 <input class="btn btn-primary" type="submit" 
                                 onclick="validateExistingReview()" id="overridingReview" />
+                                
 
                                 {% else %}
-
                                 <input class="btn btn-primary" type="submit"/>
-
                                 {%endif%}
-                            {% endfor %}    
+
+                            {% endfor %}  
+
+                                
+
+                               
+
+                                 
+
+                            
                             </div>
                         </form>
                     </div>
