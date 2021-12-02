@@ -42,19 +42,18 @@ class FavoriteCreateForm(forms.ModelForm):
 
 
 class UserUpdateForm(forms.ModelForm):
-    email = forms.EmailField()
+    # email = forms.EmailField()
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['email'].label = '<i class="fas fa-envelope me-1"></i> Username'
-        self.fields['username'].label = '<i class="fas fa-user-circle me-1"></i> Email'
+        # self.fields['email'].label = '<i class="fas fa-envelope me-1"></i> Username'
+        self.fields['username'].label = '<i class="fas fa-user-circle me-1"></i> Username'
 
     class Meta:
         model = User
-        fields = ["username", "email"]
+        fields = ["username"]
         help_texts = {
             'username': None,
-            'email': None,
         }
 
 

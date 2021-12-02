@@ -138,3 +138,7 @@ input[type="email"] {
   padding: 10px;
   margin-top: 10px;
 }
+ul.errorlist {
+  list-style-type: none !important;
+  padding: 0px;
+}

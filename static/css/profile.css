@@ -117,7 +117,7 @@ fieldset input:focus {
   font-size: 20px;
   padding: 5px 20px;
   /* background-color: #f5f5f5; */
-
+  word-wrap: break-word;
   margin-bottom: 10px;
 }
 .review-title {

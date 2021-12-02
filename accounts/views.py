@@ -29,9 +29,10 @@ from django.utils.http import urlsafe_base64_decode
 
 
 def bz_update(request):
-    if request.method=="POST":
+    if request.method == "POST":
         # bform = BusinessUpdate(request.POST, instance=request.user.bprofile)
-        bform = BusinessUpdate(request.POST, request.FILES, instance=request.user.bprofile)
+        bform = BusinessUpdate(request.POST, request.FILES,
+                               instance=request.user.bprofile)
         if bform.is_valid():
             bform.save()
             return render(request, "accounts/business_info_update_suc.html")
@@ -291,26 +292,24 @@ def locationDetail(request):
 
         # check if the user is a business account
         is_business = Profile.objects.get(user=request.user).business_account
-        is_owner = Profile.objects.filter(user=request.user, verified_yelp_id = business_id).count() == 1
+        is_owner = Profile.objects.filter(
+            user=request.user, verified_yelp_id=business_id).count() == 1
         # check if location is verified
         try:
             is_verified = Profile.objects.filter(
                 verified_yelp_id=business_id).values('verified')[0]['verified']
         except IndexError:
             is_verified = False
-        
+
         info = None
         if is_verified:
 
-            
-            profile = Profile.objects.filter(verified_yelp_id = business_id)
-            if profile.count()==1:
+            profile = Profile.objects.filter(verified_yelp_id=business_id)
+            if profile.count() == 1:
                 user_ = profile[0].user
-                bp = BProfile.objects.filter(user = user_)
-                if bp.count()==1:
+                bp = BProfile.objects.filter(user=user_)
+                if bp.count() == 1:
                     info = bp[0]
-
-
 
         context = {
             "business": resultJSON,
@@ -346,10 +345,10 @@ def registerPage(request):
             # ack business account creation
             if business_account:
                 Profile.objects.filter(user=user_obj).update(business_account=True)
-                bdict={
-                   "user":user_obj 
+                bdict = {
+                    "user": user_obj
                 }
-                bzform= BusinessProfileForm(bdict)
+                bzform = BusinessProfileForm(bdict)
                 if bzform.is_valid():
                     bzform.save()
                     print("Bzforn created")
@@ -404,9 +403,9 @@ def ActivateAccount(request, uidb64, token, *args, **kwargs):
 #     if request.method == "POST":
 #         username = request.POST.get("username")
 #         password = request.POST.get("password")
-#
+
 #         user = authenticate(request, username=username, password=password)
-#
+
 #         if user is not None:
 #             login(request, user)
 #             print(request.get_full_path())
@@ -418,7 +417,7 @@ def ActivateAccount(request, uidb64, token, *args, **kwargs):
 #                 return redirect("index")
 #         else:
 #             messages.info(request, "Username OR password is incorrect")
-#
+
 #     context = {}
 #     return render(request, "accounts/login.html", context)
 
