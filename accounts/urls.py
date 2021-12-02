@@ -44,7 +44,10 @@ urlpatterns = [
     path('about/', views.about, name='about'),
     path('checkout/', views.create_checkout_session,
          name='create_checkout_session'),
-    path('checkout-success/', views.checkout_success)
+    path('checkout-success/', views.checkout_success),
+    path('checkout-cancel/', views.checkout_cancel),
+    path('advertise/', views.advertise, name='advertise'),
+    path('webhook/', views.webhook_view, name='webhook_view'),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL,

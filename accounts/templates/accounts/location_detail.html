@@ -40,7 +40,7 @@
             <div class="location-info-head fade-in animation-delay-3">
                 <h1>{{ business.name }}</h1>
                 {% if is_verified %}
-                <div class="fs-5 fw-bold text-center mt-20">
+                <div class="fs-5 fw-bold">
                     <p style="color:#10C483"> Verified StudySpace <span> <i class="fas fa-graduation-cap"></i>
                         </span></p>
                 </div>
@@ -72,17 +72,15 @@
                         {% endfor %}
                 </ul>
                 {% endif %}
-                <a href={% url 'create_checkout_session' %}>
-                    <div class="btn">Buy ad</div>
-                </a>
             </div>
             <div class="image-button-wrapper fade-in animation-dealy-3">
                 <button type="button" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#imageModal">
                     See photo
                 </button>
                 {% if is_owner %}
-                <a type="button" class="btn btn-light" href="/bz_update?location_id={{locationID}}" target="_blank">
-                    Update
+                <a type="button" class="btn btn-light ms-2" href="/bz_update?location_id={{locationID}}"
+                    target="_blank">
+                    Update info
                 </a>
                 {% endif %}
             </div>
@@ -130,7 +128,8 @@
                             <p class="review-text">
                                 {{ review.review_text }} <a class="btn btn-secondary btn-sm mt-1 mb-1"
                                     href="{% url 'review-update' review.id %}" target="_blank">Update</a>
-                                <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'review-delete' review.id %}" target="_blank">Delete</a>
+                                <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'review-delete' review.id %}"
+                                    target="_blank">Delete</a>
                             </p>
 
                         </div>

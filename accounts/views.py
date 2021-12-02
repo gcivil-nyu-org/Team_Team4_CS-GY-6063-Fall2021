@@ -1,5 +1,6 @@
 # views.py
 import json
+from django.http import HttpResponse
 from django.urls import reverse
 from django.shortcuts import render, redirect
 from .forms import RegisterForm, UserUpdateForm, ProfileUpdateForm, ReviewCreateForm
@@ -27,30 +28,66 @@ from django.template.loader import render_to_string
 from .utils import account_activation_token
 from django.utils.encoding import force_text
 from django.utils.http import urlsafe_base64_decode
-
+from django.views.decorators.csrf import csrf_exempt
 import stripe
-# This is a sample test API key. Sign in to see examples pre-filled with your key.
-stripe.api_key = 'sk_test_51K2GDkEYo8rGfFwcUsIzkaOnnVlCTO8jqs9OsoSZwbCy3K9OanyTTXXnILMOacUtoOyIa6uTrCGaApRCBn7GLM8400FTPTGGLb'
-YOUR_DOMAIN = "http://127.0.0.1:8000"
+
+stripe.api_key = os.environ.get('STRIPE_SECRET')
+YOUR_DOMAIN = os.environ.get('DOMAIN')
+
+
+@csrf_exempt
+def webhook_view(request):
+    payload = request.body
+    event = None
+
+    try:
+        event = stripe.Event.construct_from(
+            json.loads(payload), stripe.api_key
+        )
+    except ValueError as e:
+        # Invalid payload
+        return HttpResponse(status=400)
+
+    # Handle the event
+    if event.type == 'charge.succeeded':
+        user_email = event.data.object.billing_details.email
+        user = User.objects.get(email=user_email)
+        if user:
+            bprofile = BProfile.objects.get(user=user)
+            bprofile.is_promoted = True
+            bprofile.save()
+    # else:
+    #     print('Unhandled event type {}'.format(event.type))
+
+    return HttpResponse(status=200)
+
+
+def advertise(request):
+    items = {"1": "price_1K2M9kEYo8rGfFwcfBjg9mKJ",
+             "2": "price_1K2MAREYo8rGfFwcPrZK9LF7", "3": "price_1K2MAgEYo8rGfFwcIwfPau57"}
+    if request.method == "POST":
+        plan = request.POST.get('plan')
+        if plan:
+            line_items = [{"price": items[plan], "quantity": 1}]
+            return create_checkout_session(line_items)
+    return render(request, "accounts/advertise.html")
 
 
 def checkout_success(request):
     return render(request, "accounts/checkout_success.html")
 
 
-def create_checkout_session(request):
+def checkout_cancel(request):
+    return render(request, "accounts/checkout_cancel.html")
+
+
+def create_checkout_session(line_items):
     try:
         checkout_session = stripe.checkout.Session.create(
-            line_items=[
-                {
-                    # Provide the exact Price ID (e.g. pr_1234) of the product you want to sell
-                    'price': 'price_1K2GyiEYo8rGfFwcNdKD1OeV',
-                    'quantity': 1,
-                },
-            ],
+            line_items=line_items,
             mode='payment',
             success_url=YOUR_DOMAIN + '/checkout-success',
-            cancel_url=YOUR_DOMAIN + '/cancel',
+            cancel_url=YOUR_DOMAIN + '/checkout-cancel',
         )
     except Exception as e:
         return str(e)

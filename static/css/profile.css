@@ -15,6 +15,15 @@ body {
   justify-content: center;
   align-items: center;
 } */
+
+ul {
+  padding: 0px 10px 0px 10px !important;
+}
+.alert {
+  font-weight: bold;
+  font-size: 1.2em;
+}
+
 input[type="text"]:focus,
 input[type="email"]:focus {
   outline: none;
