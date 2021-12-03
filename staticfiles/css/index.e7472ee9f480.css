@@ -100,7 +100,7 @@ img {
   background-color: rgb(255, 140, 51);
 }
 .searchBar-wrapper {
-  background-image: url("/static/images/banner.jpg");
+  background-image: url("/static/images/banner.da73ac8c1474.jpg");
   background-size: cover;
 }
 .searchBar h1 {
@@ -165,13 +165,13 @@ img {
   width: 30px;
   height: 30px;
   cursor: pointer;
-  background-image: url("/static/images/location-arrow.svg");
+  background-image: url("/static/images/location-arrow.88c19ed4f154.svg");
   background-size: cover;
   content: "use";
 }
 
 .use-current input[type="checkbox"]:checked + label {
-  background-image: url("/static/images/location-arrow-active.svg");
+  background-image: url("/static/images/location-arrow-active.ea4e870748e7.svg");
 }
 
 /* .use-current:hover {

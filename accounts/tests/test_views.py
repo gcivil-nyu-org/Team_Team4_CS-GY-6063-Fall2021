@@ -3,6 +3,7 @@ from django.urls import reverse
 from django.contrib.auth.models import User
 from accounts.models import Review, Favorite
 from accounts.zip_codes import zipcodeInNYC, filterInNYC, noNYCResults
+from accounts.models import Profile
 
 
 class StudyCityViewsTests(TestCase):
@@ -163,4 +164,21 @@ class StudyCityViewsTests(TestCase):
 
     def test_checkout_cancel(self):
         response = self.c.get(reverse('checkout_cancel'))
+        self.assertEquals(response.status_code, 200)
+
+    def test_advertise(self):
+        logged_in = self.c.login(username='testuser', password='123456e')
+        self.assertTrue(logged_in)
+        response = self.c.get(reverse('advertise'))
+        self.assertEquals(response.status_code, 200)
+
+    def test_advertise_business(self):
+        user = User.objects.create(
+            username="bizuser", password="123456e", email="bizuser@gmail.com")
+        user.set_password("123456e")
+        user.save()
+        logged_in = self.c.login(username='bizuser', password='123456e')
+        self.assertTrue(logged_in)
+        Profile.objects.filter(user=user).update(business_account=True)
+        response = self.c.get(reverse('advertise'))
         self.assertEquals(response.status_code, 200)
