@@ -157,14 +157,10 @@ class StudyCityViewsTests(TestCase):
         response = self.c.get(reverse('about'))
         self.assertEquals(response.status_code, 200)
 
-    def test_advertisePage(self):
-        response = self.c.get(reverse('advertise'))
-        self.assertEquals(response.status_code, 200)
-
     def test_checkout_success(self):
-        response = self.c.get(reverse('checkout-success'))
+        response = self.c.get(reverse('checkout_success'))
         self.assertEquals(response.status_code, 200)
 
     def test_checkout_cancel(self):
-        response = self.c.get(reverse('checkout-cancel'))
+        response = self.c.get(reverse('checkout_cancel'))
         self.assertEquals(response.status_code, 200)
