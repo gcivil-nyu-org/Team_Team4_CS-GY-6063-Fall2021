@@ -1,5 +1,5 @@
-function validateExistingReview() {
+function submitReviewUpdate() {
   
-    alert("Your previous review would be over-written");
+    
 
   }
