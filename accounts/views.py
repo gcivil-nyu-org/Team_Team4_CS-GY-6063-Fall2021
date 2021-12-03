@@ -84,7 +84,7 @@ def advertise(request):
         context["is_promoted"] = business_profile.is_promoted
         context["promote_end_date"] = business_profile.promote_end_date
     except:
-        pass
+        business_profile = None
 
     if request.method == "POST":
         plan = request.POST.get('plan')
