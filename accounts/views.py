@@ -29,6 +29,8 @@ from .utils import account_activation_token
 from django.utils.encoding import force_text
 from django.utils.http import urlsafe_base64_decode
 from django.views.decorators.csrf import csrf_exempt
+from datetime import date
+from dateutil.relativedelta import relativedelta
 import stripe
 
 stripe.api_key = os.environ.get('STRIPE_SECRET')
@@ -39,7 +41,7 @@ YOUR_DOMAIN = os.environ.get('DOMAIN')
 def webhook_view(request):
     payload = request.body
     event = None
-
+    plans = {"9990": 12, "3990": 3, "1990": 1}
     try:
         event = stripe.Event.construct_from(
             json.loads(payload), stripe.api_key
@@ -51,10 +53,16 @@ def webhook_view(request):
     # Handle the event
     if event.type == 'charge.succeeded':
         user_email = event.data.object.billing_details.email
+        price = str(event.data.object.amount)
         user = User.objects.get(email=user_email)
         if user:
             bprofile = BProfile.objects.get(user=user)
             bprofile.is_promoted = True
+            currDate = date.today()
+            bprofile.promote_start_date = currDate
+            if price in plans:
+                bprofile.promote_end_date = currDate + \
+                    relativedelta(months=plans[price])
             bprofile.save()
     # else:
     #     print('Unhandled event type {}'.format(event.type))
@@ -63,16 +71,21 @@ def webhook_view(request):
 
 
 def advertise(request):
-    items = {"1": "price_1K2M9kEYo8rGfFwcfBjg9mKJ",
-             "2": "price_1K2MAREYo8rGfFwcPrZK9LF7", "3": "price_1K2MAgEYo8rGfFwcIwfPau57"}
-    user = Profile.objects.get(user=request.user)
+    items = {"1": "price_1K2iIXEYo8rGfFwcIkRtJkJi",
+             "2": "price_1K2iI7EYo8rGfFwc91I2y65L", "3": "price_1K2iJfEYo8rGfFwcvJcaxc5m"}
     context = {}
+    user = Profile.objects.get(user=request.user)
     if user:
         is_business = user.business_account
         is_verified = user.verified
-        is_promoted = BProfile.objects.get(user=request.user).is_promoted
-        context = {"is_business": is_business,
-                   "is_verified": is_verified, "is_promoted": is_promoted}
+        context = {"is_business": is_business, "is_verified": is_verified}
+    try:
+        business_profile = BProfile.objects.get(user=request.user)
+        context["is_promoted"] = business_profile.is_promoted
+        context["promote_end_date"] = business_profile.promote_end_date
+    except:
+        pass
+
     if request.method == "POST":
         plan = request.POST.get('plan')
         if plan:

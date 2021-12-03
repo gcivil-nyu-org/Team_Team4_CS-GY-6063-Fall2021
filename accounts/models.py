@@ -36,6 +36,10 @@ class BProfile(models.Model):
     phone = models.CharField(max_length=64, blank=True, default="")
     business_hours = models.CharField(max_length=256, blank=True, default="")
     is_promoted = models.BooleanField(default=False)
+    promote_start_date = models.DateField(
+        null=True, blank=True)
+    promote_end_date = models.DateField(
+        null=True, blank=True)
 
     def __str__(self):
         return f"{self.user.username} BProfile"
