@@ -83,7 +83,7 @@ def advertise(request):
         business_profile = BProfile.objects.get(user=request.user)
         context["is_promoted"] = business_profile.is_promoted
         context["promote_end_date"] = business_profile.promote_end_date
-    except:
+    except Exception:
         business_profile = None
 
     if request.method == "POST":
