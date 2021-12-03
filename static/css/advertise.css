@@ -72,3 +72,28 @@ body {
 .alert p {
   margin: 0px;
 }
+.popular {
+  display: inline-block;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--color-orange-500);
+}
+.popular-container {
+  border-color: var(--color-orange-500);
+  border-width: 3px;
+}
+.popular-container h3 {
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+.popular-container h2 {
+  font-size: 70px;
+}
+
+.strike {
+  text-decoration: line-through;
+  color: var(--color-gray);
+  margin-bottom: 0px;
+  padding-bottom: 0px;
+  font-size: 25px;
+}

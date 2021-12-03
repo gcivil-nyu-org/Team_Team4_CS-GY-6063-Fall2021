@@ -23,7 +23,8 @@
         <img class="mb-5" src="{% static 'images/patient.png' %}" />
         <h1>Advertisement Plans</h1>
         <h2 class="subtitle">Choose a plan that suits your needs</h2>
-        <div class="price-section mt-5">
+        <p class="mt-5 popular"> Most Popular!</p>
+        <div class="price-section mt-2">
             <div class="price text-center">
                 <form method="post">
                     {% csrf_token %}
@@ -37,12 +38,15 @@
                     {% endif %}
                 </form>
             </div>
-            <div class="price text-center">
+            <div class="price text-center popular-container">
                 <form method="post">
                     {% csrf_token %}
-                    <h3>Monthly Plan</h3>
-                    <h2>$49.9</h2>
-                    <input type="hidden" name="plan" value="2" />
+                    <h3>Yearly Plan</h3>
+                    <p class="strike">$598.8</p>
+                    <h2>$99.9</h2>
+
+
+                    <input type="hidden" name="plan" value="3" />
                     {% if not is_business or not is_verified%}
                     <input class="buy-btn" type="submit" value="Buy Now" disabled>
                     {% else %}
@@ -53,9 +57,9 @@
             <div class="price text-center">
                 <form method="post">
                     {% csrf_token %}
-                    <h3>Yearly Plan</h3>
-                    <h2>$99.9</h2>
-                    <input type="hidden" name="plan" value="3" />
+                    <h3>Monthly Plan</h3>
+                    <h2>$49.9</h2>
+                    <input type="hidden" name="plan" value="2" />
                     {% if not is_business or not is_verified%}
                     <input class="buy-btn" type="submit" value="Buy Now" disabled>
                     {% else %}
