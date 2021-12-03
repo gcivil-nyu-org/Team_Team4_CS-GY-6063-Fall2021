@@ -70,7 +70,9 @@ def advertise(request):
     if user:
         is_business = user.business_account
         is_verified = user.verified
-        context = {"is_business": is_business, "is_verified": is_verified}
+        is_promoted = BProfile.objects.get(user=request.user).is_promoted
+        context = {"is_business": is_business,
+                   "is_verified": is_verified, "is_promoted": is_promoted}
     if request.method == "POST":
         plan = request.POST.get('plan')
         if plan:

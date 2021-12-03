@@ -31,7 +31,7 @@
                     <h3>Day Plan</h3>
                     <h2>$9.9</h2>
                     <input type="hidden" name="plan" value="1" />
-                    {% if not is_business or not is_verified%}
+                    {% if not is_business or not is_verified or is_promoted%}
                     <input class="buy-btn" type="submit" value="Buy Now" disabled>
                     {% else %}
                     <input class="buy-btn" type="submit" value="Buy Now">
@@ -47,7 +47,7 @@
 
 
                     <input type="hidden" name="plan" value="3" />
-                    {% if not is_business or not is_verified%}
+                    {% if not is_business or not is_verified or is_promoted%}
                     <input class="buy-btn" type="submit" value="Buy Now" disabled>
                     {% else %}
                     <input class="buy-btn" type="submit" value="Buy Now">
@@ -60,7 +60,7 @@
                     <h3>Monthly Plan</h3>
                     <h2>$49.9</h2>
                     <input type="hidden" name="plan" value="2" />
-                    {% if not is_business or not is_verified%}
+                    {% if not is_business or not is_verified or is_promoted%}
                     <input class="buy-btn" type="submit" value="Buy Now" disabled>
                     {% else %}
                     <input class="buy-btn" type="submit" value="Buy Now">
@@ -70,8 +70,14 @@
 
         </div>
         {% if not is_business or not is_verified%}
-        <div class="alert mt-3" role="alert">
+        <div class="alert mt-4" role="alert">
             <p>You need to be a verified business to advertise on our website.
+            </p>
+        </div>
+        {% endif %}
+        {% if is_promoted%}
+        <div class="alert mt-4" role="alert">
+            <p>Your business is already promoted.
             </p>
         </div>
         {% endif %}
