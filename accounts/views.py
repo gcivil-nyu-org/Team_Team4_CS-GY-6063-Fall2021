@@ -420,6 +420,12 @@ def locationDetail(request):
                 if bp.count() == 1:
                     info = bp[0]
 
+# SS
+        userReviewExists = False
+        for review in review_list:
+            if review.user == request.user:
+                userReviewExists = True
+
         context = {
             "business": resultJSON,
             "locationID": business_id,
@@ -433,6 +439,8 @@ def locationDetail(request):
             "is_owner": is_owner,
             'google': os.environ.get('GOOGLE_API'),
             "business_info": info,
+            # SS
+            "userReviewExists": userReviewExists,
         }
 
     return render(request, "accounts/location_detail.html", context=context)
