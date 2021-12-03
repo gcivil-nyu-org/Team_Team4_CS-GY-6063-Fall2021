@@ -311,6 +311,7 @@ def locationDetail(request):
                     info = bp[0]
 
 # SS
+        userReviewExists=False
         for review in review_list:
             if review.user==request.user:
                 userReviewExists=True
