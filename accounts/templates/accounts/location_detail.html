@@ -17,6 +17,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous">
     </script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script> 
 
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"
         integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm" crossorigin="anonymous">
@@ -160,7 +161,7 @@
 
                     <div class="post-review">
                         <h2><i class="fas fa-edit me-2"></i>Post your review</h2>
-                        <form method="post">
+                        <form method="post" id="review_form">
                             {% csrf_token %}
                             <textarea placeholder="Your review..." name="review"></textarea>
                             <br />
@@ -207,7 +208,27 @@
            
                                 <input type="hidden" name="locationid" value="{{ locationID }}" />
                                 <input type="hidden" name="locationname" value="{{ business.name }}" />
-                                <input class="btn btn-primary" type="submit" />
+                          
+
+                              
+                                <!-- <input class="btn btn-primary" type="submit"/> --> 
+
+        
+                               
+                               {% if userReviewExists %}
+                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal"
+                                onclick="$('#exampleModal').modal('show')"
+                                >
+                                    Submit
+                                  </button>
+                                {% else %}
+
+                                <input class="btn btn-primary" type="submit"/>
+                                
+                                  
+                                  {% endif %}
+
+                                 
                             </div>
                         </form>
                     </div>
@@ -274,6 +295,28 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Resubmitting Review</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="$('#exampleModal').modal('hide')">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <p> This will over-write your existing review </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="$('#review_form').submit();$('#exampleModal').modal('hide')">Save changes</button>
+              <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="$('#exampleModal').modal('hide')" >Cancel</button>
+              
+            </div>
+          </div>
+        </div>
+      </div>
+
     <script>
         /* beautify preserve:start */
         document.getElementById("comfort").innerHTML = getStars({{avg_dict.comfort_rating__avg}});
