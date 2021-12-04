@@ -1,5 +1,5 @@
 from django.test import SimpleTestCase
-from accounts.forms import ReviewCreateForm, FavoriteCreateForm
+from accounts.forms import ReviewCreateForm, FavoriteCreateForm, RegisterForm
 from django.contrib.auth.models import User
 
 
@@ -37,3 +37,23 @@ class TestForms(SimpleTestCase):
             'business_name': 'cafe star'
         })
         self.assertTrue(form.is_valid())
+
+    # def test_register_form_clean(self):
+    #     form = RegisterForm(data={
+    #             'username': 'test_user2',
+    #             'email': 'abcd@gmail.com',
+    #             'password1': 'zh000000',
+    #             'password2': 'zh000000',
+    #             'business_account': False
+    #     })
+
+    #     form2 = RegisterForm(data={
+    #             'username': 'test_user3',
+    #             'email': 'abcd@gmail.com',
+    #             'password1': 'zh000001',
+    #             'password2': 'zh000001',
+    #             'business_account': False
+    #     })
+
+    #     self.assertTrue(form.is_valid())
+    #     self.assertTrue(form2.is_valid())
