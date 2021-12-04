@@ -15,7 +15,7 @@ class AdClients:
         date = datetime.date.today()
         return date
 
-    def check_if_advertisting(self):
+    def check_if_advertising(self):
         try:
             profile = Profile.objects.get(verified_yelp_id=self.id)
             if profile is not None:

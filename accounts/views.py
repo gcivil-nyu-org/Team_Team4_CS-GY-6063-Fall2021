@@ -237,7 +237,7 @@ def index(request):
             check_query.perform_checks()
 
             ad_clients = AdClients(item)
-            ad_clients.check_if_advertisting()
+            ad_clients.check_if_advertising()
 
         response = resultJSON['businesses']
 
