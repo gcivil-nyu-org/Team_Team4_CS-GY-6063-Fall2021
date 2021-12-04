@@ -485,7 +485,7 @@ def registerPage(request):
             })
             createdUser.email_user(subject, message)
             messages.success(
-                request, ('Please Confirm your email to complete registration.'))
+                request, ('Please confirm your email to complete registration.'))
             return redirect("login")
 
     return render(request, "accounts/register.html", {"form": form})

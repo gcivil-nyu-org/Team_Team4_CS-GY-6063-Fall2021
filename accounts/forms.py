@@ -16,6 +16,16 @@ class RegisterForm(UserCreationForm):
         model = User
         fields = ["username", "email", "password1", "password2", "business_account"]
 
+    def clean(self):
+        cleaned_data = super().clean()
+        email = cleaned_data.get('email')
+
+        if User.objects.filter(email=email).exists():
+            msg = 'A user with that email already exists.'
+            self.add_error('email', msg)
+
+        return self.cleaned_data
+
 
 class ReviewCreateForm(forms.ModelForm):
     review_text = forms.CharField(widget=forms.Textarea, required=False)

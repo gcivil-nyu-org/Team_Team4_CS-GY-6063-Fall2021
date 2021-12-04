@@ -7,6 +7,7 @@ from datetime import datetime
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    # User._meta.get_field('email')._unique = True # enforce email address as unique
     image = models.ImageField(
         default="profile_pics/default.jpg", upload_to="profile_pics"
     )
