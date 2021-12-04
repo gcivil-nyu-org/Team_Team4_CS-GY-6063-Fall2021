@@ -11,8 +11,7 @@ urlpatterns = [
     path('register/', views.registerPage, name="register"),
 
     path('login/', auth_views.LoginView.as_view(
-        template_name="accounts/login.html")
-         , name="login"),
+        template_name="accounts/login.html"), name="login"),
     # path('login/', views.loginPage, name="login"),
     path('logout/', views.logoutUser, name="logout"),
     path('profile/', views.profile, name="profile"),
@@ -43,6 +42,12 @@ urlpatterns = [
          name='password_reset_complete'),
     path('activate/<uidb64>/<token>/', views.ActivateAccount, name='activate'),
     path('about/', views.about, name='about'),
+    path('checkout/', views.create_checkout_session,
+         name='create_checkout_session'),
+    path('checkout-success/', views.checkout_success, name="checkout_success"),
+    path('checkout-cancel/', views.checkout_cancel, name="checkout_cancel"),
+    path('advertise/', views.advertise, name='advertise'),
+    path('webhook/', views.webhook_view, name='webhook_view'),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL,

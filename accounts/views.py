@@ -1,5 +1,6 @@
 # views.py
 import json
+from django.http import HttpResponse
 from django.urls import reverse
 from django.shortcuts import render, redirect
 from .forms import RegisterForm, UserUpdateForm, ProfileUpdateForm, ReviewCreateForm
@@ -27,12 +28,99 @@ from django.template.loader import render_to_string
 from .utils import account_activation_token
 from django.utils.encoding import force_text
 from django.utils.http import urlsafe_base64_decode
+from django.views.decorators.csrf import csrf_exempt
+from datetime import date
+from dateutil.relativedelta import relativedelta
+import stripe
+
+stripe.api_key = os.environ.get('STRIPE_SECRET')
+YOUR_DOMAIN = os.environ.get('DOMAIN')
+
+
+@csrf_exempt
+def webhook_view(request):
+    payload = request.body
+    event = None
+    plans = {"9990": 12, "3990": 3, "1990": 1}
+    try:
+        event = stripe.Event.construct_from(
+            json.loads(payload), stripe.api_key
+        )
+    except ValueError:
+        # Invalid payload
+        return HttpResponse(status=400)
+
+    # Handle the event
+    if event.type == 'charge.succeeded':
+        user_email = event.data.object.billing_details.email
+        price = str(event.data.object.amount)
+        user = User.objects.get(email=user_email)
+        if user:
+            bprofile = BProfile.objects.get(user=user)
+            bprofile.is_promoted = True
+            currDate = date.today()
+            bprofile.promote_start_date = currDate
+            if price in plans:
+                bprofile.promote_end_date = currDate + \
+                    relativedelta(months=plans[price])
+            bprofile.save()
+    # else:
+    #     print('Unhandled event type {}'.format(event.type))
+
+    return HttpResponse(status=200)
+
+
+def advertise(request):
+    items = {"1": "price_1K2iIXEYo8rGfFwcIkRtJkJi",
+             "2": "price_1K2iI7EYo8rGfFwc91I2y65L", "3": "price_1K2iJfEYo8rGfFwcvJcaxc5m"}
+    context = {}
+    user = Profile.objects.get(user=request.user)
+    if user:
+        is_business = user.business_account
+        is_verified = user.verified
+        context = {"is_business": is_business, "is_verified": is_verified}
+    try:
+        business_profile = BProfile.objects.get(user=request.user)
+        context["is_promoted"] = business_profile.is_promoted
+        context["promote_end_date"] = business_profile.promote_end_date
+    except Exception:
+        business_profile = None
+
+    if request.method == "POST":
+        plan = request.POST.get('plan')
+        if plan:
+            line_items = [{"price": items[plan], "quantity": 1}]
+            return create_checkout_session(line_items)
+    return render(request, "accounts/advertise.html", context)
+
+
+def checkout_success(request):
+    return render(request, "accounts/checkout_success.html")
+
+
+def checkout_cancel(request):
+    return render(request, "accounts/checkout_cancel.html")
+
+
+def create_checkout_session(line_items):
+    try:
+        checkout_session = stripe.checkout.Session.create(
+            line_items=line_items,
+            mode='payment',
+            success_url=YOUR_DOMAIN + '/checkout-success',
+            cancel_url=YOUR_DOMAIN + '/checkout-cancel',
+        )
+    except Exception as e:
+        return str(e)
+
+    return redirect(checkout_session.url)
 
 
 def bz_update(request):
-    if request.method=="POST":
+    if request.method == "POST":
         # bform = BusinessUpdate(request.POST, instance=request.user.bprofile)
-        bform = BusinessUpdate(request.POST, request.FILES, instance=request.user.bprofile)
+        bform = BusinessUpdate(request.POST, request.FILES,
+                               instance=request.user.bprofile)
         if bform.is_valid():
             bform.save()
             return render(request, "accounts/business_info_update_suc.html")
@@ -313,30 +401,29 @@ def locationDetail(request):
 
         # check if the user is a business account
         is_business = Profile.objects.get(user=request.user).business_account
-        is_owner = Profile.objects.filter(user=request.user, verified_yelp_id = business_id).count() == 1
+        is_owner = Profile.objects.filter(
+            user=request.user, verified_yelp_id=business_id).count() == 1
         # check if location is verified
         try:
             is_verified = Profile.objects.filter(
                 verified_yelp_id=business_id).values('verified')[0]['verified']
         except IndexError:
             is_verified = False
-        
+
         info = None
         if is_verified:
 
-            
-            profile = Profile.objects.filter(verified_yelp_id = business_id)
-            if profile.count()==1:
+            profile = Profile.objects.filter(verified_yelp_id=business_id)
+            if profile.count() == 1:
                 user_ = profile[0].user
-                bp = BProfile.objects.filter(user = user_)
-                if bp.count()==1:
+                bp = BProfile.objects.filter(user=user_)
+                if bp.count() == 1:
                     info = bp[0]
 
-# SS
-        userReviewExists=False
+        userReviewExists = False
         for review in review_list:
-            if review.user==request.user:
-                userReviewExists=True
+            if review.user == request.user:
+                userReviewExists = True
 
         context = {
             "business": resultJSON,
@@ -351,8 +438,7 @@ def locationDetail(request):
             "is_owner": is_owner,
             'google': os.environ.get('GOOGLE_API'),
             "business_info": info,
-            # SS
-            "userReviewExists":userReviewExists,
+            "userReviewExists": userReviewExists,
         }
 
     return render(request, "accounts/location_detail.html", context=context)
@@ -374,10 +460,10 @@ def registerPage(request):
             # ack business account creation
             if business_account:
                 Profile.objects.filter(user=user_obj).update(business_account=True)
-                bdict={
-                   "user":user_obj 
+                bdict = {
+                    "user": user_obj
                 }
-                bzform= BusinessProfileForm(bdict)
+                bzform = BusinessProfileForm(bdict)
                 if bzform.is_valid():
                     bzform.save()
                     print("Bzforn created")
@@ -432,9 +518,9 @@ def ActivateAccount(request, uidb64, token, *args, **kwargs):
 #     if request.method == "POST":
 #         username = request.POST.get("username")
 #         password = request.POST.get("password")
-#
+
 #         user = authenticate(request, username=username, password=password)
-#
+
 #         if user is not None:
 #             login(request, user)
 #             print(request.get_full_path())
@@ -446,7 +532,7 @@ def ActivateAccount(request, uidb64, token, *args, **kwargs):
 #                 return redirect("index")
 #         else:
 #             messages.info(request, "Username OR password is incorrect")
-#
+
 #     context = {}
 #     return render(request, "accounts/login.html", context)
 

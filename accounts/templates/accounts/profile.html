@@ -29,7 +29,7 @@
                 {% if messages %}
                 <ul class="messages">
                     {% for message in messages %}
-                    <div class="alert alert-primary mt-2" role="alert">
+                    <div class="alert" role="alert">
                         {{ message }}
                     </div>
                     {% endfor %}
@@ -45,8 +45,10 @@
                     </form>
                     <div class="">
                         <h2 class="mt-3">{{ user.username }}</h2>
-                        {% if user.profile.business_account %}
-                        <p class="text-secondary">Business Account &#10004;&#65039;</p>
+                        {% if user.profile.business_account and user.profile.verified %}
+                        <p class="text-secondary">Verified Business Account &#9989;</p>
+                        {% elif user.profile.business_account %}
+                        <p class="text-secondary">Business Account &#9989;</p>
                         {% endif %}
                         <p class="text-secondary">{{ user.email }}</p>
                     </div>
