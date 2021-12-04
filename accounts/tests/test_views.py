@@ -69,6 +69,12 @@ class StudyCityViewsTests(TestCase):
         self.assertEquals(response.status_code, 200)
         self.assertTemplateUsed(response, 'accounts/index.html')
 
+    def test_index_with_invalid_search(self):
+        searchURL = reverse('index') + '?place=asddsadsada'
+        response = self.c.post(searchURL)
+        self.assertEquals(response.status_code, 200)
+        self.assertTemplateUsed(response, 'accounts/index.html')
+
     def test_index_with_currentLocation(self):
         searchURL = reverse(
             'index') + '/?place=&useCurrentLocation=true& \
@@ -137,6 +143,18 @@ class StudyCityViewsTests(TestCase):
         response = self.c.get(reverse('profile'))
         self.assertEquals(response.status_code, 200)
 
+    def test_profile_with_image(self):
+        logged_in = self.c.login(username='testuser', password='123456e')
+        self.assertTrue(logged_in)
+        yelp_id = 'uks5xzzN5F88a3OOibkYLg'
+        yelp_name = 'Jill Lindsey'
+        location_detail_url = reverse('locationDetail') + '?locationID=' + yelp_id
+        response = self.c.post(location_detail_url,
+                               {'fav_locationid': yelp_id, 'fav_locationname': yelp_name})
+        self.assertEquals(response.status_code, 302)
+        response = self.c.get(reverse('profile'))
+        self.assertEquals(response.status_code, 200)
+
     def test_zipcodeInNYC(self):
         zipcode = '10001'
         item = {}
@@ -157,6 +175,7 @@ class StudyCityViewsTests(TestCase):
     def test_aboutPage(self):
         response = self.c.get(reverse('about'))
         self.assertEquals(response.status_code, 200)
+        self.assertTemplateUsed(response, 'accounts/about.html')
 
     def test_checkout_success(self):
         response = self.c.get(reverse('checkout_success'))
@@ -165,6 +184,10 @@ class StudyCityViewsTests(TestCase):
     def test_checkout_cancel(self):
         response = self.c.get(reverse('checkout_cancel'))
         self.assertEquals(response.status_code, 200)
+
+    def test_webhook_view(self):
+        response = self.c.get(reverse('webhook_view'))
+        self.assertEquals(response.status_code, 400)
 
     def test_advertise(self):
         logged_in = self.c.login(username='testuser', password='123456e')
@@ -180,5 +203,15 @@ class StudyCityViewsTests(TestCase):
         logged_in = self.c.login(username='bizuser', password='123456e')
         self.assertTrue(logged_in)
         Profile.objects.filter(user=user).update(business_account=True)
+        response = self.c.get(reverse('advertise'))
+        self.assertEquals(response.status_code, 200)
+
+    def test_advertise_business_no_profile(self):
+        user = User.objects.create(
+            username="bizuser", password="123456e", email="bizuser@gmail.com")
+        user.set_password("123456e")
+        user.save()
+        logged_in = self.c.login(username='bizuser', password='123456e')
+        self.assertTrue(logged_in)
         response = self.c.get(reverse('advertise'))
         self.assertEquals(response.status_code, 200)
