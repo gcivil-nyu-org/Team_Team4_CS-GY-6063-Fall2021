@@ -3,6 +3,6 @@ omit =
     *asgi*
     *wsgi*
     *filters.py
-    *urls.py
     *populate.py
     *admin.py
+    
