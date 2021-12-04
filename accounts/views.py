@@ -236,6 +236,9 @@ def index(request):
 
             check_query.perform_checks()
 
+            ad_clients = AdClients(item)
+            ad_clients.check_if_advertisting()
+
         response = resultJSON['businesses']
 
         # filter for locations outside of NYC
@@ -259,14 +262,6 @@ def index(request):
 
         response = filter_results.filter_all()
 
-        # get advertising businesses
-        ad_response = AdClients().client_data
-        print("ad_response: ", ad_response)
-
-        # filter advertising clients from normal response
-        #response = [i for i in response if i not in ad_response]
-        print("response: ", response)
-
         # if the filter returns < 3 locations, provided suggestions
         recommendations = [i for i in unfiltered_response if i not in response] if len(
             response) < 3 else []
@@ -280,10 +275,6 @@ def index(request):
                              'lat': item['coordinates']['latitude'],
                              'lng': item['coordinates']['longitude'],
                              'label': item['label']})
-
-        #print(response)
-
-
 
         context = {
             'businesses': response,
