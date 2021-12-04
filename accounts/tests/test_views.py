@@ -143,6 +143,18 @@ class StudyCityViewsTests(TestCase):
         response = self.c.get(reverse('profile'))
         self.assertEquals(response.status_code, 200)
 
+    def test_profile_with_image(self):
+        logged_in = self.c.login(username='testuser', password='123456e')
+        self.assertTrue(logged_in)
+        yelp_id = 'uks5xzzN5F88a3OOibkYLg'
+        yelp_name = 'Jill Lindsey'
+        location_detail_url = reverse('locationDetail') + '?locationID=' + yelp_id
+        response = self.c.post(location_detail_url,
+                               {'fav_locationid': yelp_id, 'fav_locationname': yelp_name})
+        self.assertEquals(response.status_code, 302)
+        response = self.c.get(reverse('profile'))
+        self.assertEquals(response.status_code, 200)
+
     def test_zipcodeInNYC(self):
         zipcode = '10001'
         item = {}
@@ -163,6 +175,7 @@ class StudyCityViewsTests(TestCase):
     def test_aboutPage(self):
         response = self.c.get(reverse('about'))
         self.assertEquals(response.status_code, 200)
+        self.assertTemplateUsed(response, 'accounts/about.html')
 
     def test_checkout_success(self):
         response = self.c.get(reverse('checkout_success'))
