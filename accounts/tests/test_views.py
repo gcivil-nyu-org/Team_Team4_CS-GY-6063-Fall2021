@@ -69,6 +69,12 @@ class StudyCityViewsTests(TestCase):
         self.assertEquals(response.status_code, 200)
         self.assertTemplateUsed(response, 'accounts/index.html')
 
+    def test_index_with_invalid_search(self):
+        searchURL = reverse('index') + '?place=asddsadsada'
+        response = self.c.post(searchURL)
+        self.assertEquals(response.status_code, 200)
+        self.assertTemplateUsed(response, 'accounts/index.html')
+
     def test_index_with_currentLocation(self):
         searchURL = reverse(
             'index') + '/?place=&useCurrentLocation=true& \
@@ -180,5 +186,15 @@ class StudyCityViewsTests(TestCase):
         logged_in = self.c.login(username='bizuser', password='123456e')
         self.assertTrue(logged_in)
         Profile.objects.filter(user=user).update(business_account=True)
+        response = self.c.get(reverse('advertise'))
+        self.assertEquals(response.status_code, 200)
+
+    def test_advertise_business_no_profile(self):
+        user = User.objects.create(
+            username="bizuser", password="123456e", email="bizuser@gmail.com")
+        user.set_password("123456e")
+        user.save()
+        logged_in = self.c.login(username='bizuser', password='123456e')
+        self.assertTrue(logged_in)
         response = self.c.get(reverse('advertise'))
         self.assertEquals(response.status_code, 200)
