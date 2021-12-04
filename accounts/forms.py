@@ -4,10 +4,8 @@ from django.contrib.auth.models import User
 from .models import Profile, BProfile
 from .models import Review, Favorite
 from crispy_forms.helper import FormHelper
-# ss
 from django.contrib.auth.forms import PasswordResetForm
 
-# ss
 class EmailValidationOnForgotPassword(PasswordResetForm):
 
     def clean_email(self):

@@ -4,15 +4,11 @@ from django.conf import settings
 from django.conf.urls.static import static
 from .views import ReviewUpdateView, ReviewDeleteView
 from django.contrib.auth import views as auth_views
-
-# ss
 from accounts.forms import EmailValidationOnForgotPassword
 
 
 urlpatterns = [
-    # ss
-    # path('accounts/password_reset/', auth_views.PasswordResetView.as_view(form_class=EmailValidationOnForgotPassword), name='password_reset'),
-   
+    
     path('bz_update/', views.bz_update),
     path('', views.index, name='index'),
     path('register/', views.registerPage, name="register"),
@@ -30,12 +26,9 @@ urlpatterns = [
     path('password-reset/',
          auth_views.PasswordResetView.as_view(
              template_name='accounts/password_reset.html'
-            #  ss
             ,form_class=EmailValidationOnForgotPassword
          ),
          name='password_reset'),
-        #  SS
-        # {'password_reset_form': EmailValidationOnForgotPassword}
     path('password-reset/done/',
          auth_views.PasswordResetDoneView.as_view(
              template_name='accounts/password_reset_done.html'
