@@ -2,3 +2,4 @@
 omit =
     *asgi*
     *wsgi*
+    *filters.py
