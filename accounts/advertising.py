@@ -1,6 +1,7 @@
 from .models import User, Profile, BProfile
 import datetime
 
+
 # question - does is_promoted bool flip to false once end date passes?
 class AdClients:
 
@@ -25,7 +26,7 @@ class AdClients:
                         self.item['advertising'] = False
                 try: 
                     bprofile = BProfile.objects.get(user=user)
-                    if bprofile.is_promoted == True:
+                    if bprofile.is_promoted:
                         if bprofile.promote_start_date <= self.today and \
                             self.today <= bprofile.promote_end_date:
                             self.item['advertising'] = True

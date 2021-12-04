@@ -1,5 +1,5 @@
 from django.test import SimpleTestCase
-from accounts.forms import ReviewCreateForm, FavoriteCreateForm, RegisterForm
+from accounts.forms import ReviewCreateForm, FavoriteCreateForm
 from django.contrib.auth.models import User
 
 
