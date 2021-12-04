@@ -172,6 +172,10 @@ class StudyCityViewsTests(TestCase):
         response = self.c.get(reverse('checkout_cancel'))
         self.assertEquals(response.status_code, 200)
 
+    def test_webhook_view(self):
+        response = self.c.get(reverse('webhook_view'))
+        self.assertEquals(response.status_code, 400)
+
     def test_advertise(self):
         logged_in = self.c.login(username='testuser', password='123456e')
         self.assertTrue(logged_in)
