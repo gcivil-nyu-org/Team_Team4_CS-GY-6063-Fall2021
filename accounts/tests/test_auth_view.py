@@ -91,3 +91,16 @@ class UserVerifyTest(BaseTest):
         self.assertEqual(response.status_code, 302)
         user = User.objects.get(email='crytest@gmail.com')
         self.assertFalse(user.is_active)
+
+    def test_user_already_active(self):
+        user = User.objects.create_user('testuser', 'crytest@gmail.com')
+        user.set_password('tetetebvghhhhj')
+        user.is_active = True
+        user.save()
+        uid = urlsafe_base64_encode(force_bytes(user.pk))
+        token = account_activation_token.make_token(user)
+        response = self.client.get(
+            reverse('activate', kwargs={'uidb64': uid, 'token': token}))
+        self.assertEqual(response.status_code, 302)
+        user = User.objects.get(email='crytest@gmail.com')
+        self.assertTrue(user.is_active)
