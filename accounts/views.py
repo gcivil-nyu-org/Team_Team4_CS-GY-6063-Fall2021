@@ -236,7 +236,9 @@ def index(request):
 
             check_query.perform_checks()
 
+            # add tag to response for locations that are advertising
             ad_clients = AdClients(item)
+
             ad_clients.check_if_advertising()
 
         response = resultJSON['businesses']
@@ -261,6 +263,9 @@ def index(request):
                                  )
 
         response = filter_results.filter_all()
+
+        # sort response list by if business is advertising
+        response = sorted(response, key=lambda item: item['advertising'])
 
         # if the filter returns < 3 locations, provided suggestions
         recommendations = [i for i in unfiltered_response if i not in response] if len(
@@ -301,7 +306,7 @@ def locationDetail(request):
             if request.POST.get("unfavorite"):
                 favor_delete = Favorite.objects.filter(user=request.user,
                                                        yelp_id=business_id)
-            # if favor_delete:
+                # if favor_delete:
                 favor_delete.delete()
                 messages.info(request, 'Unfavorite successfully!')
             elif Favorite.objects.filter(user=request.user).count() >= 5:
