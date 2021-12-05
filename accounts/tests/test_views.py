@@ -198,17 +198,10 @@ class StudyCityViewsTests(TestCase):
                                                  verified_yelp_id='zV1_EFMN4VY7Rxpv7P-ajg',
                                                  email_confirmed=True)
 
-        # profile = Profile.objects.create(user=user,
-        #                                  business_account=True,
-        #                                  verified=True,
-        #                                  verified_yelp_id='zV1_EFMN4VY7Rxpv7P-ajg',
-        #                                  email_confirmed=True)
-                                        
-        bprofile = BProfile.objects.create(user=user,
-                                           is_promoted=True,
-                                           promote_start_date=today,
-                                           promote_end_date=tplustwo)
-
+        BProfile.objects.create(user=user,
+                                is_promoted=True,
+                                promote_start_date=today,
+                                promote_end_date=tplustwo)
 
         item = {'id': 'zV1_EFMN4VY7Rxpv7P-ajg', 
                 'name': 'Sunflower - Gramercy', 
