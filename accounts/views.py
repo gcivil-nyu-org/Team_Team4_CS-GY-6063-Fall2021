@@ -265,7 +265,11 @@ def index(request):
         response = filter_results.filter_all()
 
         # sort response list by if business is advertising
-        response = sorted(response, key=lambda item: item['advertising'])
+        response = sorted(response, 
+                          key=lambda item: item['advertising'], 
+                          reverse=True)
+
+        print(response)
 
         # if the filter returns < 3 locations, provided suggestions
         recommendations = [i for i in unfiltered_response if i not in response] if len(

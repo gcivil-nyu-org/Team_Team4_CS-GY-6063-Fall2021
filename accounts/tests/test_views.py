@@ -3,7 +3,9 @@ from django.urls import reverse
 from django.contrib.auth.models import User
 from accounts.models import Review, Favorite
 from accounts.zip_codes import zipcodeInNYC, filterInNYC, noNYCResults
-from accounts.models import Profile
+from accounts.models import Profile, BProfile
+from accounts.advertising import AdClients
+import datetime
 
 
 class StudyCityViewsTests(TestCase):
@@ -182,3 +184,47 @@ class StudyCityViewsTests(TestCase):
         Profile.objects.filter(user=user).update(business_account=True)
         response = self.c.get(reverse('advertise'))
         self.assertEquals(response.status_code, 200)
+
+    def test_check_if_advertising(self):
+        today = datetime.date.today()
+        tplustwo = today + datetime.timedelta(days=2)
+        user = User.objects.create(
+                                   username="bizuser1", 
+                                   password="123456e", 
+                                   email="bizuser@gmail.com")
+
+        Profile.objects.filter(user=user).update(business_account=True,
+                                                 verified=True,
+                                                 verified_yelp_id='zV1_EFMN4VY7Rxpv7P-ajg',
+                                                 email_confirmed=True)
+
+        # profile = Profile.objects.create(user=user,
+        #                                  business_account=True,
+        #                                  verified=True,
+        #                                  verified_yelp_id='zV1_EFMN4VY7Rxpv7P-ajg',
+        #                                  email_confirmed=True)
+                                        
+        bprofile = BProfile.objects.create(user=user,
+                                           is_promoted=True,
+                                           promote_start_date=today,
+                                           promote_end_date=tplustwo)
+
+
+        item = {'id': 'zV1_EFMN4VY7Rxpv7P-ajg', 
+                'name': 'Sunflower - Gramercy', 
+                'coordinates': {'latitude': 40.7399, 'longitude': -73.98219}, 
+                'location': {'address1': '335 3rd Ave', 
+                             'address2': '', 
+                             'address3': None, 
+                             'city': 'New York', 
+                             'zip_code': '10010', 
+                             'country': 'US', 
+                             'state': 'NY', 
+                             'display_address': ['335 3rd Ave', 'New York, NY 10010']}, 
+                'phone': '+19172620804', 
+                'display_phone': '(917) 262-0804', 
+                'in_nyc': True}
+
+        ad_clients = AdClients(item)
+        response = ad_clients.check_if_advertising()
+        self.assertEquals(response, True)
