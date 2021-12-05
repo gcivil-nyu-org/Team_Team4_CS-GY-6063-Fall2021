@@ -269,8 +269,6 @@ def index(request):
                           key=lambda item: item['advertising'], 
                           reverse=True)
 
-        print(response)
-
         # if the filter returns < 3 locations, provided suggestions
         recommendations = [i for i in unfiltered_response if i not in response] if len(
             response) < 3 else []
