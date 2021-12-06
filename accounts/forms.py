@@ -33,6 +33,7 @@ class RegisterForm(UserCreationForm):
         if User.objects.filter(email=email).exists():
             msg = 'A user with that email already exists.'
             self.add_error('email', msg)
+            print(" got error...")
 
         return self.cleaned_data
 
