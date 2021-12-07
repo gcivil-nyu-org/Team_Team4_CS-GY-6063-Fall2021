@@ -37,8 +37,6 @@ class AdClients:
                 except BProfile.DoesNotExist:
                     self.item['advertising'] = False
                     return False
-            else:
-                print("test")
 
         except Profile.DoesNotExist:
             self.item['advertising'] = False
