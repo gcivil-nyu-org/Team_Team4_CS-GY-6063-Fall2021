@@ -2,15 +2,12 @@
 {% load static %}
 <html>
 
-
 <head>
   <meta charset="UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title> StudyCity </title>
-  <link rel="shortcut icon" type="image/jpg" href="media/profile_pics/default.jpg" />
-
-
+  <link rel="shortcut icon" type="image/x-icon" href="{% static 'favicon/favicon.ico' %}" />
   <script src="{% static 'js/index.js' %}"> </script>
   <script src="https://polyfill.io/v3/polyfill.min.js?features=default">
   </script>
@@ -240,8 +237,7 @@
 
     <form method="get" class="form-group">
       <div class="searchBar-wrapper fade-in-top animation-delay-2">
-        <div class="searchBar ">
-
+        <div class="searchBar">
           <h1>Find perfect study space in NYC</h1>
           <div class="search-wrapper">
             <input id="locationInput" class="form-control" type="text" name="place"
@@ -384,13 +380,16 @@
         {% for data in businesses %}
         <div class="col my-3">
           <div class="card m-auto headline" style="width: 18rem">
+
+
             <img class="card-image-top" src="{{ data.image_url }}" alt="Card image cap" />
+
             <div class="card-body">
               <h5 class="card-title">
-                <p class="data-label" type="button" data-bs-toggle="tooltip" data-bs-placement="top"
-                  title="Map label">
+                <p class="data-label" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="Map label">
                   {{data.label}}</p>{{ data.name }}
               </h5>
+
               <p class="card-text my-0">Phone: {{ data.phone }}</p>
               <p class="card-text my-0">Rating: {{ data.rating }}</p>
               <p class="card-text my-0">Price Range: {{ data.price }}</p>
@@ -401,11 +400,19 @@
                 Zip Code: {{data.location.zip_code}}
               </p>
               <a class="external-url" href="{{data.url}}" target="_blank" class="card-text pointer">Visit Website</a>
-              <div class="mt-2">
+              <div class="mt-2 card-bottom">
                 <a class="btn btn-primary" href="{% url 'locationDetail'%}?locationID={{data.id|default:''}}">
                   View detail
                 </a>
+                {% if data.advertising %}
+
+                <p>Promoted </p>
+
+                {% endif %}
               </div>
+
+
+
               <!-- <a href="#" class="btn btn-primary">Go somewhere</a> -->
             </div>
           </div>
