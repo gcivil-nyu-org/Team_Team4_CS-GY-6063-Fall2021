@@ -28,8 +28,12 @@ class AdClients:
                             return True
                         elif self.today > bprofile.promote_end_date:
                             # if ad window expired, set is_promoted to False
+                            self.item['advertising'] = False
                             bprofile.is_promoted = False
                             return False
+                    else:
+                        self.item['advertising'] = False
+                        return False
                 except BProfile.DoesNotExist:
                     self.item['advertising'] = False
                     return False

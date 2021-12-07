@@ -236,7 +236,7 @@ def index(request):
                                  )
 
             check_query.perform_checks()
-
+            
             # add tag to response for locations that are advertising
             ad_clients = AdClients(item)
 
@@ -267,8 +267,8 @@ def index(request):
 
         # sort response list by if business is advertising
         response = sorted(response, 
-                          key=lambda item: item['advertising'], 
-                          reverse=True)
+                        key=lambda item: item['advertising'], 
+                        reverse=True)
 
         # if the filter returns < 3 locations, provided suggestions
         recommendations = [i for i in unfiltered_response if i not in response] if len(
