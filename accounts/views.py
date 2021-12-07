@@ -90,9 +90,10 @@ def advertise(request):
 
     if request.method == "POST":
         plan = request.POST.get('plan')
+        email = request.user.email
         if plan:
             line_items = [{"price": items[plan], "quantity": 1}]
-            return create_checkout_session(line_items)
+            return create_checkout_session(line_items, email)
     return render(request, "accounts/advertise.html", context)
 
 
@@ -104,9 +105,10 @@ def checkout_cancel(request):
     return render(request, "accounts/checkout_cancel.html")
 
 
-def create_checkout_session(line_items):
+def create_checkout_session(line_items, email):
     try:
         checkout_session = stripe.checkout.Session.create(
+            customer_email=email,
             line_items=line_items,
             mode='payment',
             success_url=YOUR_DOMAIN + '/checkout-success',
@@ -236,7 +238,7 @@ def index(request):
                                  )
 
             check_query.perform_checks()
-            
+
             # add tag to response for locations that are advertising
             ad_clients = AdClients(item)
 
@@ -266,9 +268,9 @@ def index(request):
         response = filter_results.filter_all()
 
         # sort response list by if business is advertising
-        response = sorted(response, 
-                        key=lambda item: item['advertising'], 
-                        reverse=True)
+        response = sorted(response,
+                          key=lambda item: item['advertising'],
+                          reverse=True)
 
         # if the filter returns < 3 locations, provided suggestions
         recommendations = [i for i in unfiltered_response if i not in response] if len(
