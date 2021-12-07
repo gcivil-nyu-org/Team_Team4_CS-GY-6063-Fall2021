@@ -456,6 +456,8 @@ def locationDetail(request):
 
 
 def registerPage(request):
+    if request.user.is_authenticated:
+        return redirect("index")
     form = RegisterForm()
     if request.method == "POST":
         form = RegisterForm(request.POST)
