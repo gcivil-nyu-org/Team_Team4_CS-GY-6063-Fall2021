@@ -72,6 +72,7 @@ def webhook_view(request):
     return HttpResponse(status=200)
 
 
+@login_required(login_url='login')
 def advertise(request):
     items = {"1": "price_1K2iIXEYo8rGfFwcIkRtJkJi",
              "2": "price_1K2iI7EYo8rGfFwc91I2y65L", "3": "price_1K2iJfEYo8rGfFwcvJcaxc5m"}
