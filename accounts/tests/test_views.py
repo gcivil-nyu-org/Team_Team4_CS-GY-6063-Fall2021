@@ -131,13 +131,15 @@ class StudyCityViewsTests(TestCase):
         self.assertEquals(before_review_post_count + 1, after_review_post_count)
 
     def test_login(self):
-        logged_in = self.c.login(username='testuser', password='123456e')
-        self.assertTrue(logged_in)
+        # logged_in = self.c.login(username='testuser', password='123456e')
+        # self.assertTrue(logged_in)
         response = self.c.get(reverse('profile'))
-        # user_info = {"username": "testuser", "password": "123456e"}
-        # self.c.post(reverse("login"), user_info)
+        self.assertEquals(response.status_code, 302)
+        user_info = {"username": "testuser", "password": "123456e"}
+        response = self.c.post(reverse("login"), user_info)
         # response = self.c.get(reverse('logout'))
-        self.assertEquals(response.status_code, 200)
+        self.assertEquals(response.status_code, 302)
+        self.c.get(reverse("login"))
 
     def test_profile1_Get(self):
         logged_in = self.c.login(username='testuser', password='123456e')
@@ -253,4 +255,10 @@ class StudyCityViewsTests(TestCase):
         logged_in = self.c.login(username='bizuser', password='123456e')
         self.assertTrue(logged_in)
         response = self.c.get(reverse('advertise'))
+        self.assertEquals(response.status_code, 200)
+
+    def test_successful_update_delete(self):
+        response = self.c.get(reverse('review-update-suc'))
+        self.assertEquals(response.status_code, 200)
+        response = self.c.get(reverse('review-delete-suc'))
         self.assertEquals(response.status_code, 200)
