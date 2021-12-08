@@ -10,6 +10,7 @@ class BaseTest(TestCase):
     def setUp(self):
         self.register_url = reverse('register')
         self.login_url = reverse('login')
+        self.logout_url = reverse('logout')
         self.user = {
             'email': 'testemail@gmail.com',
             'username': 'username',
@@ -66,6 +67,17 @@ class LoginTest(BaseTest):
             self.login_url, {'username': 'testuser', 'password': 'acbddfsd'}, format='text/html')
         self.assertEqual(response.status_code, 200)
 
+    def test_login_and_logout(self):
+        user = User.objects.create_user('testuser', 'crytest@gmail.com')
+        user.set_password('tetetebvghhhhj')
+        user.is_active = True
+        user.save()
+        response = self.client.post(
+            self.login_url, {'username': 'testuser', 'password': 'acbddfsd'}, format='text/html')
+        self.assertEqual(response.status_code, 200)
+        response = self.client.get(self.logout_url)
+        self.assertEqual(response.status_code, 302)
+
 
 class UserVerifyTest(BaseTest):
     def test_user_ctivates_success(self):
@@ -91,3 +103,16 @@ class UserVerifyTest(BaseTest):
         self.assertEqual(response.status_code, 302)
         user = User.objects.get(email='crytest@gmail.com')
         self.assertFalse(user.is_active)
+
+    def test_user_already_active(self):
+        user = User.objects.create_user('testuser', 'crytest@gmail.com')
+        user.set_password('tetetebvghhhhj')
+        user.is_active = True
+        user.save()
+        uid = urlsafe_base64_encode(force_bytes(user.pk))
+        token = account_activation_token.make_token(user)
+        response = self.client.get(
+            reverse('activate', kwargs={'uidb64': uid, 'token': token}))
+        self.assertEqual(response.status_code, 302)
+        user = User.objects.get(email='crytest@gmail.com')
+        self.assertTrue(user.is_active)

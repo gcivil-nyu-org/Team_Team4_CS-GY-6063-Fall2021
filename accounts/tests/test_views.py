@@ -129,6 +129,19 @@ class StudyCityViewsTests(TestCase):
         after_review_post_count = Review.objects.filter(
             user=self.user, yelp_id=yelp_id).count()
         self.assertEquals(before_review_post_count + 1, after_review_post_count)
+        review_post_1 = {
+            "locationid": yelp_id,
+            "locationname": yelp_name,
+            "review": "Good place to go.",
+            "wifi_rating": 5,
+            "general_rating": 5,
+            "food_rating": 4,
+            "comfort_rating": 3,
+            "charging_rating": 4,
+        }
+        response_1 = self.c.post(location_detail_url,
+                                 review_post_1)
+        self.assertEquals(response_1.status_code, 302)
 
     def test_login(self):
         # logged_in = self.c.login(username='testuser', password='123456e')
