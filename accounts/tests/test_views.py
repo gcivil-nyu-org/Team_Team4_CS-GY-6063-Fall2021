@@ -3,6 +3,9 @@ from django.urls import reverse
 from django.contrib.auth.models import User
 from accounts.models import Review, Favorite
 from accounts.zip_codes import zipcodeInNYC, filterInNYC, noNYCResults
+from accounts.models import Profile, BProfile
+from accounts.advertising import AdClients
+import datetime
 
 
 class StudyCityViewsTests(TestCase):
@@ -68,6 +71,12 @@ class StudyCityViewsTests(TestCase):
         self.assertEquals(response.status_code, 200)
         self.assertTemplateUsed(response, 'accounts/index.html')
 
+    def test_index_with_invalid_search(self):
+        searchURL = reverse('index') + '?place=asddsadsada'
+        response = self.c.post(searchURL)
+        self.assertEquals(response.status_code, 200)
+        self.assertTemplateUsed(response, 'accounts/index.html')
+
     def test_index_with_currentLocation(self):
         searchURL = reverse(
             'index') + '/?place=&useCurrentLocation=true& \
@@ -84,7 +93,7 @@ class StudyCityViewsTests(TestCase):
         location_detail_url = reverse('locationDetail') + '?locationID=' + yelp_id
         response = self.c.post(location_detail_url,
                                {'fav_locationid': yelp_id, 'fav_locationname': yelp_name})
-        self.assertEquals(response.status_code, 200)
+        self.assertEquals(response.status_code, 302)
         favorite = Favorite.objects.get(user=self.user, yelp_id=yelp_id)
         self.assertEquals(favorite.business_name, yelp_name)
 
@@ -116,23 +125,50 @@ class StudyCityViewsTests(TestCase):
         }
         response = self.c.post(location_detail_url,
                                review_post)
-        self.assertEquals(response.status_code, 200)
+        self.assertEquals(response.status_code, 302)
         after_review_post_count = Review.objects.filter(
             user=self.user, yelp_id=yelp_id).count()
         self.assertEquals(before_review_post_count + 1, after_review_post_count)
+        review_post_1 = {
+            "locationid": yelp_id,
+            "locationname": yelp_name,
+            "review": "Good place to go.",
+            "wifi_rating": 5,
+            "general_rating": 5,
+            "food_rating": 4,
+            "comfort_rating": 3,
+            "charging_rating": 4,
+        }
+        response_1 = self.c.post(location_detail_url,
+                                 review_post_1)
+        self.assertEquals(response_1.status_code, 302)
 
     def test_login(self):
-        logged_in = self.c.login(username='testuser', password='123456e')
-        self.assertTrue(logged_in)
+        # logged_in = self.c.login(username='testuser', password='123456e')
+        # self.assertTrue(logged_in)
         response = self.c.get(reverse('profile'))
-        # user_info = {"username": "testuser", "password": "123456e"}
-        # self.c.post(reverse("login"), user_info)
+        self.assertEquals(response.status_code, 302)
+        user_info = {"username": "testuser", "password": "123456e"}
+        response = self.c.post(reverse("login"), user_info)
         # response = self.c.get(reverse('logout'))
-        self.assertEquals(response.status_code, 200)
+        self.assertEquals(response.status_code, 302)
+        self.c.get(reverse("login"))
 
     def test_profile1_Get(self):
         logged_in = self.c.login(username='testuser', password='123456e')
         self.assertTrue(logged_in)
+        response = self.c.get(reverse('profile'))
+        self.assertEquals(response.status_code, 200)
+
+    def test_profile_with_image(self):
+        logged_in = self.c.login(username='testuser', password='123456e')
+        self.assertTrue(logged_in)
+        yelp_id = 'uks5xzzN5F88a3OOibkYLg'
+        yelp_name = 'Jill Lindsey'
+        location_detail_url = reverse('locationDetail') + '?locationID=' + yelp_id
+        response = self.c.post(location_detail_url,
+                               {'fav_locationid': yelp_id, 'fav_locationname': yelp_name})
+        self.assertEquals(response.status_code, 302)
         response = self.c.get(reverse('profile'))
         self.assertEquals(response.status_code, 200)
 
@@ -152,3 +188,90 @@ class StudyCityViewsTests(TestCase):
         empty_list = []
         response = noNYCResults(empty_list)
         self.assertEquals(response, True)
+
+    def test_aboutPage(self):
+        response = self.c.get(reverse('about'))
+        self.assertEquals(response.status_code, 200)
+        self.assertTemplateUsed(response, 'accounts/about.html')
+
+    def test_checkout_success(self):
+        response = self.c.get(reverse('checkout_success'))
+        self.assertEquals(response.status_code, 200)
+
+    def test_checkout_cancel(self):
+        response = self.c.get(reverse('checkout_cancel'))
+        self.assertEquals(response.status_code, 200)
+
+    def test_webhook_view(self):
+        response = self.c.get(reverse('webhook_view'))
+        self.assertEquals(response.status_code, 400)
+
+    def test_advertise(self):
+        logged_in = self.c.login(username='testuser', password='123456e')
+        self.assertTrue(logged_in)
+        response = self.c.get(reverse('advertise'))
+        self.assertEquals(response.status_code, 200)
+
+    def test_advertise_business(self):
+        user = User.objects.create(
+            username="bizuser", password="123456e", email="bizuser@gmail.com")
+        user.set_password("123456e")
+        user.save()
+        logged_in = self.c.login(username='bizuser', password='123456e')
+        self.assertTrue(logged_in)
+        Profile.objects.filter(user=user).update(business_account=True)
+        response = self.c.get(reverse('advertise'))
+        self.assertEquals(response.status_code, 200)
+
+    def test_check_if_advertising(self):
+        today = datetime.date.today()
+        tplustwo = today + datetime.timedelta(days=2)
+        user = User.objects.create(
+                                   username="bizuser1", 
+                                   password="123456e", 
+                                   email="bizuser@gmail.com")
+
+        Profile.objects.filter(user=user).update(business_account=True,
+                                                 verified=True,
+                                                 verified_yelp_id='zV1_EFMN4VY7Rxpv7P-ajg',
+                                                 email_confirmed=True)
+
+        BProfile.objects.create(user=user,
+                                is_promoted=True,
+                                promote_start_date=today,
+                                promote_end_date=tplustwo)
+
+        item = {'id': 'zV1_EFMN4VY7Rxpv7P-ajg', 
+                'name': 'Sunflower - Gramercy', 
+                'coordinates': {'latitude': 40.7399, 'longitude': -73.98219}, 
+                'location': {'address1': '335 3rd Ave', 
+                             'address2': '', 
+                             'address3': None, 
+                             'city': 'New York', 
+                             'zip_code': '10010', 
+                             'country': 'US', 
+                             'state': 'NY', 
+                             'display_address': ['335 3rd Ave', 'New York, NY 10010']}, 
+                'phone': '+19172620804', 
+                'display_phone': '(917) 262-0804', 
+                'in_nyc': True}
+
+        ad_clients = AdClients(item)
+        response = ad_clients.check_if_advertising()
+        self.assertEquals(response, True)
+        
+    def test_advertise_business_no_profile(self):
+        user = User.objects.create(
+            username="bizuser", password="123456e", email="bizuser@gmail.com")
+        user.set_password("123456e")
+        user.save()
+        logged_in = self.c.login(username='bizuser', password='123456e')
+        self.assertTrue(logged_in)
+        response = self.c.get(reverse('advertise'))
+        self.assertEquals(response.status_code, 200)
+
+    def test_successful_update_delete(self):
+        response = self.c.get(reverse('review-update-suc'))
+        self.assertEquals(response.status_code, 200)
+        response = self.c.get(reverse('review-delete-suc'))
+        self.assertEquals(response.status_code, 200)

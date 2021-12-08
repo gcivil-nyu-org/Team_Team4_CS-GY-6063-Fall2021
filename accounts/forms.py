@@ -4,6 +4,16 @@ from django.contrib.auth.models import User
 from .models import Profile, BProfile
 from .models import Review, Favorite
 from crispy_forms.helper import FormHelper
+from django.contrib.auth.forms import PasswordResetForm
+
+class EmailValidationOnForgotPassword(PasswordResetForm):
+
+    def clean_email(self):
+        email = self.cleaned_data['email']
+        if not User.objects.filter(email__iexact=email, is_active=True).exists():
+            msg = ("There is no user registered with the specified E-Mail address.")
+            self.add_error('email', msg)
+        return email
 
 
 class RegisterForm(UserCreationForm):
@@ -15,6 +25,17 @@ class RegisterForm(UserCreationForm):
     class Meta:
         model = User
         fields = ["username", "email", "password1", "password2", "business_account"]
+
+    def clean(self):
+        cleaned_data = super().clean()
+        email = cleaned_data.get('email')
+
+        if User.objects.filter(email=email).exists():
+            msg = 'A user with that email already exists.'
+            self.add_error('email', msg)
+            print(" got error...")
+
+        return self.cleaned_data
 
 
 class ReviewCreateForm(forms.ModelForm):
@@ -42,19 +63,18 @@ class FavoriteCreateForm(forms.ModelForm):
 
 
 class UserUpdateForm(forms.ModelForm):
-    email = forms.EmailField()
+    # email = forms.EmailField()
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['email'].label = '<i class="fas fa-envelope me-1"></i> Username'
-        self.fields['username'].label = '<i class="fas fa-user-circle me-1"></i> Email'
+        # self.fields['email'].label = '<i class="fas fa-envelope me-1"></i> Username'
+        self.fields['username'].label = '<i class="fas fa-user-circle me-1"></i> Username'
 
     class Meta:
         model = User
-        fields = ["username", "email"]
+        fields = ["username"]
         help_texts = {
             'username': None,
-            'email': None,
         }
 
 

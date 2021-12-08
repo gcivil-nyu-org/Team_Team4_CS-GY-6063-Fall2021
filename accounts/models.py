@@ -7,6 +7,7 @@ from datetime import datetime
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    # User._meta.get_field('email')._unique = True # enforce email address as unique
     image = models.ImageField(
         default="profile_pics/default.jpg", upload_to="profile_pics"
     )
@@ -16,7 +17,6 @@ class Profile(models.Model):
         max_length=256, blank=True, default="", unique=True)
     verified = models.BooleanField(default=False)
     email_confirmed = models.BooleanField(default=False)
-    
 
     def save(self, *args, **kwargs):
         if not self.business_account:
@@ -34,9 +34,14 @@ class BProfile(models.Model):
     image = models.ImageField(null=True, blank=True, upload_to="business_images")
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     address = models.TextField(max_length=256, blank=True, default="")
-    phone = models.CharField(max_length=64, blank=True,default="")
-    business_hours = models.CharField(max_length=256,blank=True,default="")
- 
+    phone = models.CharField(max_length=64, blank=True, default="")
+    business_hours = models.CharField(max_length=256, blank=True, default="")
+    is_promoted = models.BooleanField(default=False)
+    promote_start_date = models.DateField(
+        null=True, blank=True)
+    promote_end_date = models.DateField(
+        null=True, blank=True)
+
     def __str__(self):
         return f"{self.user.username} BProfile"
 
@@ -45,7 +50,7 @@ class Review(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     yelp_id = models.CharField(max_length=256)
     business_name = models.CharField(max_length=64, default="StudySpace")
-    review_text = models.TextField(max_length=256,blank=True)
+    review_text = models.TextField(max_length=256, blank=True)
     wifi_rating = models.IntegerField(default=0)
     general_rating = models.IntegerField(default=0)
     food_rating = models.IntegerField(default=0)

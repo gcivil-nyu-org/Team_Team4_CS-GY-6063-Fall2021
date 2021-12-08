@@ -2,26 +2,31 @@ from django.urls import path
 from . import views
 from django.conf import settings
 from django.conf.urls.static import static
-from .views import ReviewUpdateView
+from .views import ReviewUpdateView, ReviewDeleteView
 from django.contrib.auth import views as auth_views
+from accounts.forms import EmailValidationOnForgotPassword
+
 
 urlpatterns = [
-    path('bz_update/',views.bz_update),
+    
+    path('bz_update/', views.bz_update),
     path('', views.index, name='index'),
     path('register/', views.registerPage, name="register"),
 
-    path('login/', auth_views.LoginView.as_view(
-        template_name="accounts/login.html")
-         , name="login"),
-    # path('login/', views.loginPage, name="login"),
+    # path('login/', auth_views.LoginView.as_view(
+    #     template_name="accounts/login.html"), name="login"),
+    path('login/', views.loginPage, name="login"),
     path('logout/', views.logoutUser, name="logout"),
     path('profile/', views.profile, name="profile"),
     path('location', views.locationDetail, name="locationDetail"),
     path('review/<int:pk>/update/', ReviewUpdateView.as_view(), name='review-update'),
+    path('review/<int:pk>/delete/', ReviewDeleteView.as_view(), name='review-delete'),
     path('review/update/successful', views.review_update, name='review-update-suc'),
+    path('review/delete/successful', views.review_delete, name='review-delete-suc'),
     path('password-reset/',
          auth_views.PasswordResetView.as_view(
              template_name='accounts/password_reset.html'
+            ,form_class=EmailValidationOnForgotPassword
          ),
          name='password_reset'),
     path('password-reset/done/',
@@ -41,6 +46,12 @@ urlpatterns = [
          name='password_reset_complete'),
     path('activate/<uidb64>/<token>/', views.ActivateAccount, name='activate'),
     path('about/', views.about, name='about'),
+    path('checkout/', views.create_checkout_session,
+         name='create_checkout_session'),
+    path('checkout-success/', views.checkout_success, name="checkout_success"),
+    path('checkout-cancel/', views.checkout_cancel, name="checkout_cancel"),
+    path('advertise/', views.advertise, name='advertise'),
+    path('webhook/', views.webhook_view, name='webhook_view'),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL,
