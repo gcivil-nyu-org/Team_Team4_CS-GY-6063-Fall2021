@@ -3,7 +3,9 @@ from django.urls import reverse
 from django.contrib.auth.models import User
 from accounts.models import Review, Favorite
 from accounts.zip_codes import zipcodeInNYC, filterInNYC, noNYCResults
-from accounts.models import Profile
+from accounts.models import Profile, BProfile
+from accounts.advertising import AdClients
+import datetime
 
 
 class StudyCityViewsTests(TestCase):
@@ -142,13 +144,15 @@ class StudyCityViewsTests(TestCase):
         self.assertEquals(response_1.status_code, 302)
 
     def test_login(self):
-        logged_in = self.c.login(username='testuser', password='123456e')
-        self.assertTrue(logged_in)
+        # logged_in = self.c.login(username='testuser', password='123456e')
+        # self.assertTrue(logged_in)
         response = self.c.get(reverse('profile'))
-        # user_info = {"username": "testuser", "password": "123456e"}
-        # self.c.post(reverse("login"), user_info)
+        self.assertEquals(response.status_code, 302)
+        user_info = {"username": "testuser", "password": "123456e"}
+        response = self.c.post(reverse("login"), user_info)
         # response = self.c.get(reverse('logout'))
-        self.assertEquals(response.status_code, 200)
+        self.assertEquals(response.status_code, 302)
+        self.c.get(reverse("login"))
 
     def test_profile1_Get(self):
         logged_in = self.c.login(username='testuser', password='123456e')
@@ -219,6 +223,43 @@ class StudyCityViewsTests(TestCase):
         response = self.c.get(reverse('advertise'))
         self.assertEquals(response.status_code, 200)
 
+    def test_check_if_advertising(self):
+        today = datetime.date.today()
+        tplustwo = today + datetime.timedelta(days=2)
+        user = User.objects.create(
+                                   username="bizuser1", 
+                                   password="123456e", 
+                                   email="bizuser@gmail.com")
+
+        Profile.objects.filter(user=user).update(business_account=True,
+                                                 verified=True,
+                                                 verified_yelp_id='zV1_EFMN4VY7Rxpv7P-ajg',
+                                                 email_confirmed=True)
+
+        BProfile.objects.create(user=user,
+                                is_promoted=True,
+                                promote_start_date=today,
+                                promote_end_date=tplustwo)
+
+        item = {'id': 'zV1_EFMN4VY7Rxpv7P-ajg', 
+                'name': 'Sunflower - Gramercy', 
+                'coordinates': {'latitude': 40.7399, 'longitude': -73.98219}, 
+                'location': {'address1': '335 3rd Ave', 
+                             'address2': '', 
+                             'address3': None, 
+                             'city': 'New York', 
+                             'zip_code': '10010', 
+                             'country': 'US', 
+                             'state': 'NY', 
+                             'display_address': ['335 3rd Ave', 'New York, NY 10010']}, 
+                'phone': '+19172620804', 
+                'display_phone': '(917) 262-0804', 
+                'in_nyc': True}
+
+        ad_clients = AdClients(item)
+        response = ad_clients.check_if_advertising()
+        self.assertEquals(response, True)
+        
     def test_advertise_business_no_profile(self):
         user = User.objects.create(
             username="bizuser", password="123456e", email="bizuser@gmail.com")
@@ -227,4 +268,10 @@ class StudyCityViewsTests(TestCase):
         logged_in = self.c.login(username='bizuser', password='123456e')
         self.assertTrue(logged_in)
         response = self.c.get(reverse('advertise'))
+        self.assertEquals(response.status_code, 200)
+
+    def test_successful_update_delete(self):
+        response = self.c.get(reverse('review-update-suc'))
+        self.assertEquals(response.status_code, 200)
+        response = self.c.get(reverse('review-delete-suc'))
         self.assertEquals(response.status_code, 200)

@@ -7,7 +7,8 @@ from .forms import RegisterForm, UserUpdateForm, ProfileUpdateForm, ReviewCreate
 from .forms import BusinessUpdate, BusinessProfileForm
 from .forms import FavoriteCreateForm
 from django.contrib.auth import logout
-# from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -17,6 +18,7 @@ from .yelp_api import Yelp_Search
 from .open_data_api import Open_Data_Query
 from .zip_codes import filterInNYC, zipcodeInNYC, noNYCResults
 from .filters import Checks, Filters
+from .advertising import AdClients
 import os
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import UpdateView, DeleteView
@@ -70,6 +72,7 @@ def webhook_view(request):
     return HttpResponse(status=200)
 
 
+@login_required(login_url='login')
 def advertise(request):
     items = {"1": "price_1K2iIXEYo8rGfFwcIkRtJkJi",
              "2": "price_1K2iI7EYo8rGfFwc91I2y65L", "3": "price_1K2iJfEYo8rGfFwcvJcaxc5m"}
@@ -88,9 +91,10 @@ def advertise(request):
 
     if request.method == "POST":
         plan = request.POST.get('plan')
+        email = request.user.email
         if plan:
             line_items = [{"price": items[plan], "quantity": 1}]
-            return create_checkout_session(line_items)
+            return create_checkout_session(line_items, email)
     return render(request, "accounts/advertise.html", context)
 
 
@@ -102,9 +106,10 @@ def checkout_cancel(request):
     return render(request, "accounts/checkout_cancel.html")
 
 
-def create_checkout_session(line_items):
+def create_checkout_session(line_items, email):
     try:
         checkout_session = stripe.checkout.Session.create(
+            customer_email=email,
             line_items=line_items,
             mode='payment',
             success_url=YOUR_DOMAIN + '/checkout-success',
@@ -235,6 +240,11 @@ def index(request):
 
             check_query.perform_checks()
 
+            # add tag to response for locations that are advertising
+            ad_clients = AdClients(item)
+
+            ad_clients.check_if_advertising()
+
         response = resultJSON['businesses']
 
         # filter for locations outside of NYC
@@ -257,6 +267,11 @@ def index(request):
                                  )
 
         response = filter_results.filter_all()
+
+        # sort response list by if business is advertising
+        response = sorted(response,
+                          key=lambda item: item['advertising'],
+                          reverse=True)
 
         # if the filter returns < 3 locations, provided suggestions
         recommendations = [i for i in unfiltered_response if i not in response] if len(
@@ -297,7 +312,7 @@ def locationDetail(request):
             if request.POST.get("unfavorite"):
                 favor_delete = Favorite.objects.filter(user=request.user,
                                                        yelp_id=business_id)
-            # if favor_delete:
+                # if favor_delete:
                 favor_delete.delete()
                 messages.info(request, 'Unfavorite successfully!')
             elif Favorite.objects.filter(user=request.user).count() >= 5:
@@ -445,6 +460,8 @@ def locationDetail(request):
 
 
 def registerPage(request):
+    if request.user.is_authenticated:
+        return redirect("index")
     form = RegisterForm()
     if request.method == "POST":
         form = RegisterForm(request.POST)
@@ -514,27 +531,29 @@ def ActivateAccount(request, uidb64, token, *args, **kwargs):
     return redirect('login')
 
 
-# def loginPage(request):
-#     if request.method == "POST":
-#         username = request.POST.get("username")
-#         password = request.POST.get("password")
+def loginPage(request):
+    if request.user.is_authenticated:
+        return redirect("index")
+    if request.method == "POST":
+        username = request.POST.get("username")
+        password = request.POST.get("password")
 
-#         user = authenticate(request, username=username, password=password)
+        user = authenticate(request, username=username, password=password)
 
-#         if user is not None:
-#             login(request, user)
-#             print(request.get_full_path())
-#             print("url: ", request.GET.get("next"))
-#             next_url = request.GET.get("next")
-#             if next_url:
-#                 return redirect(next_url)
-#             else:
-#                 return redirect("index")
-#         else:
-#             messages.info(request, "Username OR password is incorrect")
+        if user is not None:
+            login(request, user)
+            print(request.get_full_path())
+            print("url: ", request.GET.get("next"))
+            next_url = request.GET.get("next")
+            if next_url:
+                return redirect(next_url)
+            else:
+                return redirect(settings.LOGIN_REDIRECT_URL)
+        else:
+            messages.info(request, "Username OR password is incorrect")
 
-#     context = {}
-#     return render(request, "accounts/login.html", context)
+    context = {}
+    return render(request, "accounts/login.html", context)
 
 
 def logoutUser(request):
