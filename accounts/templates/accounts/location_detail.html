@@ -63,7 +63,7 @@
                     <input type="submit" class="btn btn-primary m-auto" value="Unfavorite" />
                     {% else %}
                     {#                        <input type="hidden" name="favorite" value="1" />#}
-                    <input type="submit" class="btn btn-primary m-auto" value="Add to favorite" />
+                    <input type="submit" class="btn btn-primary m-auto" value="Add to favorites" />
                     {% endif %}
                 </form>
                 {% if messages %}
@@ -228,7 +228,7 @@
                     </div>
                     {% else %}
                     <div class="post-review">
-                        <p class="alert"><i class="fas fa-exclamation-circle me-2"></i>Sorry, business user can't post
+                        <p class="alert"><i class="fas fa-exclamation-circle me-2"></i>Sorry, business users can't post
                             reviews</p>
                     </div>
                     {% endif %}
@@ -249,7 +249,7 @@
                         {% endif %}
                         <!-- <h3><i class="fas fa-business-time me-2"></i>Business Hours</h3> -->
                         {% if business_info and business_info.business_hours %}
-                        <h3><i class="fas fa-business-time me-2"></i>Business Hours</h3>
+                        <h3><i class="fas fa-business-time me-2"></i>Business hours</h3>
                         <p>{{ business_info.business_hours }}</p>
                         {% endif %}
                         <h3><i class="fas fa-star-half-alt me-2"></i>Yelp! rating </h3>
