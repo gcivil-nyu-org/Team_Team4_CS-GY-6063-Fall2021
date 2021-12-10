@@ -440,6 +440,19 @@ def locationDetail(request):
             if review.user == request.user:
                 userReviewExists = True
 
+        if resultJSON['location']['address2']:
+            resultJSON['location']['address1'] += "," + resultJSON['location']['address2']
+
+        if resultJSON['location']['address3']:
+            resultJSON['location']['address1'] += "," + resultJSON['location']['address3']
+
+        if resultJSON['location']['city']:
+            resultJSON['location']['address1'] += "," + resultJSON['location']['city']
+
+        if resultJSON['location']['state']:
+            resultJSON['location']['address1'] += "," + resultJSON['location']['state']
+
+
         context = {
             "business": resultJSON,
             "locationID": business_id,
