@@ -314,7 +314,7 @@ def locationDetail(request):
                                                        yelp_id=business_id)
                 # if favor_delete:
                 favor_delete.delete()
-                messages.info(request, 'Unfavorite successfully!')
+                messages.info(request, 'Unfavorited successfully!')
             elif Favorite.objects.filter(user=request.user).count() >= 5:
                 messages.info(request,
                               'Maximum of 5 favorited locations.' +
