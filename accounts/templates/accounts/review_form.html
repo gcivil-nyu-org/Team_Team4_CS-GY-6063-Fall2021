@@ -40,10 +40,6 @@
             width: 500px;
         }
 
-        #map {
-            min-height: 80vh;
-        }
-
         .btn {
             background-color: var(--color-orange-500);
             border: none;
@@ -65,17 +61,20 @@
         }
     </style>
 </head>
-<div class="container">
-    <img src="{%static 'images/reviews.png'%}">
-    <form method="POST">
-        {% csrf_token %}
-        <fieldset class="form-group">
-            {{ form|crispy }}
-        </fieldset>
-        <div class="form-group mt-3">
-            <button class="btn" type="submit">Update</button>
-        </div>
-    </form>
-</div>
+
+<body>
+    <div class="container">
+        <img src="{%static 'images/reviews.png'%}">
+        <form method="POST">
+            {% csrf_token %}
+            <fieldset class="form-group">
+                {{ form|crispy }}
+            </fieldset>
+            <div class="form-group mt-3">
+                <button class="btn" type="submit">Update</button>
+            </div>
+        </form>
+    </div>
+</body>
 
 </html>

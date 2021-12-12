@@ -62,6 +62,11 @@
             <a class="btn btn-outline-secondary" href="{% url 'about' %}">
                 About
             </a>
+            <a href="{% url 'advertise' %}" class="ms-2">
+                <button class="btn btn-secondary">
+                    Advertise
+                </button>
+            </a>
         </div>
 
     </div>
@@ -77,11 +82,7 @@
                 Profile
             </button>
         </a>
-        <a href="{% url 'advertise' %}" class="">
-            <button class="btn btn-secondary">
-                Advertise
-            </button>
-        </a>
+
         <a href="{% url 'logout' %}">
             <button class="btn btn-outline-secondary">
                 Logout
