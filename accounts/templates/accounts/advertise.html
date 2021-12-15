@@ -31,7 +31,7 @@
                 <form method="post">
                     {% csrf_token %}
                     <h3>One Month</h3>
-                    <h2>$19.99</h2>
+                    <h2>$19.90</h2>
                     <input type="hidden" name="plan" value="1" />
                     {% if not is_business or not is_verified or is_promoted%}
                     <input class="buy-btn" type="submit" value="Buy Now" disabled>
@@ -45,7 +45,7 @@
                     {% csrf_token %}
                     <h3>Yearly Plan</h3>
                     <p class="strike">$239.99</p>
-                    <h2>$99.99</h2>
+                    <h2>$99.90</h2>
 
 
                     <input type="hidden" name="plan" value="3" />
@@ -60,7 +60,7 @@
                 <form method="post">
                     {% csrf_token %}
                     <h3>Three Month</h3>
-                    <h2>$39.99</h2>
+                    <h2>$39.90</h2>
                     <input type="hidden" name="plan" value="2" />
                     {% if not is_business or not is_verified or is_promoted%}
                     <input class="buy-btn" type="submit" value="Buy Now" disabled>
