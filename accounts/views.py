@@ -331,7 +331,7 @@ def locationDetail(request):
                     form = FavoriteCreateForm(form_dict)
                     if form.is_valid():
                         form.save()
-                        messages.info(request, 'Favorite successfully!')
+                        messages.info(request, 'Favorited successfully!')
                         print("Favorite object has been created successfully")
 
         else:  # it is a review post
