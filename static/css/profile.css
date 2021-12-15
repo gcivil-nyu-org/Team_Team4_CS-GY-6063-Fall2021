@@ -64,6 +64,9 @@ p {
   padding: 20px 0px;
   border-radius: 8px;
 }
+.profile-section a {
+  color: var(--color-orange-500) !important;
+}
 fieldset {
   display: flex;
   flex-direction: column;
